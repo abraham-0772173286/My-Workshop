@@ -1,0 +1,19 @@
+{
+  "dashboard": "Panel de Control",
+  "repairJobs": "Trabajos de Reparación",
+  "customers": "Clientes",
+  "vehicles": "Vehículos",
+  "payments": "Pagos",
+  "registerJob": "Registrar Trabajo de Reparación",
+  "customerName": "Nombre del cliente",
+  "phone": "Teléfono / contacto",
+  "plateNumber": "Número de placa",
+  "repairType": "Tipo de reparación",
+  "partsCost": "Costo de piezas (KES)",
+  "labourCost": "Costo de mano de obra (KES)",
+  "status": "Estado de reparación",
+  "save": "Guardar trabajo de reparación",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "cancel": "Cancelar"
+}
