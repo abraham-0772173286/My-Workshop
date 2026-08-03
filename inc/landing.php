@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jin Long Garage | Workshop Operations</title>
+    <title>SHENGCHI | Workshop Operations</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@500;600;700&display=swap" rel="stylesheet">
@@ -409,7 +409,7 @@
             const button = $(this).find('button[type="submit"]');
             button.prop('disabled', true).text('SIGNING IN...');
             $.ajax({
-                url: '../classes/Login?f=login',
+                url: '../classes/Login.php?f=login',
                 method: 'POST',
                 dataType: 'json',
                 data: $(this).serialize(),

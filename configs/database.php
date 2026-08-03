@@ -61,4 +61,15 @@ function ensure_workshop_schema(mysqli $connection): void
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_repair_jobs_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
     ) ENGINE=InnoDB");
+
+    // Drop any legacy NOT NULL columns that were added before this schema was finalised
+    $rjCols = [];
+    $rjResult = $connection->query('DESCRIBE repair_jobs');
+    while ($row = $rjResult->fetch_assoc()) {
+        $rjCols[$row['Field']] = $row;
+    }
+    // 'problem' column existed in an earlier version with no default — give it one so old rows don't break inserts
+    if (isset($rjCols['problem']) && $rjCols['problem']['Default'] === null && $rjCols['problem']['Null'] === 'NO') {
+        $connection->query("ALTER TABLE repair_jobs MODIFY COLUMN problem VARCHAR(255) NOT NULL DEFAULT ''");
+    }
 }

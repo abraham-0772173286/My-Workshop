@@ -1,11 +1,26 @@
 <?php
 declare(strict_types=1);
 
-header('Content-Type: application/json; charset=utf-8');
-session_save_path(__DIR__ . '/.sessions');
-session_start();
+require_once __DIR__ . '/../inc/app.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_GET['f'] ?? '') !== 'login') {
+workshop_session_start();
+
+$f = (string) ($_GET['f'] ?? '');
+
+if ($f === 'logout') {
+    $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], (bool) $params['secure'], (bool) $params['httponly']);
+    }
+    session_destroy();
+    header('Location: ' . workshop_base_path() . 'inc/landing.php');
+    exit;
+}
+
+header('Content-Type: application/json; charset=utf-8');
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || $f !== 'login') {
     http_response_code(405);
     echo json_encode(['status' => 'error', 'msg' => 'Login requests must use POST.']);
     exit;
@@ -19,15 +34,15 @@ $password = (string) ($_POST['password'] ?? '');
  * lookup once the database layer is added.
  */
 $accounts = [
-    'admin' =>[
+    'admin' => [
         'name' => 'Garage Owner',
         'role' => 'admin',
-        'password_hash' => '$2y$10$IgTJblHVGrW0Sc3TESd0le/ZzRYYTC6DhORdop55r4XQ1lX9Gie4.',
+        'password_hash' => '$2y$10$vxtWqddpnjyYKLa1nQUMJOdpFpJKWqrpfLIve9rOBdDazkPW76YVO', // 2212Aa@0
     ],
-    'cashier' =>[
+    'cashier' => [
         'name' => 'Cashier',
         'role' => 'cashier',
-        'password_hash' => '$2y$10$gR89LqV/Eq9XIhxC.avXx.CnQRNsIwug1Uupby3v/yNVn/lD/oY9W',
+        'password_hash' => '$2y$10$vxtWqddpnjyYKLa1nQUMJOdpFpJKWqrpfLIve9rOBdDazkPW76YVO', // 2212Aa@0
     ],
 ];
 
@@ -49,5 +64,5 @@ $_SESSION['user'] = [
 echo json_encode([
     'status' => 'success',
     'msg' => 'Login successful.',
-    'redirect' => '../public/',
+    'redirect' => workshop_base_path() . 'public/',
 ]);

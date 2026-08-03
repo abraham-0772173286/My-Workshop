@@ -42,10 +42,10 @@
                     <i class="bi bi-globe"></i> <span id="currentLang">EN</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">🇺🇸 English</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">🇪🇸 Español</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr')">🇫🇷 Français</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh')">🇨🇳 中文</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('en'); return false;">🇺🇸 English</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('es'); return false;">🇪🇸 Español</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr'); return false;">🇫🇷 Français</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh'); return false;">🇨🇳 中文</a></li>
                 </ul>
             </li>
 
@@ -58,20 +58,69 @@
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
                     <i class="bi bi-person-circle text-dark fs-5"></i>
-                    <span class="d-none d-md-inline text-dark fw-medium small ms-1">System</span>
+                    <span class="d-none d-md-inline text-dark fw-medium small ms-1"><?= htmlspecialchars((string) ($_SESSION['user']['name'] ?? 'System'), ENT_QUOTES, 'UTF-8') ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end shadow-sm">
                     <li class="user-header bg-light text-center p-4">
                         <i class="bi bi-person-circle text-primary" style="font-size: 80px;"></i>
-                        <p class="mb-0 fw-bold text-dark">Support System</p>
-                        <small class="text-muted">N/A</small>
+                        <p class="mb-0 fw-bold text-dark"><?= htmlspecialchars((string) ($_SESSION['user']['name'] ?? 'Support System'), ENT_QUOTES, 'UTF-8') ?></p>
+                        <small class="text-muted"><?= htmlspecialchars((string) ($_SESSION['user']['role'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?></small>
                     </li>
                     <li class="user-footer d-flex justify-content-between p-3 bg-white">
                         <a href="#" class="btn btn-outline-primary btn-sm px-3">Profile</a>
-                        <a href="inc/forgotpassword.php?f=logout" class="btn btn-outline-danger btn-sm px-3">Sign out</a>
+                        <a href="../classes/Login.php?f=logout" class="btn btn-outline-danger btn-sm px-3">Sign out</a>
                     </li>
                 </ul>
             </li>
         </ul>
     </div>
 </nav>
+
+<script>
+(function () {
+  'use strict';
+
+  let _translations = {};
+
+  function _applyTranslations() {
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      const key = el.getAttribute('data-i18n');
+      if (!_translations[key]) return;
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.setAttribute('placeholder', _translations[key]);
+      } else {
+        el.textContent = _translations[key];
+      }
+    });
+  }
+
+  function loadLanguage(lang) {
+    // _base_url_ is set per-page before navbar.php is included
+    const base = (typeof _base_url_ !== 'undefined') ? _base_url_ : '/workshop/';
+    fetch(base + 'assets/lang/' + lang + '.json')
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        _translations = data;
+        localStorage.setItem('appLanguage', lang);
+        const badge = document.getElementById('currentLang');
+        if (badge) badge.textContent = lang.toUpperCase();
+        _applyTranslations();
+      })
+      .catch(function (err) {
+        console.warn('Language file not loaded:', err);
+      });
+  }
+
+  // Expose globally so onclick handlers in the dropdown work
+  window.changeLanguage = loadLanguage;
+
+  // Auto-load saved language on every page
+  document.addEventListener('DOMContentLoaded', function () {
+    const saved = localStorage.getItem('appLanguage') || 'en';
+    loadLanguage(saved);
+  });
+})();
+</script>
