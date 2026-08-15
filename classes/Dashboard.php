@@ -57,7 +57,7 @@ try {
                     COUNT(*) AS jobs
              FROM repair_jobs
              WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-             GROUP BY yr, mo
+             GROUP BY DATE_FORMAT(created_at,'%b %Y'), yr, mo
              ORDER BY yr ASC, mo ASC"
         )->fetch_all(MYSQLI_ASSOC);
         reply($rows);

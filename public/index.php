@@ -307,6 +307,9 @@ function loadRevenueChart() {
     });
     const total = revenue.reduce((a,b) => a+b, 0);
     $('#chartSubtitle').text('Total: UGX ' + total.toLocaleString());
+  }).fail(() => {
+    toastr.error('Could not load revenue chart.');
+    $('#chartSubtitle').text('Failed to load');
   });
 }
 
@@ -330,6 +333,8 @@ function loadTypesChart() {
         }
       }
     });
+  }).fail(() => {
+    toastr.error('Could not load repair types chart.');
   });
 }
 

@@ -90,52 +90,52 @@ $workshopBase = workshop_base_path();
     <!-- Security Status Cards -->
     <div class="row g-3 mb-4">
       <div class="col-md-3">
-        <div class="card security-card warning">
+        <div class="card security-card warning bg-warning">
           <div class="card-body">
             <div class="d-flex align-items-center">
-              <i class="bi bi-exclamation-triangle fs-2 text-warning me-3"></i>
+              <i class="bi bi-exclamation-triangle fs-2 text-dark me-3"></i>
               <div>
                 <h5 class="mb-0" id="lockedUsersCount">0</h5>
-                <small class="text-muted">Locked Users</small>
+                <small class="text-dark opacity-75">Locked Users</small>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card security-card danger">
+        <div class="card security-card danger bg-danger">
           <div class="card-body">
             <div class="d-flex align-items-center">
-              <i class="bi bi-shield-x fs-2 text-danger me-3"></i>
+              <i class="bi bi-shield-x fs-2 text-white me-3"></i>
               <div>
                 <h5 class="mb-0" id="failedAttemptsCount">0</h5>
-                <small class="text-muted">Failed Attempts (24h)</small>
+                <small class="text-white opacity-75">Failed Attempts (24h)</small>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card security-card success">
+        <div class="card security-card success bg-success">
           <div class="card-body">
             <div class="d-flex align-items-center">
-              <i class="bi bi-shield-check fs-2 text-success me-3"></i>
+              <i class="bi bi-shield-check fs-2 text-white me-3"></i>
               <div>
                 <h5 class="mb-0" id="activeSessionsCount">0</h5>
-                <small class="text-muted">Active Sessions</small>
+                <small class="text-white opacity-75">Active Sessions</small>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card security-card info">
+        <div class="card security-card info bg-info">
           <div class="card-body">
             <div class="d-flex align-items-center">
-              <i class="bi bi-activity fs-2 text-info me-3"></i>
+              <i class="bi bi-activity fs-2 text-dark me-3"></i>
               <div>
                 <h5 class="mb-0" id="loginAttemptsCount">0</h5>
-                <small class="text-muted">Login Attempts (24h)</small>
+                <small class="text-dark opacity-75">Login Attempts (24h)</small>
               </div>
             </div>
           </div>
@@ -150,7 +150,7 @@ $workshopBase = workshop_base_path();
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Security Events</h6>
-            <button class="btn btn-sm btn-outline-primary" onclick="loadSecurityEvents()">
+            <button class="btn btn-sm btn-primary" onclick="loadSecurityEvents()">
               <i class="bi bi-arrow-clockwise"></i> Refresh
             </button>
           </div>
@@ -172,17 +172,17 @@ $workshopBase = workshop_base_path();
           </div>
           <div class="card-body">
             <div class="d-grid gap-2">
-              <button class="btn btn-outline-primary" onclick="unlockAllExpiredUsers()">
+              <button class="btn btn-primary" onclick="unlockAllExpiredUsers()">
                 <i class="bi bi-unlock me-2"></i>Unlock Expired Users
               </button>
-              <button class="btn btn-outline-warning" onclick="resetAllFailedAttempts()">
+              <button class="btn btn-warning text-dark" onclick="resetAllFailedAttempts()">
                 <i class="bi bi-arrow-clockwise me-2"></i>Reset Failed Attempts
               </button>
-              <button class="btn btn-outline-info" onclick="exportSecurityLog()">
+              <button class="btn btn-info text-dark" onclick="exportSecurityLog()">
                 <i class="bi bi-download me-2"></i>Export Security Log
               </button>
               <hr>
-              <button class="btn btn-outline-success" onclick="showSystemHealth()">
+              <button class="btn btn-success" onclick="showSystemHealth()">
                 <i class="bi bi-heart-pulse me-2"></i>System Health Check
               </button>
             </div>
@@ -369,8 +369,8 @@ function showSystemHealth() {
   status += `Sessions: ${healthData.sessions}\n`;
   status += `Security: ${healthData.security} (2 locked users)\n`;
   status += `Performance: ${healthData.performance}\n`;
-  
-  alert(status);
+
+  toastr.info(status.replace(/\n/g, '<br>'), 'System Health', { escapeHtml: false });
 }
 
 $(document).ready(function() {
