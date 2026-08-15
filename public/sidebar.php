@@ -31,7 +31,7 @@ $navItems[] = ['page' => 'receipts', 'href' => '#', 'icon' => 'bi-receipt', 'lab
 
 // Admin and Owner only features
 if (in_array($userRole, ['admin', 'owner'])) {
-    $navItems[] = ['page' => 'reports', 'href' => '#', 'icon' => 'bi-bar-chart-line', 'label' => 'Reports', 'arrow' => true];
+    $navItems[] = ['page' => 'reports', 'href' => 'models/reports.php', 'icon' => 'bi-bar-chart-line', 'label' => 'Reports'];
 }
 
 // Admin only features

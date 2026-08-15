@@ -123,34 +123,14 @@ $workshopBase = workshop_base_path();
 <?php $activePage = 'dashboard'; include 'sidebar.php'; ?>
 
 <main class="app-main">
-  <!-- breadcrumb -->
-  <div class="app-content-header px-4 pt-3 pb-0">
+    <div class="app-content-header px-4 pt-3 pb-0">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h4 class="fw-bold mb-0">
-          <?php if ($workshopUser['effective_role'] === 'admin'): ?>
-            <i class="bi bi-shield-lock me-2 text-danger"></i>Admin Dashboard
-          <?php elseif ($workshopUser['effective_role'] === 'owner'): ?>
-            <i class="bi bi-person-badge me-2 text-primary"></i>Owner Dashboard
-          <?php else: ?>
-            <i class="bi bi-cash-stack me-2 text-warning"></i>Cashier Dashboard
-          <?php endif; ?>
-        </h4>
-        <p class="text-muted small mb-0">
-          Welcome back, <?= htmlspecialchars($workshopUser['name'], ENT_QUOTES) ?> — 
-          <?php if ($workshopUser['effective_role'] === 'admin'): ?>
-            you have full system access and control.
-          <?php elseif ($workshopUser['effective_role'] === 'owner'): ?>
-            here's your business overview and performance metrics.
-          <?php else: ?>
-            here are today's operations and customer transactions.
-          <?php endif; ?>
-        </p>
+        <h4 class="fw-bold mb-0">Dashboard</h4>
+        <p class="text-muted small mb-0">Welcome back, <?= htmlspecialchars($workshopUser['name'], ENT_QUOTES) ?> — here's what's happening today.</p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-        <li class="breadcrumb-item active">
-          <?= ucfirst($workshopUser['effective_role']) ?> Home
-        </li>
+        <li class="breadcrumb-item active">Home</li>
       </ol>
     </div>
   </div>
@@ -252,7 +232,7 @@ $workshopBase = workshop_base_path();
 
 <script>
 const API = '../classes/Dashboard.php';
-const fmt = n => 'KES ' + Number(n).toLocaleString('en-KE', {minimumFractionDigits:0, maximumFractionDigits:0});
+const fmt = n => 'UGX ' + Number(n).toLocaleString('en-UG', {minimumFractionDigits:0, maximumFractionDigits:0});
 
 // ── KPI cards ────────────────────────────────────────────────────────────────
 function loadStats() {
@@ -297,7 +277,7 @@ function loadRevenueChart() {
         labels,
         datasets: [
           {
-            label: 'Revenue (KES)',
+            label: 'Revenue (UGX)',
             data: revenue,
             backgroundColor: 'rgba(79,70,229,.75)',
             borderRadius: 7,
@@ -320,13 +300,13 @@ function loadRevenueChart() {
         interaction: { mode: 'index', intersect: false },
         plugins: { legend: { labels: { font: { family: 'DM Sans', size: 12 } } } },
         scales: {
-          y:  { position: 'left',  grid: { color: '#f1f5f9' }, ticks: { callback: v => 'KES ' + v.toLocaleString() } },
+          y:  { position: 'left',  grid: { color: '#f1f5f9' }, ticks: { callback: v => 'UGX ' + v.toLocaleString() } },
           y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { stepSize: 1 } }
         }
       }
     });
     const total = revenue.reduce((a,b) => a+b, 0);
-    $('#chartSubtitle').text('Total: KES ' + total.toLocaleString());
+    $('#chartSubtitle').text('Total: UGX ' + total.toLocaleString());
   });
 }
 
