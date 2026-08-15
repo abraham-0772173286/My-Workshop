@@ -17,6 +17,33 @@ function database_connection(): mysqli
     return $connection;
 }
 
+function get_database_connection(): PDO
+{
+    $server = 'localhost';
+    $username = 'root';
+    $password = '2212Aa@0';
+    $database = 'workshop';
+
+    $dsn = "mysql:host=$server;dbname=$database;charset=utf8mb4";
+    
+    try {
+        $pdo = new PDO($dsn, $username, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
+        
+        // Create database if it doesn't exist
+        $pdo->exec("CREATE DATABASE IF NOT EXISTS `$database` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        $pdo->exec("USE `$database`");
+        
+        return $pdo;
+    } catch (PDOException $e) {
+        error_log("Database connection failed: " . $e->getMessage());
+        throw new Exception("Database connection failed.");
+    }
+}
+
 function ensure_workshop_schema(mysqli $connection): void
 {
     $connection->query('CREATE TABLE IF NOT EXISTS customers (

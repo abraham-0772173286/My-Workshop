@@ -127,11 +127,30 @@ $workshopBase = workshop_base_path();
   <div class="app-content-header px-4 pt-3 pb-0">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h4 class="fw-bold mb-0">Dashboard</h4>
-        <p class="text-muted small mb-0">Welcome back, <?= htmlspecialchars($workshopUser['name'], ENT_QUOTES) ?> — here's what's happening today.</p>
+        <h4 class="fw-bold mb-0">
+          <?php if ($workshopUser['effective_role'] === 'admin'): ?>
+            <i class="bi bi-shield-lock me-2 text-danger"></i>Admin Dashboard
+          <?php elseif ($workshopUser['effective_role'] === 'owner'): ?>
+            <i class="bi bi-person-badge me-2 text-primary"></i>Owner Dashboard
+          <?php else: ?>
+            <i class="bi bi-cash-stack me-2 text-warning"></i>Cashier Dashboard
+          <?php endif; ?>
+        </h4>
+        <p class="text-muted small mb-0">
+          Welcome back, <?= htmlspecialchars($workshopUser['name'], ENT_QUOTES) ?> — 
+          <?php if ($workshopUser['effective_role'] === 'admin'): ?>
+            you have full system access and control.
+          <?php elseif ($workshopUser['effective_role'] === 'owner'): ?>
+            here's your business overview and performance metrics.
+          <?php else: ?>
+            here are today's operations and customer transactions.
+          <?php endif; ?>
+        </p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-        <li class="breadcrumb-item active">Home</li>
+        <li class="breadcrumb-item active">
+          <?= ucfirst($workshopUser['effective_role']) ?> Home
+        </li>
       </ol>
     </div>
   </div>

@@ -1,8 +1,15 @@
 <?php
 require_once __DIR__ . '/../inc/app.php';
 workshop_require_login();
+
+// Check if user has permission to view repair jobs
+workshop_require_permission('manage_repair_jobs');
+
 $workshopUser = $_SESSION['user'];
 $workshopBase = workshop_base_path();
+$userRole = $workshopUser['effective_role'] ?? $workshopUser['role'] ?? 'cashier';
+$canDelete = workshop_has_permission('delete_records');
+$canExport = workshop_has_permission('export_data');
 ?>
 <!doctype html>
 <html lang="en">
@@ -20,7 +27,7 @@ $workshopBase = workshop_base_path();
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css">
-  <link rel="stylesheet" href="layout.css.php">
+  <link rel="stylesheet" href="layout.css.php?v=<?= time() ?>">
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
