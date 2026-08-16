@@ -55,6 +55,94 @@ $canExport = workshop_has_permission('export_data');
     .toast-success { background-color: #28a745 !important; color: white !important; }
     .toast-error   { background-color: #dc3545 !important; color: white !important; }
     .toast-warning { background-color: rgb(229,156,54); color: black; }
+
+    /* ---------- Repair Jobs table ---------- */
+    #repairjobstable { font-size: .85rem; border-collapse: separate; border-spacing: 0; }
+    #repairjobstable thead th {
+      background: #f8fafc;
+      color: #64748b;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      border-bottom: 2px solid #eef2f7;
+      border-top: 0;
+      white-space: nowrap;
+      padding: .8rem .9rem;
+    }
+    #repairjobstable tbody td {
+      padding: .7rem .9rem;
+      vertical-align: middle;
+      border-bottom: 1px solid #f8fafc;
+      white-space: nowrap;
+    }
+    #repairjobstable tbody tr:hover td { background: #f8fafc; }
+    #repairjobstable tbody tr.selected td { background: #eef2ff !important; }
+    #repairjobstable .dataTables_empty {
+      text-align: center;
+      padding: 2.5rem !important;
+      color: #94a3b8;
+      font-size: .9rem;
+    }
+    /* scrollX container keeps rounded corners inside the card */
+    #repairjobstable_wrapper .dataTables_scrollBody::-webkit-scrollbar {
+      height: 8px;
+    }
+    #repairjobstable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    /* length + search controls */
+    #repairjobstable_wrapper .dataTables_length,
+    #repairjobstable_wrapper .dataTables_filter { margin-bottom: .9rem; }
+    #repairjobstable_wrapper .dataTables_length select,
+    #repairjobstable_wrapper .dataTables_filter input {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: .35rem .6rem;
+      font-size: .85rem;
+      outline: none;
+    }
+    #repairjobstable_wrapper .dataTables_filter input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+    }
+    /* info + pagination */
+    #repairjobstable_wrapper .dataTables_info {
+      color: #94a3b8;
+      font-size: .8rem;
+      padding-top: 1rem;
+    }
+    #repairjobstable_wrapper .dataTables_paginate {
+      padding-top: .9rem;
+    }
+    #repairjobstable_wrapper .dataTables_paginate .paginate_button {
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 8px !important;
+      background: #fff !important;
+      color: #64748b !important;
+      font-size: .8rem;
+      margin: 0 2px;
+      padding: .3rem .75rem !important;
+    }
+    #repairjobstable_wrapper .dataTables_paginate .paginate_button:hover {
+      background: #f8fafc !important;
+      color: #6366f1 !important;
+      border-color: #c7d2fe !important;
+    }
+    #repairjobstable_wrapper .dataTables_paginate .paginate_button.current,
+    #repairjobstable_wrapper .dataTables_paginate .paginate_button.current:hover {
+      background: #6366f1 !important;
+      border-color: #6366f1 !important;
+      color: #fff !important;
+    }
+    /* job number + row checkbox tweaks */
+    #repairjobstable td code {
+      font-size: .8rem;
+      background: #eef2ff;
+      padding: .2rem .5rem;
+      border-radius: 6px;
+    }
   </style>
 </head>
 
@@ -165,8 +253,8 @@ $canExport = workshop_has_permission('export_data');
                   <div class="col-md-6"><label class="form-label small fw-semibold">Plate number <span class="text-danger">*</span></label><input class="form-control text-uppercase" name="plate_number" placeholder="KDD 821T" required></div>
                   <div class="col-md-6"><label class="form-label small fw-semibold">Vehicle make / model</label><input class="form-control" name="model" placeholder="Toyota Prado"></div>
                   <div class="col-12"><label class="form-label small fw-semibold">Repair type <span class="text-danger">*</span></label><input class="form-control" name="repair_type" placeholder="e.g. Brake pads replacement" required></div>
-                  <div class="col-md-4"><label class="form-label small fw-semibold">Parts cost (KES) <span class="text-danger">*</span></label><input class="form-control" type="number" name="parts_cost" min="0" step="0.01" value="0" required></div>
-                  <div class="col-md-4"><label class="form-label small fw-semibold">Labour cost (KES) <span class="text-danger">*</span></label><input class="form-control" type="number" name="labour_cost" min="0" step="0.01" value="0" required></div>
+                  <div class="col-md-4"><label class="form-label small fw-semibold">Parts cost (UGX) <span class="text-danger">*</span></label><input class="form-control" type="number" name="parts_cost" min="0" step="0.01" value="0" required></div>
+                  <div class="col-md-4"><label class="form-label small fw-semibold">Labour cost (UGX) <span class="text-danger">*</span></label><input class="form-control" type="number" name="labour_cost" min="0" step="0.01" value="0" required></div>
                   <div class="col-md-4">
                     <label class="form-label small fw-semibold">Repair status <span class="text-danger">*</span></label>
                     <select class="form-select" name="status" required>
@@ -234,7 +322,8 @@ $canExport = workshop_has_permission('export_data');
       table.destroy();
     }
     table = $('#repairjobstable').DataTable({
-      responsive: true,
+      scrollX: true,
+      scrollCollapse: true,
       processing: true,
       pageLength: 50,
       dom: 'lfrtip',
@@ -264,8 +353,8 @@ $canExport = workshop_has_permission('export_data');
         { data: 'customer',     render: d => `<span class="fw-bold text-dark">${d}</span>` },
         { data: 'vehicle',      render: d => `<span class="small"><i class="bi bi-car-front me-1 text-muted"></i>${d}</span>` },
         { data: 'repair_type' },
-        { data: 'parts_cost',   render: d => `KES ${Number(d).toLocaleString()}` },
-        { data: 'labour_cost',  render: d => `KES ${Number(d).toLocaleString()}` },
+        { data: 'parts_cost',   render: d => `UGX ${Number(d).toLocaleString()}` },
+        { data: 'labour_cost',  render: d => `UGX ${Number(d).toLocaleString()}` },
         { data: 'status', className: 'text-center', render: d => d === 'REPAIR DONE'
             ? '<span class="status-pill status-done"><i class="bi bi-check-circle-fill me-1"></i>REPAIR DONE</span>'
             : '<span class="status-pill status-pending"><i class="bi bi-clock-history me-1"></i>REPAIR PENDING</span>' },
@@ -281,6 +370,11 @@ $canExport = workshop_has_permission('export_data');
       selectedJob = isSelected ? table.row(this).data().repair_job_id : null;
     });
   }
+
+  // Recalculate column widths when the layout changes (e.g. sidebar collapse)
+  $(window).on('resize', function () {
+    if (table) { table.columns.adjust(); }
+  });
 
   const repairJobModal = new bootstrap.Modal(document.getElementById('repairJobModal'));
   $('#registerRepairJob').on('click', () => repairJobModal.show());

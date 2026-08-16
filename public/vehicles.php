@@ -261,7 +261,7 @@ $(document).ready(function(){
       { data:'total_jobs', className:'text-center',
         render: d => `<span class="jobs-badge">${d} job${d!=1?'s':''}</span>` },
       { data:'total_spent',
-        render: d => `<span class="fw-semibold small">KES ${Number(d).toLocaleString()}</span>` },
+        render: d => `<span class="fw-semibold small">UGX ${Number(d).toLocaleString()}</span>` },
       { data:'date_received', className:'text-muted small' }
     ]
   });

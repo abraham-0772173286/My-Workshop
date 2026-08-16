@@ -57,10 +57,12 @@ $workshopBase = workshop_base_path();
     }
     
     .stat-card {
-      border-radius: 16px;
-      border: none;
+      border-radius: 20px;
+      border: 1px solid #eef2f7;
+      background: #fff;
       padding: 1.5rem;
       height: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
@@ -69,10 +71,10 @@ $workshopBase = workshop_base_path();
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
     
-    .stat-card.purple { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-    .stat-card.green { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; }
-    .stat-card.orange { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
-    .stat-card.red { background: linear-gradient(135deg, #ff9a9e, #fecfef); color: white; }
+    .stat-card.purple .stat-number { color: #6366f1; }
+    .stat-card.green .stat-number { color: #0d9488; }
+    .stat-card.orange .stat-number { color: #d97706; }
+    .stat-card.red .stat-number { color: #f97316; }
     
     .stat-number {
       font-size: 2.5rem;
@@ -83,8 +85,21 @@ $workshopBase = workshop_base_path();
     
     .stat-label {
       font-size: 0.9rem;
-      opacity: 0.9;
+      color: #6c757d;
       margin: 0;
+    }
+    
+    .report-card {
+      background: #fff;
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    .report-card .card-title {
+      font-weight: 800;
+      font-size: 1rem;
+      color: #0f172a;
     }
     
     .chart-container {
@@ -240,7 +255,7 @@ $workshopBase = workshop_base_path();
         <div class="card stat-card purple">
           <div class="text-center">
             <div class="stat-number" id="totalOrders">0</div>
-            <p class="stat-label">Total Orders</p>
+            <p class="stat-label">Total Jobs</p>
           </div>
         </div>
       </div>
@@ -253,7 +268,7 @@ $workshopBase = workshop_base_path();
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card stat-card orange">
+        <div class="card stat-card blue">
           <div class="text-center">
             <div class="stat-number" id="avgOrderValue">UGX 0</div>
             <p class="stat-label">Avg Order Value</p>
@@ -264,7 +279,7 @@ $workshopBase = workshop_base_path();
         <div class="card stat-card red">
           <div class="text-center">
             <div class="stat-number" id="itemsSold">0</div>
-            <p class="stat-label">Items Sold</p>
+            <p class="stat-label">Parts Bought</p>
           </div>
         </div>
       </div>
@@ -273,17 +288,17 @@ $workshopBase = workshop_base_path();
     <!-- Charts Row -->
     <div class="row g-4 mb-4">
       <div class="col-lg-8">
-        <div class="card">
+        <div class="card report-card">
           <div class="card-body">
-            <h6 class="card-title mb-3">Revenue by Day</h6>
+            <h6 class="card-title mb-3">Repairs This Week</h6>
             <div class="chart-container">
-              <canvas id="revenueChart"></canvas>
+              <canvas id="weekChart"></canvas>
             </div>
           </div>
         </div>
       </div>
       <div class="col-lg-4">
-        <div class="card">
+        <div class="card report-card">
           <div class="card-body">
             <h6 class="card-title mb-3">Sales by Category</h6>
             <div class="chart-container">
@@ -394,66 +409,96 @@ function loadSummaryStats() {
     });
 }
 
-// Load revenue chart
-function loadRevenueChart() {
-  $.getJSON(`${API_BASE}?f=revenue_by_day&period=${currentPeriod}`)
+// Load weekly jobs chart (current week, dynamic)
+function loadWeekChart() {
+  $.getJSON(`${API_BASE}?f=jobs_by_weekday`)
     .done(function(response) {
       if (response.status === 'success') {
-        renderRevenueChart(response.data);
+        renderWeekChart(response.data);
       }
     })
     .fail(function() {
-      toastr.error('Failed to load revenue chart data');
+      toastr.error('Failed to load weekly jobs chart data');
     });
 }
 
-// Render revenue chart
-function renderRevenueChart(data) {
-  const ctx = document.getElementById('revenueChart').getContext('2d');
+function localDateKey(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Render weekly jobs chart — days of the week on the Y axis, job count on X axis
+function renderWeekChart(data) {
+  const ctx = document.getElementById('weekChart').getContext('2d');
   
   if (revenueChart) {
     revenueChart.destroy();
   }
   
-  const labels = data.map(d => new Date(d.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric'}));
-  const revenues = data.map(d => parseFloat(d.revenue));
-  const orders = data.map(d => parseInt(d.orders));
+  const today = new Date();
+  const labels = [];
+  const counts = [];
+  
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const key = localDateKey(d);
+    const row = data.find(r => String(r.date).slice(0, 10) === key);
+    labels.push(d.toLocaleDateString('en-US', { weekday: 'short' }) + ' ' + d.getDate());
+    counts.push(row ? parseInt(row.jobs) : 0);
+  }
   
   revenueChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [{
-        label: 'Revenue (UGX)',
-        data: revenues,
-        backgroundColor: 'rgba(102, 126, 234, 0.8)',
-        borderColor: 'rgba(102, 126, 234, 1)',
-        borderWidth: 1,
-        borderRadius: 8
+        label: 'Jobs',
+        data: counts,
+        backgroundColor: 'rgba(99,102,241,0.15)',
+        borderColor: '#6366f1',
+        borderWidth: 2,
+        minBarLength: 8,
+        borderRadius: { topLeft: 10, topRight: 10 }
       }]
     },
     options: {
+      indexAxis: 'x',
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
           display: false
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: function(value) {
-              return 'UGX ' + value.toLocaleString();
+        },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleFont: { family: 'DM Sans' },
+          bodyFont: { family: 'DM Sans' },
+          callbacks: {
+            label: function(context) {
+              return context.parsed.y + ' repair job(s)';
             }
           }
         }
       },
-      tooltips: {
-        callbacks: {
-          label: function(context) {
-            return 'Revenue: UGX ' + context.parsed.y.toLocaleString();
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'DM Sans' }
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: '#eef2f7' },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'DM Sans' },
+            precision: 0,
+            stepSize: 1
           }
         }
       }
@@ -483,8 +528,8 @@ function renderCategoryChart(categories) {
   }
   
   const colors = [
-    '#667eea', '#764ba2', '#f093fb', '#f5576c',
-    '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'
+    '#6366f1', '#14b8a6', '#f59e0b', '#f97316',
+    '#10b981', '#7c3aed', '#ff7f50', '#0ea5e9'
   ];
   
   categoryChart = new Chart(ctx, {
@@ -494,22 +539,32 @@ function renderCategoryChart(categories) {
       datasets: [{
         data: categories.map(c => parseFloat(c.revenue)),
         backgroundColor: colors.slice(0, categories.length),
-        borderWidth: 0
+        borderColor: '#fff',
+        borderWidth: 4,
+        hoverOffset: 6
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      cutout: '60%',
       plugins: {
         legend: {
           position: 'bottom',
           labels: {
             padding: 20,
             usePointStyle: true,
+            color: '#94a3b8',
             font: {
+              family: 'DM Sans',
               size: 12
             }
           }
+        },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleFont: { family: 'DM Sans' },
+          bodyFont: { family: 'DM Sans' }
         }
       }
     }
@@ -597,7 +652,7 @@ function printTable() {
 // Load all data
 function loadAllData() {
   loadSummaryStats();
-  loadRevenueChart();
+  loadWeekChart();
   loadCategoryChart();
   loadVehiclesTable();
 }

@@ -99,4 +99,22 @@ function ensure_workshop_schema(mysqli $connection): void
     if (isset($rjCols['problem']) && $rjCols['problem']['Default'] === null && $rjCols['problem']['Null'] === 'NO') {
         $connection->query("ALTER TABLE repair_jobs MODIFY COLUMN problem VARCHAR(255) NOT NULL DEFAULT ''");
     }
+
+    $connection->query("CREATE TABLE IF NOT EXISTS payments (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        repair_job_id INT NOT NULL,
+        amount_paid DECIMAL(12,2) NOT NULL DEFAULT 0,
+        payment_method ENUM('CASH', 'MPESA', 'BANK TRANSFER', 'OTHER') NOT NULL DEFAULT 'CASH',
+        reference VARCHAR(80) NULL,
+        paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_payments_repair_job FOREIGN KEY (repair_job_id) REFERENCES repair_jobs(id)
+    ) ENGINE=InnoDB");
+
+    $connection->query("CREATE TABLE IF NOT EXISTS receipts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        payment_id INT NOT NULL,
+        receipt_no VARCHAR(30) NOT NULL UNIQUE,
+        issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_receipts_payment FOREIGN KEY (payment_id) REFERENCES payments(id)
+    ) ENGINE=InnoDB");
 }

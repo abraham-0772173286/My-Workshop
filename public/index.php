@@ -66,29 +66,29 @@ $workshopBase = workshop_base_path();
 
     /* ── KPI cards ── */
     .kpi-card{
-      border:none;border-radius:16px;padding:22px 24px;
+      border:none;border-radius:20px;background:#fff;padding:22px 24px;
       display:flex;align-items:center;gap:18px;
-      box-shadow:0 2px 12px rgba(0,0,0,.07);
+      box-shadow:0 4px 20px rgba(0,0,0,.06);
       transition:transform .2s,box-shadow .2s;
     }
-    .kpi-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.11);}
+    .kpi-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.1);}
     .kpi-icon{width:56px;height:56px;border-radius:14px;display:grid;place-items:center;font-size:24px;flex-shrink:0;}
-    .kpi-val{font-size:1.9rem;font-weight:800;line-height:1;}
+    .kpi-val{font-size:1.9rem;font-weight:800;line-height:1;color:#0f172a;}
     .kpi-label{font-size:.78rem;color:#6c757d;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;}
-    .kpi-sub{font-size:.75rem;margin-top:6px;}
+    .kpi-sub{font-size:.75rem;margin-top:6px;color:#94a3b8;}
 
     /* card colours */
-    .kpi-blue  {background:#eef2ff;} .kpi-blue  .kpi-icon{background:#4f46e5;color:#fff;}
-    .kpi-green {background:#f0fdf4;} .kpi-green .kpi-icon{background:#16a34a;color:#fff;}
-    .kpi-amber {background:#fffbeb;} .kpi-amber .kpi-icon{background:#d97706;color:#fff;}
-    .kpi-red   {background:#fef2f2;} .kpi-red   .kpi-icon{background:#dc2626;color:#fff;}
-    .kpi-sky   {background:#f0f9ff;} .kpi-sky   .kpi-icon{background:#0284c7;color:#fff;}
-    .kpi-violet{background:#faf5ff;} .kpi-violet .kpi-icon{background:#7c3aed;color:#fff;}
+    .kpi-blue  {background:#fff;} .kpi-blue  .kpi-icon{background:#4f46e5;color:#fff;}
+    .kpi-green {background:#fff;} .kpi-green .kpi-icon{background:#0d9488;color:#fff;}
+    .kpi-amber {background:#fff;} .kpi-amber .kpi-icon{background:#d97706;color:#fff;}
+    .kpi-red   {background:#fff;} .kpi-red   .kpi-icon{background:#f97316;color:#fff;}
+    .kpi-sky   {background:#fff;} .kpi-sky   .kpi-icon{background:#0284c7;color:#fff;}
+    .kpi-violet{background:#fff;} .kpi-violet .kpi-icon{background:#7c3aed;color:#fff;}
 
     /* ── section cards ── */
-    .dash-card{border:none;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.07);}
-    .dash-card .card-header{background:#fff;border-bottom:1px solid #f1f5f9;border-radius:16px 16px 0 0!important;padding:16px 20px;}
-    .dash-card .card-header h6{font-weight:700;font-size:.9rem;margin:0;}
+    .dash-card{border:none;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,.06);}
+    .dash-card .card-header{background:#fff;border-bottom:1px solid #f1f5f9;border-radius:20px 20px 0 0!important;padding:16px 20px;}
+    .dash-card .card-header h6{font-weight:800;font-size:.9rem;margin:0;color:#0f172a;}
 
     /* ── status pills ── */
     .pill{padding:.28em .75em;font-size:.68rem;font-weight:700;text-transform:uppercase;border-radius:50px;}
@@ -126,7 +126,7 @@ $workshopBase = workshop_base_path();
     <div class="app-content-header px-4 pt-3 pb-0">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h4 class="fw-bold mb-0">Dashboard</h4>
+        <h4 class="fw-bold mb-0" data-i18n="dashboard">Dashboard</h4>
         <p class="text-muted small mb-0">Welcome back, <?= htmlspecialchars($workshopUser['name'], ENT_QUOTES) ?> — here's what's happening today.</p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
@@ -151,7 +151,7 @@ $workshopBase = workshop_base_path();
         <div class="card dash-card h-100">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h6><i class="bi bi-bar-chart-line me-2 text-primary"></i>Revenue — Last 6 Months</h6>
-            <span class="badge bg-light text-muted small fw-normal" id="chartSubtitle">KES</span>
+            <span class="badge bg-light text-muted small fw-normal" id="chartSubtitle">UGX</span>
           </div>
           <div class="card-body p-3"><canvas id="revenueChart" height="110"></canvas></div>
         </div>
@@ -182,7 +182,7 @@ $workshopBase = workshop_base_path();
               <table class="table dash-table mb-0" id="recentTable">
                 <thead><tr>
                   <th>Job No.</th><th>Customer</th><th>Vehicle</th>
-                  <th>Total (KES)</th><th>Status</th><th>Date</th>
+                  <th>Total (UGX)</th><th>Status</th><th>Date</th>
                 </tr></thead>
                 <tbody id="recentBody"><tr><td colspan="6" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading…</td></tr></tbody>
               </table>
@@ -279,17 +279,21 @@ function loadRevenueChart() {
           {
             label: 'Revenue (UGX)',
             data: revenue,
-            backgroundColor: 'rgba(79,70,229,.75)',
-            borderRadius: 7,
+            backgroundColor: 'rgba(99,102,241,.15)',
+            borderColor: '#6366f1',
+            borderWidth: 2,
+            borderRadius: { topLeft: 10, topRight: 10 },
             yAxisID: 'y',
           },
           {
             label: 'Jobs',
             data: jobs,
             type: 'line',
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245,158,11,.12)',
-            pointBackgroundColor: '#f59e0b',
+            borderColor: '#14b8a6',
+            backgroundColor: 'rgba(20,184,166,.12)',
+            pointBackgroundColor: '#14b8a6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
             tension: .4,
             yAxisID: 'y1',
           }
@@ -298,10 +302,18 @@ function loadRevenueChart() {
       options: {
         responsive: true,
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { labels: { font: { family: 'DM Sans', size: 12 } } } },
+        plugins: {
+          legend: { labels: { font: { family: 'DM Sans', size: 12 }, color: '#94a3b8', usePointStyle: true } },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            titleFont: { family: 'DM Sans' },
+            bodyFont: { family: 'DM Sans' }
+          }
+        },
         scales: {
-          y:  { position: 'left',  grid: { color: '#f1f5f9' }, ticks: { callback: v => 'UGX ' + v.toLocaleString() } },
-          y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { stepSize: 1 } }
+          x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans' } } },
+          y:  { position: 'left',  grid: { color: '#eef2f7' }, ticks: { color: '#94a3b8', font: { family: 'DM Sans' }, callback: v => 'UGX ' + v.toLocaleString() } },
+          y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { stepSize: 1, color: '#94a3b8', font: { family: 'DM Sans' } } }
         }
       }
     });
@@ -318,18 +330,19 @@ let typesChart = null;
 function loadTypesChart() {
   $.getJSON(API + '?f=repair_types', function(rows) {
     if (!rows.length) { $('#typesChart').closest('.card-body').html('<p class="text-muted text-center py-4 small">No data yet.</p>'); return; }
-    const palette = ['#4f46e5','#7c3aed','#db2777','#dc2626','#d97706','#16a34a','#0284c7','#0891b2'];
+    const palette = ['#6366f1','#14b8a6','#f59e0b','#f97316','#10b981','#7c3aed','#ff7f50','#0ea5e9'];
     if (typesChart) typesChart.destroy();
     typesChart = new Chart(document.getElementById('typesChart'), {
       type: 'doughnut',
       data: {
         labels: rows.map(r => r.label),
-        datasets: [{ data: rows.map(r => parseInt(r.value)), backgroundColor: palette, borderWidth: 2 }]
+        datasets: [{ data: rows.map(r => parseInt(r.value)), backgroundColor: palette, borderColor: '#fff', borderWidth: 4, hoverOffset: 6 }]
       },
       options: {
-        cutout: '65%',
+        cutout: '60%',
         plugins: {
-          legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, boxWidth: 12, padding: 10 } }
+          legend: { position: 'bottom', labels: { font: { family: 'DM Sans', size: 11 }, boxWidth: 12, padding: 10, color: '#94a3b8', usePointStyle: true } },
+          tooltip: { backgroundColor: '#0f172a', titleFont: { family: 'DM Sans' }, bodyFont: { family: 'DM Sans' } }
         }
       }
     });

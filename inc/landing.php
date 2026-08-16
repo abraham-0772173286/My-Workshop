@@ -553,15 +553,26 @@ workshop_redirect_if_logged_in();
             box-shadow: 0 0 10px #58d5a0;
         }
 
+        /* ==========================================================
+           LOGIN DRAWER - GLASSY (FROSTED) EFFECT
+           The panel background is now semi-transparent and uses
+           backdrop-filter blur + saturate, so the hero background
+           and overlay shine through behind it like frosted glass.
+           ========================================================== */
         .login-drawer {
             position: fixed;
             inset: 0 0 0 auto;
             width: 430px;
             z-index: 10;
             padding: 53px 40px;
-            background: rgba(7, 21, 34, .96);
-            border-left: 1px solid rgba(255, 255, 255, .11);
-            backdrop-filter: blur(35px);
+            /* semi-transparent so the blurred background shows = glassy look */
+            background: rgba(10, 25, 45, .35);
+            /* frost (blur + boost colours of) whatever sits behind the panel */
+            backdrop-filter: blur(35px) saturate(160%);
+            -webkit-backdrop-filter: blur(35px) saturate(160%);
+            border-left: 1px solid rgba(255, 255, 255, .14);
+            /* soft shadow to lift the panel off the page */
+            box-shadow: -18px 0 45px rgba(2, 9, 16, .45);
             transform: translateX(100%);
             transition: .55s cubic-bezier(.7, 0, .3, 1);
         }
@@ -570,6 +581,37 @@ workshop_redirect_if_logged_in();
             transform: translateX(0);
         }
 
+        /* ==========================================================
+           CANCEL BUTTON at the top of the login popup.
+           A small frosted pill so it is always visible and clearly
+           shows the user how to close the drawer.
+           ========================================================== */
+        .btn-close-drawer {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 15px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .3px;
+            color: #d5e0ec;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 999px;
+            cursor: pointer;
+            transition: .25s;
+        }
+
+        .btn-close-drawer:hover {
+            color: #fff;
+            background: rgba(245, 166, 35, .18);
+            border-color: rgba(245, 166, 35, .5);
+            transform: translateY(-1px);
+        }
+
+        /* Decorative gold glow in the top corner.
+           pointer-events: none keeps it from covering the Cancel
+           button (the circle overlaps the top-right of the drawer). */
         .login-drawer::before {
             content: '';
             position: absolute;
@@ -580,6 +622,7 @@ workshop_redirect_if_logged_in();
             border-radius: 50%;
             background: #f5a6231c;
             filter: blur(5px);
+            pointer-events: none;
         }
 
         .form-group {
@@ -609,7 +652,8 @@ workshop_redirect_if_logged_in();
             transform: translateY(-50%);
             padding: 0 5px;
             color: #9db0c5;
-            background: #0a1c2e;
+            /* translucent so the label blends with the glassy panel */
+            background: rgba(10, 28, 46, .85);
             pointer-events: none;
             font-size: 12px;
             transition: .2s;
@@ -746,8 +790,11 @@ workshop_redirect_if_logged_in();
                 <h4 class="fw-bold mt-2 mb-0">Welcome back</h4>
                 <small style="color:#9db0c5" id="roleDescription">Sign in to access workshop operations.</small>
             </div>
-            <button class="btn text-white p-0" aria-label="Close login" onclick="toggleDrawer()">
-                <i class="bi bi-x-lg fs-5"></i>
+            <!-- Cancel button (top-right) closes the login popup.
+                 It calls toggleDrawer() with NO argument, which removes
+                 the .active class and slides the drawer back out. -->
+            <button type="button" class="btn-close-drawer" aria-label="Close login" onclick="toggleDrawer()">
+                <i class="bi bi-x-lg"></i> Cancel
             </button>
         </div>
         <form id="loginform">
@@ -838,7 +885,8 @@ workshop_redirect_if_logged_in();
                 // Focus password field
                 setTimeout(() => document.getElementById('password').focus(), 100);
             } else {
-                // Closing drawer
+                // Closing drawer - triggered by the top-right "Cancel" button
+                // (or by clicking the dark overlay behind the popup).
                 drawer.classList.remove('active');
                 overlay.classList.remove('active');
                 roleLabel.textContent = 'STAFF PORTAL';

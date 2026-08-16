@@ -29,6 +29,10 @@ try {
             getRevenueByDay($pdo);
             break;
             
+        case 'jobs_by_weekday':
+            getJobsByWeekDay($pdo);
+            break;
+            
         case 'vehicles_worked_on':
             getVehiclesWorkedOn($pdo);
             break;
@@ -135,6 +139,25 @@ function getRevenueByDay(PDO $pdo): void {
         ORDER BY date ASC
     ");
     $stmt->execute([$days]);
+    $data = $stmt->fetchAll();
+    
+    echo json_encode([
+        'status' => 'success',
+        'data' => $data
+    ]);
+}
+
+function getJobsByWeekDay(PDO $pdo): void {
+    $stmt = $pdo->prepare("
+        SELECT 
+            DATE(rj.created_at) as date,
+            COUNT(*) as jobs
+        FROM repair_jobs rj
+        WHERE rj.created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+        GROUP BY DATE(rj.created_at)
+        ORDER BY date ASC
+    ");
+    $stmt->execute();
     $data = $stmt->fetchAll();
     
     echo json_encode([

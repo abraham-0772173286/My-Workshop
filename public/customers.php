@@ -52,7 +52,7 @@ $activePage   = 'customers';
   <div class="app-content-header px-4 pt-3 pb-0">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h4 class="fw-bold mb-0">Customers</h4>
+        <h4 class="fw-bold mb-0">CUSTOMERS</h4>
         <p class="text-muted small mb-0">All registered vehicle owners</p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
@@ -235,7 +235,7 @@ $(document).ready(function () {
       { data:'total_jobs', className:'text-center',
         render: d => `<span class="badge bg-light text-dark border fw-bold">${d}</span>` },
       { data:'lifetime_value',
-        render: d => `<span class="lifetime-badge">KES ${Number(d).toLocaleString()}</span>` },
+        render: d => `<span class="lifetime-badge">UGX ${Number(d).toLocaleString()}</span>` },
       { data:'joined', className:'text-muted small' }
     ]
   });

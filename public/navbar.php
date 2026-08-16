@@ -20,7 +20,7 @@
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0">
 
                     <div class="dropdown-header d-flex justify-content-between align-items-center">
-                        <span>Notifications</span>
+                        <span data-i18n="notifications">Notifications</span>
                         <span class="badge bg-primary-subtle text-primary rounded-pill">0 New</span>
                     </div>
                     <div class="dropdown-divider m-0"></div>
@@ -28,12 +28,12 @@
                     <div class="notif-scroll" style="max-height: 300px; overflow-y: auto;">
                         <div class="p-4 text-center">
                             <i class="bi bi-check2-circle text-success display-6"></i>
-                            <p class="text-muted small mt-2">No unread notifications</p>
+                            <p class="text-muted small mt-2" data-i18n="noUnreadNotifications">No unread notifications</p>
                         </div>
                     </div>
 
                     <div class="dropdown-divider m-0"></div>
-                    <a href="#" class="dropdown-item dropdown-footer">View All Notifications</a>
+                    <a href="#" class="dropdown-item dropdown-footer" data-i18n="viewAllNotifications">View All Notifications</a>
                 </div>
             </li>
 
@@ -67,8 +67,8 @@
                         <small class="text-muted"><?= htmlspecialchars((string) ($_SESSION['user']['role'] ?? 'N/A'), ENT_QUOTES, 'UTF-8') ?></small>
                     </li>
                     <li class="user-footer d-flex justify-content-between p-3 bg-white">
-                        <a href="#" class="btn btn-outline-primary btn-sm px-3">Profile</a>
-                        <a href="../classes/Login.php?f=logout" class="btn btn-outline-danger btn-sm px-3">Sign out</a>
+                        <a href="#" class="btn btn-outline-primary btn-sm px-3" data-i18n="profile">Profile</a>
+                        <a href="../classes/Login.php?f=logout" class="btn btn-outline-danger btn-sm px-3" data-i18n="signOutNav">Sign out</a>
                     </li>
                 </ul>
             </li>
@@ -121,6 +121,39 @@
   document.addEventListener('DOMContentLoaded', function () {
     const saved = localStorage.getItem('appLanguage') || 'en';
     loadLanguage(saved);
+  });
+})();
+
+(function () {
+  'use strict';
+
+  var toggle = document.querySelector('[data-lte-toggle="fullscreen"]');
+  if (!toggle) return;
+
+  var icon = toggle.querySelector('i');
+  var enterIcon = 'bi-arrows-fullscreen';
+  var exitIcon = 'bi-arrows-fullscreen-exit';
+
+  function setIcon(isFullscreen) {
+    if (icon) {
+      icon.classList.toggle(enterIcon, !isFullscreen);
+      icon.classList.toggle(exitIcon, isFullscreen);
+    }
+    toggle.setAttribute('aria-expanded', isFullscreen ? 'true' : 'false');
+    toggle.setAttribute('title', isFullscreen ? 'Exit full screen' : 'Enter full screen');
+  }
+
+  toggle.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', function () {
+    setIcon(!!document.fullscreenElement);
   });
 })();
 </script>
