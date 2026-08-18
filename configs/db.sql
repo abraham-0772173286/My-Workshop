@@ -111,7 +111,7 @@ CREATE TABLE `payments` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `repair_job_id` INT NOT NULL COMMENT 'FK → repair_jobs.id',
     `amount_paid` DECIMAL(12,2) NOT NULL DEFAULT 0.00  COMMENT 'Amount received (UGX)',
-    `payment_method` ENUM('CASH','MPESA','BANK TRANSFER','OTHER')             NOT NULL DEFAULT 'CASH',
+    `payment_method` ENUM('CASH','MOBILE MONEY','BANK')                       NOT NULL DEFAULT 'CASH',
     `reference` VARCHAR(80) NULL COMMENT 'M-Pesa code, cheque number, etc.',
     `paid_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),

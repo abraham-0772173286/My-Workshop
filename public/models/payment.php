@@ -98,6 +98,11 @@ $activePage   = 'payments';
       padding: .2rem .6rem; border-radius: 6px; letter-spacing: .3px;
     }
     .not-issued { font-size: .72rem; color: #94a3b8; font-style: italic; }
+    .status-pill {
+      padding: .28em .75em; font-size: .68rem; font-weight: 700; text-transform: uppercase; border-radius: 50px;
+    }
+    .status-done { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+    .status-pending { background: #fff4d8; color: #9a5a00; border: 1px solid #ffe3a2; }
     #paymentsTable td code { font-size: .8rem; background: #eef2ff; padding: .2rem .5rem; border-radius: 6px; }
   </style>
 </head>
@@ -157,7 +162,9 @@ $activePage   = 'payments';
                   <th>Vehicle</th>
                   <th>Repair Type</th>
                   <th>Total Cost</th>
-                  <th>Amount Paid</th>
+                  <th>Paid</th>
+                  <th>Balance</th>
+                  <th>Status</th>
                   <th>Method</th>
                   <th>Reference</th>
                   <th>Paid On</th>
@@ -212,9 +219,8 @@ $activePage   = 'payments';
                 <label class="form-label small fw-semibold">Payment method <span class="text-danger">*</span></label>
                 <select class="form-select" name="payment_method" required>
                   <option value="CASH">CASH</option>
-                  <option value="MPESA">M-PESA</option>
-                  <option value="BANK TRANSFER">BANK TRANSFER</option>
-                  <option value="OTHER">OTHER</option>
+                  <option value="MOBILE MONEY">MOBILE MONEY</option>
+                  <option value="BANK">BANK</option>
                 </select>
               </div>
               <div class="col-md-4">
@@ -282,11 +288,11 @@ $(document).ready(function () {
     pageLength: 50,
     dom: 'lfrtip',
     buttons: [
-      { extend:'copy',  exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10] } },
-      { extend:'csv',   exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10] } },
-      { extend:'excel', exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10] } },
-      { extend:'pdf',   exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10] } },
-      { extend:'print', exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10] } }
+      { extend:'copy',  exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10,11,12] } },
+      { extend:'csv',   exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10,11,12] } },
+      { extend:'excel', exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10,11,12] } },
+      { extend:'pdf',   exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10,11,12] } },
+      { extend:'print', exportOptions:{ columns:[1,2,3,4,5,6,7,8,9,10,11,12] } }
     ],
     ajax: {
       url: API + '?f=viewall',
@@ -306,7 +312,15 @@ $(document).ready(function () {
       { data:'vehicle', render: d => `<span class="small"><i class="bi bi-car-front me-1 text-muted"></i>${d}</span>` },
       { data:'repair_type' },
       { data:'total_cost', render: d => `<span class="fw-semibold">${fmt(d)}</span>` },
-      { data:'amount_paid', render: d => `<span class="fw-semibold text-success">${fmt(d)}</span>` },
+      { data:'total_paid', render: d => `<span class="fw-semibold text-success">${fmt(d)}</span>` },
+      { data:'balance', render: d => Number(d) > 0 ? `<span class="fw-semibold text-danger">${fmt(d)}</span>` : `<span class="text-muted">—</span>` },
+      { data:'payment_status', className:'text-center',
+        render: d => {
+          if (d === 'PAID')        return '<span class="status-pill status-done"><i class="bi bi-check-circle-fill me-1"></i>PAID</span>';
+          if (d === 'PARTIALLY PAID') return '<span class="status-pill status-pending"><i class="bi bi-hourglass-split me-1"></i>PARTIAL</span>';
+          return '<span class="status-pill" style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;"><i class="bi bi-x-circle me-1"></i>UNPAID</span>';
+        }
+      },
       { data:'payment_method', render: d => `<span class="method-badge">${d}</span>` },
       { data:'reference', render: d => d || '<span class="text-muted">—</span>' },
       { data:'paid_on', className:'text-muted small' },

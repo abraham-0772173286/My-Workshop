@@ -22,7 +22,7 @@ try {
     ensure_workshop_schema($connection);
     $action = $_GET['f'] ?? '';
 
-    // ── viewall — every payment with job + customer + vehicle + receipt info ──
+    // ── viewall — every payment with job + customer + vehicle + receipt + status ──
     if ($action === 'viewall') {
         $sql = "SELECT
                     p.id                              AS payment_id,
@@ -31,7 +31,14 @@ try {
                     c.fullname                        AS customer,
                     CONCAT(v.plate_number, ' · ', COALESCE(NULLIF(v.model, ''), 'Vehicle')) AS vehicle,
                     rj.repair_type                    AS repair_type,
-                    (rj.parts_cost + rj.labour_cost)  AS total_cost,
+                    total_job.total_cost              AS total_cost,
+                    total_job.total_paid              AS total_paid,
+                    (total_job.total_cost - total_job.total_paid) AS balance,
+                    CASE
+                        WHEN total_job.total_paid = 0 THEN 'UNPAID'
+                        WHEN total_job.total_paid >= total_job.total_cost THEN 'PAID'
+                        ELSE 'PARTIALLY PAID'
+                    END                               AS payment_status,
                     p.amount_paid                     AS amount_paid,
                     p.payment_method                  AS payment_method,
                     COALESCE(p.reference, '')         AS reference,
@@ -43,6 +50,14 @@ try {
                 INNER JOIN vehicles  v   ON v.id  = rj.vehicle_id
                 INNER JOIN customers c   ON c.id  = v.customer_id
                 LEFT  JOIN receipts  r   ON r.payment_id = p.id
+                INNER JOIN (
+                    SELECT repair_job_id,
+                           (parts_cost + labour_cost) AS total_cost,
+                           COALESCE(SUM(amount_paid), 0) AS total_paid
+                    FROM repair_jobs
+                    LEFT JOIN payments ON payments.repair_job_id = repair_jobs.id
+                    GROUP BY repair_job_id
+                ) total_job ON total_job.repair_job_id = rj.id
                 ORDER BY p.paid_at DESC, p.id DESC";
         reply($connection->query($sql)->fetch_all(MYSQLI_ASSOC));
     }
@@ -109,7 +124,7 @@ try {
         if ($repairJobId < 1 || $amountPaid === false || $amountPaid <= 0) {
             reply(['status' => 'error', 'msg' => 'Please select a repair job and enter a valid amount.'], 422);
         }
-        if (!in_array($paymentMethod, ['CASH', 'MPESA', 'BANK TRANSFER', 'OTHER'], true)) {
+        if (!in_array($paymentMethod, ['CASH', 'MOBILE MONEY', 'BANK'], true)) {
             reply(['status' => 'error', 'msg' => 'Invalid payment method.'], 422);
         }
 
