@@ -329,10 +329,12 @@ $(document).ready(function () {
         render: function(d, t, r) {
           let btns = '';
           if (r.receipt_no) {
-            btns += `<button class="btn btn-sm btn-outline-success btn-print-receipt me-1" data-payment="${d}" title="Print receipt"><i class="bi bi-printer"></i></button>`;
+            btns += `<button class="btn btn-sm btn-success btn-print-receipt me-1" data-payment="${d}" title="Print receipt" style="border-radius:8px;font-size:.75rem;"><i class="bi bi-printer-fill me-1"></i>Print</button>`;
+          } else {
+            btns += `<button class="btn btn-sm btn-outline-secondary btn-print-receipt me-1" data-payment="${d}" title="Issue & print receipt" style="border-radius:8px;font-size:.75rem;"><i class="bi bi-printer me-1"></i>Issue</button>`;
           }
-          btns += `<button class="btn btn-sm btn-outline-primary btn-edit-payment me-1" data-id="${d}" title="Edit"><i class="fa fa-edit"></i></button>`;
-          btns += `<button class="btn btn-sm btn-outline-danger btn-delete-payment" data-id="${d}" title="Delete"><i class="fa fa-trash"></i></button>`;
+          btns += `<button class="btn btn-sm btn-outline-primary btn-edit-payment me-1" data-id="${d}" title="Edit" style="border-radius:8px;"><i class="fa fa-edit"></i></button>`;
+          btns += `<button class="btn btn-sm btn-outline-danger btn-delete-payment" data-id="${d}" title="Delete" style="border-radius:8px;"><i class="fa fa-trash"></i></button>`;
           return btns;
         }
     ]
@@ -476,81 +478,77 @@ function openReceiptWindow(paymentId) {
   $.getJSON(RCP_API + '?f=get&payment_id=' + paymentId, function(r) {
     if (r.status !== 'success') return toastr.error(r.msg);
     const d = r.data;
-    const win = window.open('', '_blank', 'width=820,height=900');
+    const fmt = n => 'UGX ' + Number(n).toLocaleString('en-UG');
+    const methodLabel = d.payment_method === 'MOBILE MONEY' ? 'Mobile Money' : d.payment_method.charAt(0) + d.payment_method.slice(1).toLowerCase();
+    const cashierName = <?= json_encode($workshopUser['name'] ?? 'Cashier') ?>;
+    const win = window.open('', '_blank', 'width=480,height=720');
     if (!win) return toastr.warning('Please allow pop-ups for this site.');
     win.document.write(`<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Receipt ${d.receipt_no} — SHENGCHI AUTO LTD</title>
+<title>Receipt ${d.receipt_no}</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'Segoe UI',Arial,sans-serif;color:#0f172a;background:#f1f5f9;padding:30px;}
-  .receipt{max-width:720px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(2,9,16,.12);}
-  .r-head{background:#0e3158;color:#fff;padding:22px 30px;display:flex;justify-content:space-between;align-items:center;}
-  .r-head .brand{font-size:20px;font-weight:800;letter-spacing:.5px;}
-  .r-head .brand small{display:block;font-size:10px;letter-spacing:2px;color:#f5a623;font-weight:600;margin-top:3px;}
-  .r-head .rc-no{text-align:right;}
-  .r-head .rc-no b{font-size:18px;color:#f5a623;letter-spacing:1px;}
-  .r-head .rc-no span{display:block;font-size:11px;color:#c3d4e6;margin-top:3px;}
-  .r-title{text-align:center;padding:18px 0 6px;font-size:14px;letter-spacing:4px;color:#94a3b8;font-weight:700;text-transform:uppercase;}
-  .r-body{padding:10px 30px 26px;}
-  .cols{display:flex;justify-content:space-between;gap:20px;margin-bottom:18px;}
-  .cols .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;margin-bottom:4px;font-weight:700;}
-  .cols .val{font-size:14px;font-weight:600;}
-  .divider{border:0;border-top:2px dashed #e2e8f0;margin:14px 0;}
-  table{width:100%;border-collapse:collapse;font-size:13px;}
-  table th{background:#f8fafc;color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:8px 10px;text-align:left;}
-  table td{padding:10px;border-bottom:1px solid #f1f5f9;}
-  table td.num,table th.num{text-align:right;}
-  .totals{margin-top:14px;}
-  .totals .row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;}
-  .totals .row.total{border-top:2px solid #0e3158;margin-top:6px;padding-top:10px;font-size:16px;font-weight:800;}
-  .totals .row.paid{color:#0f766e;font-weight:700;}
-  .r-foot{text-align:center;padding:18px 30px;background:#f8fafc;font-size:12px;color:#64748b;}
-  .r-foot .thanks{color:#0e3158;font-weight:700;letter-spacing:1px;}
-  @media print{body{background:#fff;padding:0;}.receipt{box-shadow:none;border-radius:0;}}
+  body{font-family:'Courier New',Courier,monospace;color:#1a1a1a;background:#f0f0f0;padding:20px;display:flex;justify-content:center;}
+  .receipt{width:380px;background:#fff;padding:24px 20px;border:2px dashed #333;border-radius:4px;}
+  .r-header{text-align:center;border-bottom:2px dashed #333;padding-bottom:14px;margin-bottom:14px;}
+  .r-header h1{font-size:16px;font-weight:900;letter-spacing:1px;margin-bottom:2px;}
+  .r-header p{font-size:10px;color:#666;letter-spacing:1px;}
+  .r-meta{display:flex;justify-content:space-between;font-size:12px;margin-bottom:16px;}
+  .r-meta span{font-weight:700;}
+  .r-section{margin-bottom:14px;}
+  .r-section .label{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:#888;margin-bottom:4px;font-weight:700;}
+  .r-section .value{font-size:13px;font-weight:600;}
+  .r-divider{border:0;border-top:2px dashed #333;margin:14px 0;}
+  .r-amounts{font-size:13px;}
+  .r-amounts .row{display:flex;justify-content:space-between;padding:5px 0;}
+  .r-amounts .row.paid{font-weight:700;color:#0a7e3f;}
+  .r-amounts .row.balance{color:#c0392b;}
+  .r-amounts .row.total-line{border-top:2px dashed #333;margin-top:6px;padding-top:8px;font-weight:900;font-size:14px;}
+  .r-footer{text-align:center;border-top:2px dashed #333;padding-top:14px;margin-top:14px;}
+  .r-footer .thanks{font-size:13px;font-weight:700;margin-bottom:4px;}
+  .r-footer .info{font-size:9px;color:#888;letter-spacing:.5px;line-height:1.5;}
+  @media print{body{background:#fff;padding:0;}.receipt{border:2px dashed #333;box-shadow:none;}}
 </style>
 </head>
 <body>
   <div class="receipt">
-    <div class="r-head">
-      <div class="brand">SHENGCHI AUTO LTD<small>金龙汽车维修 · WORKSHOP OPERATIONS</small></div>
-      <div class="rc-no"><b>${d.receipt_no}</b><span>Issued ${d.issued_on}</span></div>
+    <div class="r-header">
+      <h1>SHENGCHI AUTO LTD</h1>
+      <p>&#37329;&#40857;&#27773;&#36710;&#32500;&#20462; &middot; WORKSHOP</p>
     </div>
-    <div class="r-title">Official Receipt</div>
-    <div class="r-body">
-      <div class="cols">
-        <div>
-          <div class="label">Billed To</div>
-          <div class="val">${d.customer}</div>
-          <div style="font-size:12px;color:#64748b">${d.contact}<br>${d.address}</div>
-        </div>
-        <div style="text-align:right">
-          <div class="label">Job / Vehicle</div>
-          <div class="val">${d.job_no} · ${d.plate}</div>
-          <div style="font-size:12px;color:#64748b">${d.model}</div>
-        </div>
-      </div>
-      <table>
-        <thead><tr><th>Description</th><th class="num">Amount (UGX)</th></tr></thead>
-        <tbody>
-          <tr><td>Repair service — ${d.repair_type}</td><td class="num">${fmt(d.total_cost)}</td></tr>
-          <tr><td style="color:#94a3b8">of which: parts</td><td class="num" style="color:#64748b">${fmt(d.parts_cost)}</td></tr>
-          <tr><td style="color:#94a3b8">of which: labour</td><td class="num" style="color:#64748b">${fmt(d.labour_cost)}</td></tr>
-        </tbody>
-      </table>
-      <div class="totals">
-        <div class="row"><span>Job Total</span><span>${fmt(d.total_cost)}</span></div>
-        <div class="row paid"><span>Amount Paid</span><span>${fmt(d.amount_paid)}</span></div>
-        <div class="row"><span>Payment Method</span><span>${d.payment_method} ${d.reference !== '—' ? '· ' + d.reference : ''}</span></div>
-        <div class="row"><span>Paid On</span><span>${d.paid_on}</span></div>
-        <div class="row total"><span>Receipt Total</span><span>${fmt(d.amount_paid)}</span></div>
-      </div>
+    <div class="r-meta">
+      <div>Receipt No: <span>${d.receipt_no}</span></div>
+      <div>Date: <span>${d.paid_on}</span></div>
     </div>
-    <div class="r-foot">
-      <div class="thanks">Thank you for your business!</div>
-      <div>SHENGCHI AUTO LTD · P.O. Box 123, Kampala, Uganda · +256 763 808854 · support@pearl-host.com</div>
+    <div class="r-section">
+      <div class="label">Customer</div>
+      <div class="value">${d.customer}</div>
+    </div>
+    <div class="r-section">
+      <div class="label">Vehicle</div>
+      <div class="value">${d.model} &mdash; ${d.plate}</div>
+    </div>
+    <hr class="r-divider">
+    <div class="r-amounts">
+      <div class="row"><span>Repair Total:</span><span>${fmt(d.total_cost)}</span></div>
+      <div class="row paid"><span>Paid:</span><span>${fmt(d.amount_paid)}</span></div>
+      <div class="row balance"><span>Balance:</span><span>${fmt(d.balance)}</span></div>
+    </div>
+    <hr class="r-divider">
+    <div class="r-section">
+      <div class="label">Payment Method</div>
+      <div class="value">${methodLabel}</div>
+    </div>
+    ${d.reference !== '—' ? '<div class="r-section"><div class="label">Reference</div><div class="value">' + d.reference + '</div></div>' : ''}
+    <div class="r-section">
+      <div class="label">Received By</div>
+      <div class="value">${cashierName}</div>
+    </div>
+    <div class="r-footer">
+      <div class="thanks">Thank you!</div>
+      <div class="info">SHENGCHI AUTO LTD &middot; Kampala, Uganda<br>+256 763 808854</div>
     </div>
   </div>
   <script>window.onload=function(){window.focus();window.print();};</scr` + `ipt>

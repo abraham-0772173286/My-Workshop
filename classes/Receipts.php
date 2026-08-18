@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * Actions (via ?f=):
  *   viewall  → list every payment together with its receipt (LEFT JOIN).
- *   issue    → POST payment_id: create a receipt (RCP-xxxxx) if one is missing.
+ *   issue    → POST payment_id: create a receipt (RC-xxxxxx) if one is missing.
  *   get      → GET  payment_id: full receipt details for the printable layout.
  */
 
@@ -48,6 +48,7 @@ try {
                     rj.labour_cost                    AS labour_cost,
                     (rj.parts_cost + rj.labour_cost)  AS total_cost,
                     p.amount_paid                     AS amount_paid,
+                    ((rj.parts_cost + rj.labour_cost) - p.amount_paid) AS balance,
                     p.payment_method                  AS payment_method,
                     COALESCE(p.reference, '')         AS reference,
                     DATE_FORMAT(p.paid_at, '%d %b %Y') AS paid_on,
@@ -85,6 +86,7 @@ try {
                 rj.labour_cost AS labour_cost,
                 (rj.parts_cost + rj.labour_cost) AS total_cost,
                 p.amount_paid AS amount_paid,
+                ((rj.parts_cost + rj.labour_cost) - p.amount_paid) AS balance,
                 p.payment_method AS payment_method,
                 COALESCE(NULLIF(p.reference, ''), '—') AS reference,
                 DATE_FORMAT(p.paid_at, '%d %b %Y') AS paid_on
@@ -131,9 +133,9 @@ try {
             reply(['status' => 'success', 'msg' => 'Receipt already issued.', 'receipt_no' => $row['receipt_no']]);
         }
 
-        // Generate the next receipt number, e.g. RCP-00007.
+        // Generate the next receipt number, e.g. RC-000007.
         $max = $connection->query('SELECT COALESCE(MAX(id), 0) + 1 AS next FROM receipts')->fetch_assoc();
-        $receiptNo = sprintf('RCP-%05d', (int) $max['next']);
+        $receiptNo = sprintf('RC-%06d', (int) $max['next']);
 
         $insert = $connection->prepare('INSERT INTO receipts (payment_id, receipt_no) VALUES (?, ?)');
         $insert->bind_param('is', $paymentId, $receiptNo);

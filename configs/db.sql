@@ -129,7 +129,7 @@ CREATE TABLE `payments` (
 CREATE TABLE `receipts` (
     `id`  INT NOT NULL AUTO_INCREMENT,
     `payment_id` INT NOT NULL COMMENT 'FK → payments.id',
-    `receipt_no` VARCHAR(30) NOT NULL  COMMENT 'Human-readable receipt number, e.g. RCP-00001',
+    `receipt_no` VARCHAR(30) NOT NULL  COMMENT 'Human-readable receipt number, e.g. RC-000001',
     `issued_at`  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uq_receipts_no` (`receipt_no`),
