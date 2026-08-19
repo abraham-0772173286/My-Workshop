@@ -117,4 +117,20 @@ function ensure_workshop_schema(mysqli $connection): void
         issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_receipts_payment FOREIGN KEY (payment_id) REFERENCES payments(id)
     ) ENGINE=InnoDB");
+
+    $connection->query("CREATE TABLE IF NOT EXISTS drivers (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        vehicle_id INT NOT NULL,
+        driver_name VARCHAR(120) NOT NULL,
+        vehicle_type VARCHAR(80) NOT NULL DEFAULT '',
+        model_year VARCHAR(30) NULL,
+        driver_mobile VARCHAR(30) NULL,
+        time_in DATETIME NULL,
+        time_out DATETIME NULL,
+        description TEXT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        CONSTRAINT fk_drivers_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
+            ON UPDATE CASCADE ON DELETE RESTRICT
+    ) ENGINE=InnoDB");
 }

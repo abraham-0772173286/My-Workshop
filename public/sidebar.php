@@ -25,6 +25,7 @@ $navItems[] = ['page' => 'dashboard', 'href' => 'index.php', 'icon' => 'bi-speed
 $navItems[] = ['page' => 'repair_jobs', 'href' => 'repair_jobs.php', 'icon' => 'bi-clipboard2-check', 'label' => 'Repair Jobs', 'i18n' => 'repairJobs'];
 $navItems[] = ['page' => 'customers', 'href' => 'customers.php', 'icon' => 'bi-people', 'label' => 'Customers', 'i18n' => 'customers'];
 $navItems[] = ['page' => 'vehicles', 'href' => 'vehicles.php', 'icon' => 'bi-car-front', 'label' => 'Vehicles', 'i18n' => 'vehicles'];
+$navItems[] = ['page' => 'drivers', 'href' => 'drivers.php', 'icon' => 'bi-person-workspace', 'label' => 'Drivers', 'i18n' => 'drivers'];
 
 // Financial operations - available to all roles but with different permissions
 $navItems[] = ['page' => 'payments', 'href' => 'models/payment.php', 'icon' => 'bi-cash-stack', 'label' => 'Payments', 'i18n' => 'payments'];

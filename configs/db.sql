@@ -123,7 +123,30 @@ CREATE TABLE `payments` (
   COMMENT='Payments received for completed repair jobs';
 
 -- ============================================================
--- TABLE 5 — receipts
+-- TABLE 5 — drivers
+-- Driver log — tracks who drives which vehicle and when.
+-- ============================================================
+CREATE TABLE `drivers` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `vehicle_id` INT NOT NULL COMMENT 'FK → vehicles.id',
+    `driver_name` VARCHAR(120) NOT NULL COMMENT 'Name of the driver',
+    `vehicle_type` VARCHAR(80) NOT NULL DEFAULT '' COMMENT 'Type of vehicle (Sedan, SUV, Truck, etc.)',
+    `model_year` VARCHAR(30) NULL COMMENT 'Model year of the vehicle',
+    `driver_mobile` VARCHAR(30) NULL COMMENT 'Driver mobile phone number',
+    `time_in` DATETIME NULL COMMENT 'Date and time the vehicle came in',
+    `time_out` DATETIME NULL COMMENT 'Date and time the vehicle went out',
+    `description` TEXT NULL COMMENT 'Additional notes or description',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_drivers_vehicle`
+        FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Driver log — tracks who drives which vehicle and when';
+
+-- ============================================================
+-- TABLE 6 — receipts
 -- One receipt issued per payment.
 -- ============================================================
 CREATE TABLE `receipts` (
