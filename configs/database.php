@@ -5,7 +5,7 @@ function database_connection(): mysqli
 {
     $server = 'localhost';
     $username = 'root';
-    $password = '2212Aa@0';
+    $password = '';
     $database = 'workshop';
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -21,7 +21,7 @@ function get_database_connection(): PDO
 {
     $server = 'localhost';
     $username = 'root';
-    $password = '2212Aa@0';
+    $password = '';
     $database = 'workshop';
 
     $dsn = "mysql:host=$server;dbname=$database;charset=utf8mb4";
