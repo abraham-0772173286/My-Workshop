@@ -120,17 +120,63 @@ function ensure_workshop_schema(mysqli $connection): void
 
     $connection->query("CREATE TABLE IF NOT EXISTS drivers (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        vehicle_id INT NOT NULL,
         driver_name VARCHAR(120) NOT NULL,
-        vehicle_type VARCHAR(80) NOT NULL DEFAULT '',
-        model_year VARCHAR(30) NULL,
         driver_mobile VARCHAR(30) NULL,
-        time_in DATETIME NULL,
-        time_out DATETIME NULL,
-        description TEXT NULL,
+        license_no VARCHAR(50) NULL,
+        id_number VARCHAR(50) NULL,
+        address VARCHAR(255) NULL,
+        emergency_contact VARCHAR(120) NULL,
+        status ENUM('active','inactive') NOT NULL DEFAULT 'active',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        CONSTRAINT fk_drivers_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
-            ON UPDATE CASCADE ON DELETE RESTRICT
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB");
+
+    $connection->query("CREATE TABLE IF NOT EXISTS driver_assignments (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        driver_id INT NOT NULL,
+        vehicle_id INT NOT NULL,
+        assigned_date DATE NOT NULL,
+        return_date DATE NULL,
+        notes TEXT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_da_driver FOREIGN KEY (driver_id) REFERENCES drivers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        CONSTRAINT fk_da_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON UPDATE CASCADE ON DELETE RESTRICT
+    ) ENGINE=InnoDB");
+
+    $connection->query("CREATE TABLE IF NOT EXISTS driver_trips (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        driver_id INT NOT NULL,
+        vehicle_id INT NOT NULL,
+        assignment_id INT NULL,
+        trip_date DATE NOT NULL,
+        origin VARCHAR(150) NOT NULL DEFAULT '',
+        destination VARCHAR(150) NOT NULL DEFAULT '',
+        distance_km DECIMAL(10,2) NULL DEFAULT 0,
+        start_time DATETIME NULL,
+        end_time DATETIME NULL,
+        fare DECIMAL(12,2) NULL DEFAULT 0,
+        notes TEXT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_dt_driver FOREIGN KEY (driver_id) REFERENCES drivers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        CONSTRAINT fk_dt_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON UPDATE CASCADE ON DELETE RESTRICT
+    ) ENGINE=InnoDB");
+
+    $connection->query("CREATE TABLE IF NOT EXISTS fuel_records (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        driver_id INT NULL,
+        vehicle_id INT NOT NULL,
+        trip_id INT NULL,
+        fuel_date DATE NOT NULL,
+        liters DECIMAL(10,2) NOT NULL DEFAULT 0,
+        cost_per_liter DECIMAL(10,2) NOT NULL DEFAULT 0,
+        total_cost DECIMAL(12,2) NOT NULL DEFAULT 0,
+        fuel_type ENUM('DIESEL','PETROL','OTHER') NOT NULL DEFAULT 'DIESEL',
+        station VARCHAR(150) NULL,
+        receipt_no VARCHAR(80) NULL,
+        notes TEXT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_fr_driver FOREIGN KEY (driver_id) REFERENCES drivers(id) ON UPDATE CASCADE ON DELETE SET NULL,
+        CONSTRAINT fk_fr_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        CONSTRAINT fk_fr_trip FOREIGN KEY (trip_id) REFERENCES driver_trips(id) ON UPDATE CASCADE ON DELETE SET NULL
     ) ENGINE=InnoDB");
 }

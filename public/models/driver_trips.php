@@ -1,0 +1,420 @@
+<?php
+require_once __DIR__ . '/../../inc/app.php';
+workshop_require_login();
+
+$workshopUser = $_SESSION['user'];
+$workshopBase = workshop_base_path();
+$activePage   = 'drivers_trips';
+?>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Driver Trips – SHENGCHI AUTO LTD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <link rel="stylesheet" href="../layout.css.php?v=<?= time() ?>">
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+  <script>
+    var _base_url_ = <?= json_encode($workshopBase) ?>;
+    function start_loader() {}
+    function end_loader() {}
+  </script>
+
+  <style>
+    .toast-success { background-color: #28a745 !important; color: white !important; }
+    .toast-error   { background-color: #dc3545 !important; color: white !important; }
+
+    #tripsTable { font-size: .85rem; border-collapse: separate; border-spacing: 0; }
+    #tripsTable thead th {
+      background: #f8fafc; color: #64748b; font-size: .72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid #eef2f7;
+      border-top: 0; white-space: nowrap; padding: .8rem .9rem;
+    }
+    #tripsTable tbody td {
+      padding: .7rem .9rem; vertical-align: middle; border-bottom: 1px solid #f8fafc; white-space: nowrap;
+    }
+    #tripsTable tbody tr:hover td { background: #f8fafc; }
+    #tripsTable .dataTables_empty { text-align: center; padding: 2.5rem !important; color: #94a3b8; font-size: .9rem; }
+    #tripsTable_wrapper .dataTables_scrollBody::-webkit-scrollbar { height: 8px; }
+    #tripsTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    #tripsTable_wrapper .dataTables_length,
+    #tripsTable_wrapper .dataTables_filter { margin-bottom: .9rem; }
+    #tripsTable_wrapper .dataTables_length select,
+    #tripsTable_wrapper .dataTables_filter input {
+      border: 1px solid #e2e8f0; border-radius: 8px; padding: .35rem .6rem; font-size: .85rem; outline: none;
+    }
+    #tripsTable_wrapper .dataTables_filter input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.12); }
+    #tripsTable_wrapper .dataTables_info { color: #94a3b8; font-size: .8rem; padding-top: 1rem; }
+    #tripsTable_wrapper .dataTables_paginate { padding-top: .9rem; }
+    #tripsTable_wrapper .dataTables_paginate .paginate_button {
+      border: 1px solid #e2e8f0 !important; border-radius: 8px !important; background: #fff !important;
+      color: #64748b !important; font-size: .8rem; margin: 0 2px; padding: .3rem .75rem !important;
+    }
+    #tripsTable_wrapper .dataTables_paginate .paginate_button:hover {
+      background: #f8fafc !important; color: #6366f1 !important; border-color: #c7d2fe !important;
+    }
+    #tripsTable_wrapper .dataTables_paginate .paginate_button.current,
+    #tripsTable_wrapper .dataTables_paginate .paginate_button.current:hover {
+      background: #6366f1 !important; border-color: #6366f1 !important; color: #fff !important;
+    }
+    #tripsTable td code { font-size: .8rem; background: #eef2ff; padding: .2rem .5rem; border-radius: 6px; }
+  </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<div class="app-wrapper">
+
+  <?php include '../navbar.php'; ?>
+  <?php include '../sidebar.php'; ?>
+
+  <main class="app-main">
+    <div class="app-content-header px-4 pt-3 pb-0">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h4 class="fw-bold mb-0" data-i18n="driversTrips">Driver Trips</h4>
+          <p class="text-muted small mb-0">Log and track driver trips</p>
+        </div>
+        <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
+          <li class="breadcrumb-item"><a href="../index.php" class="text-primary">Home</a></li>
+          <li class="breadcrumb-item active" data-i18n="driversTrips">Driver Trips</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="app-content p-4">
+      <div class="card border-0 shadow-sm" style="border-radius:16px;">
+        <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0"><i class="bi bi-map me-2 text-primary"></i>Trips Register</h5>
+            <div class="d-flex gap-2">
+              <button class="btn btn-primary btn-sm" id="btnAdd">
+                <i class="fa fa-plus me-1"></i>Log Trip
+              </button>
+              <button class="btn btn-sm btn-light border" onclick="exportTable('print')"><i class="fa fa-print"></i></button>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown">
+                  <i class="bi bi-download me-1"></i>Export
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow">
+                  <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf')"><i class="fa fa-file-pdf text-danger me-2"></i>PDF</a></li>
+                  <li><a class="dropdown-item small" href="#" onclick="exportTable('excel')"><i class="fa fa-file-excel text-success me-2"></i>Excel</a></li>
+                  <li><a class="dropdown-item small" href="#" onclick="exportTable('csv')"><i class="fa fa-file-csv text-info me-2"></i>CSV</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4">
+          <div class="table-responsive">
+            <table id="tripsTable" class="table align-middle w-100">
+              <thead>
+                <tr>
+                  <th style="width:30px;"></th>
+                  <th>Driver</th>
+                  <th>Vehicle</th>
+                  <th>Trip Date</th>
+                  <th>Origin</th>
+                  <th>Destination</th>
+                  <th>Distance (km)</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Fare (UGX)</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add / Edit Trip Modal -->
+  <div class="modal fade" id="entryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-3">
+        <div class="modal-header bg-primary text-white">
+          <div>
+            <h5 class="modal-title fw-bold" id="entryModalTitle">Log Trip</h5>
+            <small class="opacity-75">Record trip details</small>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="entryForm">
+          <input type="hidden" name="trip_id" id="entryId" value="0">
+          <div class="modal-body p-4">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Driver <span class="text-danger">*</span></label>
+                <select class="form-select" name="driver_id" id="selectDriver" required>
+                  <option value="">— Select driver —</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Vehicle <span class="text-danger">*</span></label>
+                <select class="form-select" name="vehicle_id" id="selectVehicle" required>
+                  <option value="">— Select vehicle —</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Trip Date <span class="text-danger">*</span></label>
+                <input class="form-control" type="date" name="trip_date" id="inputTripDate" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Distance (km)</label>
+                <input class="form-control" type="number" name="distance_km" id="inputDistance" step="0.1" min="0" placeholder="0">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Origin</label>
+                <input class="form-control" type="text" name="origin" id="inputOrigin" placeholder="e.g. Kampala">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Destination</label>
+                <input class="form-control" type="text" name="destination" id="inputDestination" placeholder="e.g. Entebbe">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Start Time</label>
+                <input class="form-control" type="datetime-local" name="start_time" id="inputStartTime">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">End Time</label>
+                <input class="form-control" type="datetime-local" name="end_time" id="inputEndTime">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label small fw-semibold">Fare (UGX)</label>
+                <input class="form-control" type="number" name="fare" id="inputFare" min="0" step="1" placeholder="0">
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-semibold">Notes</label>
+                <textarea class="form-control" name="notes" id="inputNotes" rows="2" placeholder="Additional notes..."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btnSave"><i class="bi bi-save me-1"></i>Save Trip</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm delete modal -->
+  <div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content border-top border-danger border-4">
+        <div class="modal-header bg-white">
+          <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Are you sure?</h6>
+        </div>
+        <div class="modal-body text-center py-4" id="confirmBody">This action cannot be undone.</div>
+        <div class="modal-footer border-0 justify-content-center pb-4">
+          <button class="btn btn-danger px-4 fw-bold" id="btnConfirm">YES, DELETE</button>
+          <button class="btn btn-light px-4" data-bs-dismiss="modal">CANCEL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| All Rights Reserved.</span></div>
+      <div class="order-1 order-md-2 text-center">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1">Think of it, We Develop it.</div>
+        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> AB Solutions</a>
+      </div>
+      <div class="footer-contacts order-3">
+        <a href="https://wa.me/256772173286" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+        <a href="tel:+256763808854" title="Call"><i class="bi bi-telephone-outbound"></i></a>
+        <a href="mailto:support@pearl-host.com" title="Email"><i class="bi bi-envelope-at"></i></a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+const API = '../../classes/Drivers.php';
+let table = null;
+let selectedId = null;
+
+const fmt = n => 'UGX ' + Number(n).toLocaleString('en-UG');
+
+$(document).ready(function () {
+  table = $('#tripsTable').DataTable({
+    scrollX: true,
+    scrollCollapse: true,
+    processing: true,
+    pageLength: 50,
+    dom: 'lfrtip',
+    buttons: [
+      { extend:'copy',  exportOptions:{ columns:[1,2,3,4,5,6,7,8,9] } },
+      { extend:'csv',   exportOptions:{ columns:[1,2,3,4,5,6,7,8,9] } },
+      { extend:'excel', exportOptions:{ columns:[1,2,3,4,5,6,7,8,9] } },
+      { extend:'pdf',   exportOptions:{ columns:[1,2,3,4,5,6,7,8,9] } },
+      { extend:'print', exportOptions:{ columns:[1,2,3,4,5,6,7,8,9] } }
+    ],
+    ajax: {
+      url: API + '?f=trips_viewall',
+      dataSrc: function (json) {
+        if (!Array.isArray(json)) { toastr.error('Unexpected response from server.'); return []; }
+        return json;
+      },
+      error: function (xhr, error, thrown) {
+        toastr.error('Could not load trips: ' + (thrown || error));
+      }
+    },
+    columns: [
+      { data:'trip_id', orderable:false, className:'text-center',
+        render: d => `<div class="form-check"><input class="form-check-input row-check" type="checkbox" value="${d}"></div>` },
+      { data:'driver_name', render: d => `<span class="fw-bold text-dark">${d || '—'}</span>` },
+      { data:'vehicle', render: d => `<span class="small"><i class="bi bi-car-front me-1 text-muted"></i>${d || '—'}</span>` },
+      { data:'trip_date', className:'text-muted small' },
+      { data:'origin', render: d => d || '<span class="text-muted">—</span>' },
+      { data:'destination', render: d => d || '<span class="text-muted">—</span>' },
+      { data:'distance_km', className:'text-center', render: d => d ? `${Number(d).toFixed(1)} km` : '<span class="text-muted">—</span>' },
+      { data:'start_time', render: d => d || '<span class="text-muted">—</span>' },
+      { data:'end_time', render: d => d || '<span class="text-muted">—</span>' },
+      { data:'fare', render: d => Number(d) > 0 ? `<span class="fw-semibold">${fmt(d)}</span>` : '<span class="text-muted">—</span>' },
+      { data:'trip_id', orderable:false, className:'text-center',
+        render: function(d, t, r) {
+          let btns = '';
+          btns += `<button class="btn btn-sm btn-outline-primary btn-edit me-1" data-id="${d}" title="Edit" style="border-radius:8px;"><i class="fa fa-edit"></i></button>`;
+          btns += `<button class="btn btn-sm btn-outline-danger btn-delete" data-id="${d}" title="Delete" style="border-radius:8px;"><i class="fa fa-trash"></i></button>`;
+          return btns;
+        }
+      }
+    ]
+  });
+
+  $('#tripsTable tbody').on('click', 'tr', function () {
+    $(this).toggleClass('selected').siblings().removeClass('selected');
+    const sel = $(this).hasClass('selected');
+    table.$('.row-check').prop('checked', false);
+    $(this).find('.row-check').prop('checked', sel);
+    selectedId = sel ? table.row(this).data().trip_id : null;
+  });
+
+  $(window).on('resize', function () { if (table) { table.columns.adjust(); } });
+
+  loadDropdowns();
+});
+
+function loadDropdowns() {
+  $.getJSON(API + '?f=drivers', function(rows) {
+    const sel = $('#selectDriver');
+    sel.empty().append('<option value="">— Select driver —</option>');
+    if (Array.isArray(rows)) {
+      rows.forEach(function(r) {
+        sel.append(`<option value="${r.driver_id}">${r.driver_name}</option>`);
+      });
+    }
+  });
+  $.getJSON(API + '?f=vehicles', function(rows) {
+    const sel = $('#selectVehicle');
+    sel.empty().append('<option value="">— Select vehicle —</option>');
+    if (Array.isArray(rows)) {
+      rows.forEach(function(r) {
+        sel.append(`<option value="${r.vehicle_id}">${r.plate_number} — ${r.owner || r.model || ''}</option>`);
+      });
+    }
+  });
+}
+
+$('#btnAdd').click(function() {
+  $('#entryModalTitle').text('Log Trip');
+  $('#entryForm')[0].reset();
+  $('#entryId').val(0);
+  loadDropdowns();
+  new bootstrap.Modal('#entryModal').show();
+});
+
+$(document).on('click', '.btn-edit', function(e) {
+  e.stopPropagation();
+  const id = $(this).data('id');
+  $.getJSON(API + '?f=trips_get&id=' + id, function(r) {
+    $('#entryModalTitle').text('Edit Trip');
+    $('#entryId').val(r.trip_id);
+    loadDropdowns();
+    setTimeout(function() {
+      $('#selectDriver').val(r.driver_id);
+      $('#selectVehicle').val(r.vehicle_id);
+    }, 300);
+    $('#inputTripDate').val(r.trip_date);
+    $('#inputDistance').val(r.distance_km);
+    $('#inputOrigin').val(r.origin);
+    $('#inputDestination').val(r.destination);
+    $('#inputStartTime').val(r.start_time);
+    $('#inputEndTime').val(r.end_time);
+    $('#inputFare').val(r.fare);
+    $('#inputNotes').val(r.notes);
+    new bootstrap.Modal('#entryModal').show();
+  }).fail(() => toastr.error('Could not load trip details.'));
+});
+
+$('#entryForm').on('submit', function(e) {
+  e.preventDefault();
+  const btn = $('#btnSave').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Saving...');
+  $.ajax({
+    url: API + '?f=trips_save', method: 'POST', dataType: 'json', data: $(this).serialize(),
+    success: function(r) {
+      if (r.status === 'success') {
+        toastr.success(r.msg);
+        bootstrap.Modal.getInstance('#entryModal').hide();
+        table.ajax.reload(null, false);
+      } else {
+        toastr.error(r.msg);
+      }
+    },
+    error: xhr => toastr.error(xhr.responseJSON?.msg || 'Could not save the trip.'),
+    complete: () => $('#btnSave').prop('disabled', false).html('<i class="bi bi-save me-1"></i>Save Trip')
+  });
+});
+
+$(document).on('click', '.btn-delete', function(e) {
+  e.stopPropagation();
+  selectedId = $(this).data('id');
+  $('#confirmBody').text('Delete this trip? This cannot be undone.');
+  const m = new bootstrap.Modal('#confirmModal');
+  $('#btnConfirm').off('click').on('click', function() {
+    $.post(API + '?f=trips_delete', { id: selectedId }, function(r) {
+      if (r.status === 'success') {
+        toastr.success(r.msg);
+        table.ajax.reload();
+        selectedId = null;
+      } else {
+        toastr.error(r.msg);
+      }
+      bootstrap.Modal.getInstance('#confirmModal').hide();
+    }, 'json').fail(() => toastr.error('Delete failed.'));
+  });
+  m.show();
+});
+
+function exportTable(type) {
+  if (!table) return;
+  const map = { csv: '.buttons-csv', excel: '.buttons-excel', pdf: '.buttons-pdf', print: '.buttons-print' };
+  if (map[type]) table.button(map[type]).trigger();
+}
+</script>
+</body>
+</html>

@@ -147,6 +147,67 @@ body.garage-sidebar-collapsed .app-main {
     color: #f5ad2b;
 }
 
+/* ── Sidebar Submenu (expandable/collapsible) ──────────────────────── */
+.garage-sidebar .nav-parent {
+    cursor: pointer;
+    user-select: none;
+}
+
+.garage-sidebar .nav-chevron {
+    margin-left: auto;
+    font-size: 13px;
+    opacity: .5;
+    transition: transform .25s ease;
+    flex-shrink: 0;
+}
+
+.garage-sidebar .nav-parent.open .nav-chevron {
+    transform: rotate(180deg);
+    opacity: .8;
+}
+
+.garage-sidebar .nav-submenu {
+    padding: 0;
+    margin: 0;
+}
+
+.garage-sidebar .nav-subitem {
+    margin: 1px 0;
+}
+
+.garage-sidebar .nav-subitem .sub-link {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    gap: 10px;
+    padding: 8px 18px 8px 54px;
+    color: rgba(255, 255, 255, .72) !important;
+    font-size: 13px;
+    font-weight: 500;
+    transition: background .18s, color .18s;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+}
+
+.garage-sidebar .nav-subitem .sub-link:hover {
+    background: rgba(154, 109, 255, .2);
+    color: #fff !important;
+}
+
+.garage-sidebar .nav-subitem .sub-link.active {
+    background: rgba(154, 109, 255, .35);
+    color: #fff !important;
+    border-left-color: #f5ad2b;
+    font-weight: 700;
+}
+
+.garage-sidebar .nav-subitem .sub-link i:first-child {
+    width: 22px;
+    font-size: 16px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
 /* ── Responsive Sidebar ──────────────────────────────────────────────── */
 @media (max-width: 991px) {
     .app-header,

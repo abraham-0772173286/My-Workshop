@@ -11,10 +11,10 @@
 
 -- Drop and recreate for a clean slate (remove these two lines if you
 -- want to keep existing data and just add missing tables)
-DROP DATABASE IF EXISTS `workshop`;
-CREATE DATABASE `workshop`
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+--DROP DATABASE IF EXISTS `workshop`;
+--CREATE DATABASE `workshop`
+    --CHARACTER SET utf8mb4
+    --COLLATE utf8mb4_unicode_ci;
 
 USE `workshop`;
 
@@ -124,29 +124,99 @@ CREATE TABLE `payments` (
 
 -- ============================================================
 -- TABLE 5 — drivers
--- Driver log — tracks who drives which vehicle and when.
+-- Driver registry — core driver information.
 -- ============================================================
 CREATE TABLE `drivers` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `vehicle_id` INT NOT NULL COMMENT 'FK → vehicles.id',
-    `driver_name` VARCHAR(120) NOT NULL COMMENT 'Name of the driver',
-    `vehicle_type` VARCHAR(80) NOT NULL DEFAULT '' COMMENT 'Type of vehicle (Sedan, SUV, Truck, etc.)',
-    `model_year` VARCHAR(30) NULL COMMENT 'Model year of the vehicle',
+    `driver_name` VARCHAR(120) NOT NULL COMMENT 'Full name of the driver',
     `driver_mobile` VARCHAR(30) NULL COMMENT 'Driver mobile phone number',
-    `time_in` DATETIME NULL COMMENT 'Date and time the vehicle came in',
-    `time_out` DATETIME NULL COMMENT 'Date and time the vehicle went out',
-    `description` TEXT NULL COMMENT 'Additional notes or description',
+    `license_no` VARCHAR(50) NULL COMMENT 'Driving license number',
+    `id_number` VARCHAR(50) NULL COMMENT 'National ID or passport number',
+    `address` VARCHAR(255) NULL COMMENT 'Physical address',
+    `emergency_contact` VARCHAR(120) NULL COMMENT 'Emergency contact person',
+    `status` ENUM('active','inactive') NOT NULL DEFAULT 'active' COMMENT 'Account status',
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `fk_drivers_vehicle`
-        FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`)
-        ON UPDATE CASCADE ON DELETE RESTRICT
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Driver log — tracks who drives which vehicle and when';
+  COMMENT='Driver registry — core driver information';
 
 -- ============================================================
--- TABLE 6 — receipts
+-- TABLE 6 — driver_assignments
+-- Links drivers to vehicles with date ranges.
+-- ============================================================
+CREATE TABLE `driver_assignments` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `driver_id` INT NOT NULL COMMENT 'FK → drivers.id',
+    `vehicle_id` INT NOT NULL COMMENT 'FK → vehicles.id',
+    `assigned_date` DATE NOT NULL COMMENT 'Date the assignment started',
+    `return_date` DATE NULL COMMENT 'Date the vehicle was returned',
+    `notes` TEXT NULL COMMENT 'Assignment notes',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_da_driver` FOREIGN KEY (`driver_id`) REFERENCES `drivers` (`id`)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT `fk_da_vehicle` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Driver-vehicle assignments';
+
+-- ============================================================
+-- TABLE 7 — driver_trips
+-- Individual trip records.
+-- ============================================================
+CREATE TABLE `driver_trips` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `driver_id` INT NOT NULL COMMENT 'FK → drivers.id',
+    `vehicle_id` INT NOT NULL COMMENT 'FK → vehicles.id',
+    `assignment_id` INT NULL COMMENT 'FK → driver_assignments.id',
+    `trip_date` DATE NOT NULL COMMENT 'Date of the trip',
+    `origin` VARCHAR(150) NOT NULL DEFAULT '' COMMENT 'Trip origin',
+    `destination` VARCHAR(150) NOT NULL DEFAULT '' COMMENT 'Trip destination',
+    `distance_km` DECIMAL(10,2) NULL DEFAULT 0 COMMENT 'Distance in kilometres',
+    `start_time` DATETIME NULL COMMENT 'Trip start date/time',
+    `end_time` DATETIME NULL COMMENT 'Trip end date/time',
+    `fare` DECIMAL(12,2) NULL DEFAULT 0 COMMENT 'Trip fare (UGX)',
+    `notes` TEXT NULL COMMENT 'Trip notes',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_dt_driver` FOREIGN KEY (`driver_id`) REFERENCES `drivers` (`id`)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT `fk_dt_vehicle` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`)
+        ON UPDATE CASCADE ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Driver trip log';
+
+-- ============================================================
+-- TABLE 8 — fuel_records
+-- Fuel purchase / consumption records.
+-- ============================================================
+CREATE TABLE `fuel_records` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `driver_id` INT NULL COMMENT 'FK → drivers.id',
+    `vehicle_id` INT NOT NULL COMMENT 'FK → vehicles.id',
+    `trip_id` INT NULL COMMENT 'FK → driver_trips.id',
+    `fuel_date` DATE NOT NULL COMMENT 'Date fuel was purchased',
+    `liters` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT 'Litres purchased',
+    `cost_per_liter` DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT 'Cost per litre (UGX)',
+    `total_cost` DECIMAL(12,2) NOT NULL DEFAULT 0 COMMENT 'Total cost (UGX)',
+    `fuel_type` ENUM('DIESEL','PETROL','OTHER') NOT NULL DEFAULT 'DIESEL' COMMENT 'Fuel type',
+    `station` VARCHAR(150) NULL COMMENT 'Fuel station name',
+    `receipt_no` VARCHAR(80) NULL COMMENT 'Fuel receipt number',
+    `notes` TEXT NULL COMMENT 'Additional notes',
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_fr_driver` FOREIGN KEY (`driver_id`) REFERENCES `drivers` (`id`)
+        ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT `fk_fr_vehicle` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT `fk_fr_trip` FOREIGN KEY (`trip_id`) REFERENCES `driver_trips` (`id`)
+        ON UPDATE CASCADE ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Fuel purchase and consumption records';
+
+-- ============================================================
+-- TABLE 9 — receipts
 -- One receipt issued per payment.
 -- ============================================================
 CREATE TABLE `receipts` (
