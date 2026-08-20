@@ -57,13 +57,13 @@ $driversOpen  = in_array($activePage, $driverPages);
     <!-- Drivers (parent with submenu) -->
     <?= sidebarParent('drivers-submenu', 'bi-person-workspace', 'Drivers', $driversOpen, 'drivers') ?>
     <div class="nav-submenu" id="drivers-submenu" style="<?= $driversOpen ? 'display:block;' : 'display:none;' ?>">
-        <?= sidebarSubItem('drivers_all', 'models/drivers.php', 'bi-list-ul', 'All Drivers', $activePage) ?>
-        <?= sidebarSubItem('drivers_register', 'models/driver_register.php', 'bi-person-plus', 'Register Driver', $activePage) ?>
-        <?= sidebarSubItem('drivers_assignments', 'models/driver_assignments.php', 'bi-link-45deg', 'Driver Assignments', $activePage) ?>
-        <?= sidebarSubItem('drivers_trips', 'models/driver_trips.php', 'bi-map', 'Driver Trips', $activePage) ?>
-        <?= sidebarSubItem('drivers_fuel', 'models/fuel_records.php', 'bi-fuel-pump', 'Fuel Records', $activePage) ?>
-        <?= sidebarSubItem('drivers_performance', 'models/driver_performance.php', 'bi-graph-up', 'Driver Performance', $activePage) ?>
-        <?= sidebarSubItem('drivers_history', 'models/driver_history.php', 'bi-clock-history', 'Driver History', $activePage) ?>
+        <?= sidebarSubItem('drivers_all', 'models/drivers.php', 'bi-list-ul', 'All Drivers', $activePage, 'driversAll') ?>
+        <?= sidebarSubItem('drivers_register', 'models/driver_register.php', 'bi-person-plus', 'Register Driver', $activePage, 'driversRegister') ?>
+        <?= sidebarSubItem('drivers_assignments', 'models/driver_assignments.php', 'bi-link-45deg', 'Driver Assignments', $activePage, 'driversAssignments') ?>
+        <?= sidebarSubItem('drivers_trips', 'models/driver_trips.php', 'bi-map', 'Driver Trips', $activePage, 'driversTrips') ?>
+        <?= sidebarSubItem('drivers_fuel', 'models/fuel_records.php', 'bi-fuel-pump', 'Fuel Records', $activePage, 'driversFuel') ?>
+        <?= sidebarSubItem('drivers_performance', 'models/driver_performance.php', 'bi-graph-up', 'Driver Performance', $activePage, 'driversPerformance') ?>
+        <?= sidebarSubItem('drivers_history', 'models/driver_history.php', 'bi-clock-history', 'Driver History', $activePage, 'driversHistory') ?>
     </div>
 
     <?= sidebarLink('payments', 'models/payment.php', 'bi-cash-stack', 'Payments', $activePage, 'payments') ?>

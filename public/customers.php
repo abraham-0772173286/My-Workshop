@@ -52,12 +52,12 @@ $activePage   = 'customers';
   <div class="app-content-header px-4 pt-3 pb-0">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h4 class="fw-bold mb-0">CUSTOMERS</h4>
-        <p class="text-muted small mb-0">All registered vehicle owners</p>
+        <h4 class="fw-bold mb-0" data-i18n="customersHeading">CUSTOMERS</h4>
+        <p class="text-muted small mb-0" data-i18n="customersSubtitle">All registered vehicle owners</p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-        <li class="breadcrumb-item"><a href="index.php" class="text-primary">Home</a></li>
-        <li class="breadcrumb-item active">Customers</li>
+        <li class="breadcrumb-item"><a href="index.php" class="text-primary" data-i18n="home">Home</a></li>
+        <li class="breadcrumb-item active" data-i18n="customers">Customers</li>
       </ol>
     </div>
   </div>
@@ -66,9 +66,9 @@ $activePage   = 'customers';
     <div class="card border-0 shadow-sm" style="border-radius:16px;">
       <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
         <div class="d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold mb-0"><i class="bi bi-people me-2 text-primary"></i>Customer Register</h5>
+          <h5 class="fw-bold mb-0"><i class="bi bi-people me-2 text-primary"></i><span data-i18n="customerRegister">Customer Register</span></h5>
           <button class="btn btn-primary btn-sm" id="btnAddCustomer">
-            <i class="fa fa-plus me-1"></i> Add Customer
+            <i class="fa fa-plus me-1"></i> <span data-i18n="addCustomer">Add Customer</span>
           </button>
         </div>
       </div>
@@ -78,21 +78,21 @@ $activePage   = 'customers';
         <div class="mb-3 d-flex flex-wrap gap-2 align-items-center justify-content-between">
           <div class="d-flex flex-wrap gap-2">
             <div class="d-flex gap-2 border-end pe-3 me-1">
-              <button class="btn btn-outline-success btn-sm btnEdit"><i class="fa fa-edit me-1"></i>Edit</button>
-              <button class="btn btn-outline-danger  btn-sm btnDelete"><i class="fa fa-trash me-1"></i>Delete</button>
+              <button class="btn btn-outline-success btn-sm btnEdit"><i class="fa fa-edit me-1"></i><span data-i18n="edit">Edit</span></button>
+              <button class="btn btn-outline-danger  btn-sm btnDelete"><i class="fa fa-trash me-1"></i><span data-i18n="delete">Delete</span></button>
             </div>
-            <a class="btn btn-outline-info btn-sm" id="btnViewVehicles" href="#"><i class="bi bi-car-front me-1"></i>Vehicles</a>
+            <a class="btn btn-outline-info btn-sm" id="btnViewVehicles" href="#"><i class="bi bi-car-front me-1"></i><span data-i18n="vehicles">Vehicles</span></a>
           </div>
           <div class="d-flex gap-2">
             <button class="btn btn-sm btn-light border" onclick="exportTable('print')"><i class="fa fa-print"></i></button>
             <div class="dropdown">
               <button class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown">
-                <i class="bi bi-download me-1"></i>Export
+                <i class="bi bi-download me-1"></i><span data-i18n="export">Export</span>
               </button>
               <ul class="dropdown-menu dropdown-menu-end shadow">
-                <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf')"><i class="fa fa-file-pdf text-danger me-2"></i>PDF</a></li>
-                <li><a class="dropdown-item small" href="#" onclick="exportTable('excel')"><i class="fa fa-file-excel text-success me-2"></i>Excel</a></li>
-                <li><a class="dropdown-item small" href="#" onclick="exportTable('csv')"><i class="fa fa-file-csv text-info me-2"></i>CSV</a></li>
+                <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf')"><i class="fa fa-file-pdf text-danger me-2"></i><span data-i18n="pdf">PDF</span></a></li>
+                <li><a class="dropdown-item small" href="#" onclick="exportTable('excel')"><i class="fa fa-file-excel text-success me-2"></i><span data-i18n="excel">Excel</span></a></li>
+                <li><a class="dropdown-item small" href="#" onclick="exportTable('csv')"><i class="fa fa-file-csv text-info me-2"></i><span data-i18n="csv">CSV</span></a></li>
               </ul>
             </div>
           </div>
@@ -103,13 +103,13 @@ $activePage   = 'customers';
             <thead>
               <tr>
                 <th style="width:30px;"></th>
-                <th>Customer</th>
-                <th>Contact</th>
-                <th>Address</th>
-                <th class="text-center">Vehicles</th>
-                <th class="text-center">Jobs</th>
-                <th>Lifetime Value</th>
-                <th>Joined</th>
+                <th data-i18n="customer">Customer</th>
+                <th data-i18n="contact">Contact</th>
+                <th data-i18n="address">Address</th>
+                <th class="text-center" data-i18n="vehicles">Vehicles</th>
+                <th class="text-center" data-i18n="jobs">Jobs</th>
+                <th data-i18n="lifetimeValue">Lifetime Value</th>
+                <th data-i18n="joined">Joined</th>
               </tr>
             </thead>
           </table>
@@ -125,8 +125,8 @@ $activePage   = 'customers';
     <div class="modal-content rounded-3">
       <div class="modal-header bg-primary text-white">
         <div>
-          <h5 class="modal-title fw-bold" id="customerModalTitle">Add Customer</h5>
-          <small class="opacity-75">Customer details</small>
+          <h5 class="modal-title fw-bold" id="customerModalTitle"><span data-i18n="addCustomer">Add Customer</span></h5>
+          <small class="opacity-75"><span data-i18n="customerDetails">Customer details</span></small>
         </div>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
@@ -135,23 +135,23 @@ $activePage   = 'customers';
         <div class="modal-body p-4">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label small fw-semibold">Full name <span class="text-danger">*</span></label>
+              <label class="form-label small fw-semibold"><span data-i18n="fullNameLabel">Full name</span> <span class="text-danger">*</span></label>
               <input class="form-control" name="fullname" id="inputFullname" placeholder="e.g. John Kamau" required>
             </div>
             <div class="col-12">
-              <label class="form-label small fw-semibold">Phone / contact <span class="text-danger">*</span></label>
+              <label class="form-label small fw-semibold"><span data-i18n="phoneContact">Phone / contact</span> <span class="text-danger">*</span></label>
               <input class="form-control" name="contact" id="inputContact" placeholder="e.g. 0712 345 678" required>
             </div>
             <div class="col-12">
-              <label class="form-label small fw-semibold">Address</label>
+              <label class="form-label small fw-semibold"><span data-i18n="address">Address</span></label>
               <input class="form-control" name="address" id="inputAddress" placeholder="e.g. Westlands, Nairobi">
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal"><span data-i18n="cancel">Cancel</span></button>
           <button type="submit" class="btn btn-primary" id="btnSaveCustomer">
-            <i class="bi bi-save me-1"></i>Save Customer
+            <i class="bi bi-save me-1"></i><span data-i18n="saveCustomer">Save Customer</span>
           </button>
         </div>
       </form>
@@ -164,12 +164,12 @@ $activePage   = 'customers';
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content border-top border-danger border-4">
       <div class="modal-header bg-white">
-        <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Are you sure?</h6>
+        <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i><span data-i18n="areYouSure">Are you sure?</span></h6>
       </div>
-      <div class="modal-body text-center py-4" id="confirmBody">This action cannot be undone.</div>
+      <div class="modal-body text-center py-4" id="confirmBody"><span data-i18n="actionCannotUndone">This action cannot be undone.</span></div>
       <div class="modal-footer border-0 justify-content-center pb-4">
-        <button class="btn btn-danger px-4 fw-bold" id="btnConfirm">YES, DELETE</button>
-        <button class="btn btn-light px-4" data-bs-dismiss="modal">CANCEL</button>
+        <button class="btn btn-danger px-4 fw-bold" id="btnConfirm"><span data-i18n="yesDelete">YES, DELETE</span></button>
+        <button class="btn btn-light px-4" data-bs-dismiss="modal"><span data-i18n="cancel">CANCEL</span></button>
       </div>
     </div>
   </div>

@@ -2,6 +2,10 @@
 
 # Sensitive Configuration Files
 configs/database.php
+configs/translate_api.php
+
+# Translation Cache
+assets/lang/.cache/
 
 # Session Files
 classes/.sessions/*

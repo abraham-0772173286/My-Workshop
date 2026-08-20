@@ -38,14 +38,12 @@
             </li>
 
             <li class="nav-item dropdown">
-                <button class="btn btn-link text-dark dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" style="text-decoration: none;">
+                <button class="btn btn-link text-dark dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" style="text-decoration: none;" id="langToggle">
                     <i class="bi bi-globe"></i> <span id="currentLang">EN</span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('en'); return false;">🇺🇸 English</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('es'); return false;">🇪🇸 Español</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr'); return false;">🇫🇷 Français</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh'); return false;">🇨🇳 中文</a></li>
+                <ul class="dropdown-menu dropdown-menu-end" id="langDropdown" style="max-height:350px;overflow-y:auto;min-width:180px;">
+                    <li class="px-2 py-1"><input type="text" class="form-control form-control-sm" id="langSearch" placeholder="Search language..." style="font-size:12px;"></li>
+                    <li><hr class="dropdown-divider my-1"></li>
                 </ul>
             </li>
 
@@ -80,11 +78,72 @@
 (function () {
   'use strict';
 
-  let _translations = {};
+  var _translations = {};
+  var _currentLang = 'en';
+  var _base = (typeof _base_url_ !== 'undefined') ? _base_url_ : '/workshop/';
 
+  /* ── All supported languages ───────────────────────────── */
+  var LANGUAGES = [
+    { code: 'en', name: 'English',    native: 'English',    flag: '🇺🇸' },
+    { code: 'zh', name: 'Chinese',    native: '中文',       flag: '🇨🇳' },
+    { code: 'es', name: 'Spanish',    native: 'Español',    flag: '🇪🇸' },
+    { code: 'fr', name: 'French',     native: 'Français',   flag: '🇫🇷' },
+    { code: 'ar', name: 'Arabic',     native: 'العربية',    flag: '🇸🇦' },
+    { code: 'de', name: 'German',     native: 'Deutsch',    flag: '🇩🇪' },
+    { code: 'pt', name: 'Portuguese', native: 'Português',  flag: '🇧🇷' },
+    { code: 'ja', name: 'Japanese',   native: '日本語',     flag: '🇯🇵' },
+    { code: 'ko', name: 'Korean',     native: '한국어',     flag: '🇰🇷' },
+    { code: 'hi', name: 'Hindi',      native: 'हिन्दी',     flag: '🇮🇳' },
+    { code: 'sw', name: 'Swahili',    native: 'Kiswahili',  flag: '🇰🇪' },
+    { code: 'ru', name: 'Russian',    native: 'Русский',    flag: '🇷🇺' },
+    { code: 'tr', name: 'Turkish',    native: 'Türkçe',     flag: '🇹🇷' },
+    { code: 'id', name: 'Indonesian', native: 'Bahasa',     flag: '🇮🇩' },
+    { code: 'th', name: 'Thai',       native: 'ไทย',        flag: '🇹🇭' },
+    { code: 'vi', name: 'Vietnamese', native: 'Tiếng Việt', flag: '🇻🇳' },
+    { code: 'it', name: 'Italian',    native: 'Italiano',   flag: '🇮🇹' },
+    { code: 'nl', name: 'Dutch',      native: 'Nederlands', flag: '🇳🇱' },
+    { code: 'pl', name: 'Polish',     native: 'Polski',     flag: '🇵🇱' },
+    { code: 'sv', name: 'Swedish',    native: 'Svenska',    flag: '🇸🇪' }
+  ];
+
+  /* ── Build language dropdown ───────────────────────────── */
+  function buildLangDropdown() {
+    var dd = document.getElementById('langDropdown');
+    if (!dd) return;
+
+    // Keep search bar and divider
+    var searchHtml = '<li class="px-2 py-1"><input type="text" class="form-control form-control-sm" id="langSearch" placeholder="Search language..." style="font-size:12px;"></li><li><hr class="dropdown-divider my-1"></li>';
+
+    var itemsHtml = '';
+    LANGUAGES.forEach(function (l) {
+      var active = l.code === _currentLang ? ' active' : '';
+      itemsHtml += '<li><a class="dropdown-item' + active + '" href="#" data-lang="' + l.code + '" onclick="window.changeLanguage(\'' + l.code + '\'); return false;">'
+        + '<span class="me-2">' + l.flag + '</span>'
+        + '<span class="fw-semibold">' + l.native + '</span>'
+        + '<small class="text-muted ms-1">' + l.name + '</small>'
+        + '</a></li>';
+    });
+
+    dd.innerHTML = searchHtml + itemsHtml;
+
+    // Search filter
+    var searchInput = document.getElementById('langSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', function () {
+        var q = this.value.toLowerCase();
+        dd.querySelectorAll('li a[data-lang]').forEach(function (a) {
+          var li = a.closest('li');
+          var text = a.textContent.toLowerCase();
+          li.style.display = text.indexOf(q) > -1 ? '' : 'none';
+        });
+      });
+    }
+  }
+
+  /* ── Apply translations to DOM ─────────────────────────── */
   function _applyTranslations() {
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
-      const key = el.getAttribute('data-i18n');
+      var key = el.getAttribute('data-i18n');
       if (!_translations[key]) return;
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
         el.setAttribute('placeholder', _translations[key]);
@@ -94,36 +153,126 @@
     });
   }
 
-  function loadLanguage(lang) {
-    // _base_url_ is set per-page before navbar.php is included
-    const base = (typeof _base_url_ !== 'undefined') ? _base_url_ : '/workshop/';
-    fetch(base + 'assets/lang/' + lang + '.json')
+  /* ── Fetch translations from server ────────────────────── */
+  function fetchTranslations(lang, callback) {
+    // First try the static JSON file (fast, no API needed)
+    fetch(_base + 'assets/lang/' + lang + '.json')
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return r.json();
       })
       .then(function (data) {
-        _translations = data;
-        localStorage.setItem('appLanguage', lang);
-        const badge = document.getElementById('currentLang');
-        if (badge) badge.textContent = lang.toUpperCase();
-        _applyTranslations();
+        callback(null, data);
       })
-      .catch(function (err) {
-        console.warn('Language file not loaded:', err);
+      .catch(function () {
+        // Fall back to Translation API endpoint (uses Google Translate if API key configured)
+        fetch(_base + 'classes/Translation.php?lang=' + lang)
+          .then(function (r) {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
+          .then(function (data) {
+            callback(null, data);
+          })
+          .catch(function (err2) {
+            callback(err2);
+          });
       });
   }
 
-  // Expose globally so onclick handlers in the dropdown work
-  window.changeLanguage = loadLanguage;
+  /* ── Main language change function ─────────────────────── */
+  function loadLanguage(lang) {
+    _currentLang = lang;
 
-  // Auto-load saved language on every page
+    if (lang === 'en') {
+      // For English, load the bundled file directly
+      fetchTranslations('en', function (err, data) {
+        if (err) {
+          console.warn('Could not load English translations:', err);
+          return;
+        }
+        _translations = data;
+        localStorage.setItem('appLanguage', lang);
+        updateUI(lang);
+        _applyTranslations();
+      });
+      return;
+    }
+
+    fetchTranslations(lang, function (err, data) {
+      if (err) {
+        console.warn('Language file not loaded for ' + lang + ':', err);
+        // Try Google Translate API directly if server endpoint also fails
+        fetchGoogleTranslateFallback(lang);
+        return;
+      }
+      _translations = data;
+      localStorage.setItem('appLanguage', lang);
+      updateUI(lang);
+      _applyTranslations();
+    });
+  }
+
+  /* ── Google Translate fallback via API ──────────────────── */
+  function fetchGoogleTranslateFallback(lang) {
+    fetch(_base + 'classes/Translation.php?lang=' + lang)
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        _translations = data;
+        localStorage.setItem('appLanguage', lang);
+        updateUI(lang);
+        _applyTranslations();
+      })
+      .catch(function (err) {
+        console.warn('Google Translate fallback failed for ' + lang + ':', err);
+        // Last resort: load English
+        if (lang !== 'en') {
+          loadLanguage('en');
+        }
+      });
+  }
+
+  /* ── Update UI indicators ──────────────────────────────── */
+  function updateUI(lang) {
+    var badge = document.getElementById('currentLang');
+    var info = LANGUAGES.find(function (l) { return l.code === lang; });
+    if (badge && info) {
+      badge.textContent = info.flag + ' ' + info.code.toUpperCase();
+    }
+    buildLangDropdown();
+  }
+
+  /* ── Expose globally ───────────────────────────────────── */
+  window.changeLanguage = loadLanguage;
+  window._getTranslation = function (key) { return _translations[key] || ''; };
+  window._translations = _translations;
+  Object.defineProperty(window, '_translations', {
+    get: function () { return _translations; },
+    set: function (v) { _translations = v; }
+  });
+
+  /* ── Re-apply translations on language change ─────────── */
+  var origLoad = loadLanguage;
+  window.changeLanguage = function (lang) {
+    origLoad(lang);
+    setTimeout(function () {
+      _applyTranslations();
+      window._translations = _translations;
+      document.dispatchEvent(new Event('languageChanged'));
+    }, 300);
+  };
+
+  /* ── Init on page load ─────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
-    const saved = localStorage.getItem('appLanguage') || 'en';
-    loadLanguage(saved);
+    var saved = localStorage.getItem('appLanguage') || 'en';
+    _currentLang = saved;
+    buildLangDropdown();
+    origLoad(saved);
   });
 })();
+</script>
 
+<script>
 (function () {
   'use strict';
 

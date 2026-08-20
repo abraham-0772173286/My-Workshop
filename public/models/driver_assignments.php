@@ -92,10 +92,10 @@ $activePage   = 'drivers_assignments';
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <h4 class="fw-bold mb-0" data-i18n="driversAssignments">Driver Assignments</h4>
-          <p class="text-muted small mb-0">Assign drivers to vehicles</p>
+          <p class="text-muted small mb-0" data-i18n="assignmentsSubtitle">Assign drivers to vehicles</p>
         </div>
         <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-          <li class="breadcrumb-item"><a href="../index.php" class="text-primary">Home</a></li>
+          <li class="breadcrumb-item"><a href="../index.php" class="text-primary" data-i18n="home">Home</a></li>
           <li class="breadcrumb-item active" data-i18n="driversAssignments">Driver Assignments</li>
         </ol>
       </div>
@@ -105,15 +105,15 @@ $activePage   = 'drivers_assignments';
       <div class="card border-0 shadow-sm" style="border-radius:16px;">
         <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
           <div class="d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0"><i class="bi bi-link-45deg me-2 text-primary"></i>Assignments Register</h5>
+            <h5 class="fw-bold mb-0"><i class="bi bi-link-45deg me-2 text-primary"></i><span data-i18n="assignmentsRegister">Assignments Register</span></h5>
             <div class="d-flex gap-2">
               <button class="btn btn-primary btn-sm" id="btnAdd">
-                <i class="fa fa-plus me-1"></i>New Assignment
+                <i class="fa fa-plus me-1"></i><span data-i18n="newAssignment">New Assignment</span>
               </button>
               <button class="btn btn-sm btn-light border" onclick="exportTable('print')"><i class="fa fa-print"></i></button>
               <div class="dropdown">
                 <button class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown">
-                  <i class="bi bi-download me-1"></i>Export
+                  <i class="bi bi-download me-1"></i><span data-i18n="export">Export</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
                   <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf')"><i class="fa fa-file-pdf text-danger me-2"></i>PDF</a></li>
@@ -131,12 +131,12 @@ $activePage   = 'drivers_assignments';
               <thead>
                 <tr>
                   <th style="width:30px;"></th>
-                  <th>Driver</th>
-                  <th>Vehicle</th>
-                  <th>Assigned Date</th>
-                  <th>Return Date</th>
-                  <th>Notes</th>
-                  <th class="text-center">Action</th>
+                  <th data-i18n="driver">Driver</th>
+                  <th data-i18n="vehicle">Vehicle</th>
+                  <th data-i18n="assignedDate">Assigned Date</th>
+                  <th data-i18n="returnDate">Return Date</th>
+                  <th data-i18n="notes">Notes</th>
+                  <th class="text-center" data-i18n="action">Action</th>
                 </tr>
               </thead>
             </table>
@@ -152,8 +152,8 @@ $activePage   = 'drivers_assignments';
       <div class="modal-content rounded-3">
         <div class="modal-header bg-primary text-white">
           <div>
-            <h5 class="modal-title fw-bold" id="entryModalTitle">New Assignment</h5>
-            <small class="opacity-75">Assign a driver to a vehicle</small>
+            <h5 class="modal-title fw-bold" id="entryModalTitle"><span data-i18n="newAssignment">New Assignment</span></h5>
+            <small class="opacity-75"><span data-i18n="assignmentModalSubtitle">Assign a driver to a vehicle</span></small>
           </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -162,34 +162,34 @@ $activePage   = 'drivers_assignments';
           <div class="modal-body p-4">
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Driver <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="driverLabel">Driver</span> <span class="text-danger">*</span></label>
                 <select class="form-select" name="driver_id" id="selectDriver" required>
-                  <option value="">— Select driver —</option>
+                  <option value="" data-i18n="selectDriverOption">— Select driver —</option>
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Vehicle <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="vehicleLabel2">Vehicle</span> <span class="text-danger">*</span></label>
                 <select class="form-select" name="vehicle_id" id="selectVehicle" required>
-                  <option value="">— Select vehicle —</option>
+                  <option value="" data-i18n="selectVehicleOption">— Select vehicle —</option>
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Assigned Date <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="assignedDateLabel">Assigned Date</span> <span class="text-danger">*</span></label>
                 <input class="form-control" type="date" name="assigned_date" id="inputAssignedDate" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Return Date</label>
+                <label class="form-label small fw-semibold"><span data-i18n="returnDateLabel">Return Date</span></label>
                 <input class="form-control" type="date" name="return_date" id="inputReturnDate">
               </div>
               <div class="col-12">
-                <label class="form-label small fw-semibold">Notes</label>
+                <label class="form-label small fw-semibold"><span data-i18n="notesLabel">Notes</span></label>
                 <textarea class="form-control" name="notes" id="inputNotes" rows="3" placeholder="Any additional notes..."></textarea>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary" id="btnSave"><i class="bi bi-save me-1"></i>Save Assignment</button>
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal"><span data-i18n="cancel">Cancel</span></button>
+            <button type="submit" class="btn btn-primary" id="btnSave"><i class="bi bi-save me-1"></i><span data-i18n="saveAssignment">Save Assignment</span></button>
           </div>
         </form>
       </div>
@@ -201,12 +201,12 @@ $activePage   = 'drivers_assignments';
     <div class="modal-dialog modal-sm modal-dialog-centered">
       <div class="modal-content border-top border-danger border-4">
         <div class="modal-header bg-white">
-          <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Are you sure?</h6>
+          <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i><span data-i18n="areYouSure">Are you sure?</span></h6>
         </div>
-        <div class="modal-body text-center py-4" id="confirmBody">This action cannot be undone.</div>
+        <div class="modal-body text-center py-4" id="confirmBody"><span data-i18n="actionCannotUndone">This action cannot be undone.</span></div>
         <div class="modal-footer border-0 justify-content-center pb-4">
-          <button class="btn btn-danger px-4 fw-bold" id="btnConfirm">YES, DELETE</button>
-          <button class="btn btn-light px-4" data-bs-dismiss="modal">CANCEL</button>
+          <button class="btn btn-danger px-4 fw-bold" id="btnConfirm"><span data-i18n="yesDelete">YES, DELETE</span></button>
+          <button class="btn btn-light px-4" data-bs-dismiss="modal"><span data-i18n="cancel">CANCEL</span></button>
         </div>
       </div>
     </div>
@@ -214,10 +214,10 @@ $activePage   = 'drivers_assignments';
 
   <footer class="app-footer">
     <div class="footer-content">
-      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| All Rights Reserved.</span></div>
+      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| <span data-i18n="allRightsReserved">All Rights Reserved.</span></span></div>
       <div class="order-1 order-md-2 text-center">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1">Think of it, We Develop it.</div>
-        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> AB Solutions</a>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1"><span data-i18n="tagline">Think of it, We Develop it.</span></div>
+        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> <span data-i18n="abSolutions">AB Solutions</span></a>
       </div>
       <div class="footer-contacts order-3">
         <a href="https://wa.me/256772173286" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>

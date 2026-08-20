@@ -74,10 +74,10 @@ $activePage   = 'drivers_performance';
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <h4 class="fw-bold mb-0" data-i18n="driversPerformance">Driver Performance</h4>
-          <p class="text-muted small mb-0">Analyze driver metrics and performance</p>
+          <p class="text-muted small mb-0" data-i18n="performanceSubtitle">Analyze driver metrics and performance</p>
         </div>
         <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-          <li class="breadcrumb-item"><a href="../index.php" class="text-primary">Home</a></li>
+          <li class="breadcrumb-item"><a href="../index.php" class="text-primary" data-i18n="home">Home</a></li>
           <li class="breadcrumb-item active" data-i18n="driversPerformance">Driver Performance</li>
         </ol>
       </div>
@@ -91,7 +91,7 @@ $activePage   = 'drivers_performance';
           <div class="card stat-card purple">
             <div class="text-center">
               <div class="stat-number" id="totalDrivers">0</div>
-              <p class="stat-label">Total Drivers</p>
+              <p class="stat-label" data-i18n="totalDrivers">Total Drivers</p>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@ $activePage   = 'drivers_performance';
           <div class="card stat-card green">
             <div class="text-center">
               <div class="stat-number" id="totalTrips">0</div>
-              <p class="stat-label">Total Trips</p>
+              <p class="stat-label" data-i18n="totalTrips">Total Trips</p>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@ $activePage   = 'drivers_performance';
           <div class="card stat-card blue">
             <div class="text-center">
               <div class="stat-number" id="totalDistance">0 km</div>
-              <p class="stat-label">Total Distance</p>
+              <p class="stat-label" data-i18n="totalDistance">Total Distance</p>
             </div>
           </div>
         </div>
@@ -115,7 +115,7 @@ $activePage   = 'drivers_performance';
           <div class="card stat-card orange">
             <div class="text-center">
               <div class="stat-number" id="totalFuelCost">UGX 0</div>
-              <p class="stat-label">Total Fuel Cost</p>
+              <p class="stat-label" data-i18n="totalFuelCost">Total Fuel Cost</p>
             </div>
           </div>
         </div>
@@ -126,7 +126,7 @@ $activePage   = 'drivers_performance';
         <div class="col-lg-12">
           <div class="card report-card">
             <div class="card-body">
-              <h6 class="card-title mb-3"><i class="bi bi-bar-chart me-2 text-primary"></i>Trips Per Driver</h6>
+              <h6 class="card-title mb-3"><i class="bi bi-bar-chart me-2 text-primary"></i><span data-i18n="tripsPerDriver">Trips Per Driver</span></h6>
               <div class="chart-container">
                 <canvas id="tripsChart"></canvas>
               </div>
@@ -139,7 +139,7 @@ $activePage   = 'drivers_performance';
       <div class="card border-0 shadow-sm" style="border-radius:16px;">
         <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
           <div class="d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0"><i class="bi bi-graph-up me-2 text-primary"></i>Driver Performance Details</h5>
+            <h5 class="fw-bold mb-0"><i class="bi bi-graph-up me-2 text-primary"></i><span data-i18n="performanceDetails">Driver Performance Details</span></h5>
             <button class="btn btn-sm btn-light border" id="btnRefresh"><i class="fa fa-sync"></i></button>
           </div>
         </div>
@@ -148,19 +148,19 @@ $activePage   = 'drivers_performance';
             <table class="table perf-table align-middle w-100" id="perfTable">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Driver</th>
-                  <th>Total Trips</th>
-                  <th>Total Distance (km)</th>
-                  <th>Total Fuel Cost (UGX)</th>
-                  <th>Avg Fuel/Trip</th>
-                  <th>Total Fare Earned (UGX)</th>
+                  <th data-i18n="number">#</th>
+                  <th data-i18n="driver">Driver</th>
+                  <th data-i18n="totalTrips">Total Trips</th>
+                  <th data-i18n="totalDistanceKm">Total Distance (km)</th>
+                  <th data-i18n="totalFuelCostUGX">Total Fuel Cost (UGX)</th>
+                  <th data-i18n="avgFuelTrip">Avg Fuel/Trip</th>
+                  <th data-i18n="totalFareEarnedUGX">Total Fare Earned (UGX)</th>
                 </tr>
               </thead>
               <tbody id="perfTableBody">
                 <tr>
                   <td colspan="7" class="text-center py-4">
-                    <div class="spinner-border spinner-border-sm me-2"></div>Loading performance data...
+                    <div class="spinner-border spinner-border-sm me-2"></div><span data-i18n="loadingPerformanceData">Loading performance data...</span>
                   </td>
                 </tr>
               </tbody>
@@ -174,10 +174,10 @@ $activePage   = 'drivers_performance';
 
   <footer class="app-footer">
     <div class="footer-content">
-      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| All Rights Reserved.</span></div>
+      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| <span data-i18n="allRightsReserved">All Rights Reserved.</span></span></div>
       <div class="order-1 order-md-2 text-center">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1">Think of it, We Develop it.</div>
-        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> AB Solutions</a>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1"><span data-i18n="tagline">Think of it, We Develop it.</span></div>
+        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> <span data-i18n="abSolutions">AB Solutions</span></a>
       </div>
       <div class="footer-contacts order-3">
         <a href="https://wa.me/256772173286" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>

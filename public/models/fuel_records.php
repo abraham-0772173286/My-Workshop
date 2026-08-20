@@ -94,10 +94,10 @@ $activePage   = 'drivers_fuel';
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <h4 class="fw-bold mb-0" data-i18n="driversFuel">Fuel Records</h4>
-          <p class="text-muted small mb-0">Track fuel purchases and consumption</p>
+          <p class="text-muted small mb-0" data-i18n="fuelSubtitle">Track fuel purchases and consumption</p>
         </div>
         <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-          <li class="breadcrumb-item"><a href="../index.php" class="text-primary">Home</a></li>
+          <li class="breadcrumb-item"><a href="../index.php" class="text-primary" data-i18n="home">Home</a></li>
           <li class="breadcrumb-item active" data-i18n="driversFuel">Fuel Records</li>
         </ol>
       </div>
@@ -107,15 +107,15 @@ $activePage   = 'drivers_fuel';
       <div class="card border-0 shadow-sm" style="border-radius:16px;">
         <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
           <div class="d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0"><i class="bi bi-fuel-pump me-2 text-primary"></i>Fuel Register</h5>
+            <h5 class="fw-bold mb-0"><i class="bi bi-fuel-pump me-2 text-primary"></i><span data-i18n="fuelRegister">Fuel Register</span></h5>
             <div class="d-flex gap-2">
               <button class="btn btn-primary btn-sm" id="btnAdd">
-                <i class="fa fa-plus me-1"></i>Add Fuel Record
+                <i class="fa fa-plus me-1"></i><span data-i18n="addFuelRecord">Add Fuel Record</span>
               </button>
               <button class="btn btn-sm btn-light border" onclick="exportTable('print')"><i class="fa fa-print"></i></button>
               <div class="dropdown">
                 <button class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown">
-                  <i class="bi bi-download me-1"></i>Export
+                  <i class="bi bi-download me-1"></i><span data-i18n="export">Export</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
                   <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf')"><i class="fa fa-file-pdf text-danger me-2"></i>PDF</a></li>
@@ -133,16 +133,16 @@ $activePage   = 'drivers_fuel';
               <thead>
                 <tr>
                   <th style="width:30px;"></th>
-                  <th>Driver</th>
-                  <th>Vehicle</th>
-                  <th>Date</th>
-                  <th>Liters</th>
-                  <th>Cost/Liter</th>
-                  <th>Total (UGX)</th>
-                  <th>Type</th>
-                  <th>Station</th>
-                  <th>Receipt No</th>
-                  <th class="text-center">Action</th>
+                  <th data-i18n="driver">Driver</th>
+                  <th data-i18n="vehicle">Vehicle</th>
+                  <th data-i18n="date">Date</th>
+                  <th data-i18n="liters">Liters</th>
+                  <th data-i18n="costPerLiter">Cost/Liter</th>
+                  <th data-i18n="totalUGX">Total (UGX)</th>
+                  <th data-i18n="type">Type</th>
+                  <th data-i18n="station">Station</th>
+                  <th data-i18n="receiptNo">Receipt No</th>
+                  <th class="text-center" data-i18n="action">Action</th>
                 </tr>
               </thead>
             </table>
@@ -158,8 +158,8 @@ $activePage   = 'drivers_fuel';
       <div class="modal-content rounded-3">
         <div class="modal-header bg-primary text-white">
           <div>
-            <h5 class="modal-title fw-bold" id="entryModalTitle">Add Fuel Record</h5>
-            <small class="opacity-75">Record fuel purchase details</small>
+            <h5 class="modal-title fw-bold" id="entryModalTitle"><span data-i18n="addFuelRecord">Add Fuel Record</span></h5>
+            <small class="opacity-75"><span data-i18n="fuelModalSubtitle">Record fuel purchase details</span></small>
           </div>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
@@ -168,51 +168,51 @@ $activePage   = 'drivers_fuel';
           <div class="modal-body p-4">
             <div class="row g-3">
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Driver <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="driverLabel">Driver</span> <span class="text-danger">*</span></label>
                 <select class="form-select" name="driver_id" id="selectDriver" required>
-                  <option value="">— Select driver —</option>
+                  <option value="" data-i18n="selectDriverOption">— Select driver —</option>
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Vehicle <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="vehicleLabel2">Vehicle</span> <span class="text-danger">*</span></label>
                 <select class="form-select" name="vehicle_id" id="selectVehicle" required>
-                  <option value="">— Select vehicle —</option>
+                  <option value="" data-i18n="selectVehicleOption">— Select vehicle —</option>
                 </select>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Fuel Date <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="fuelDate">Fuel Date</span> <span class="text-danger">*</span></label>
                 <input class="form-control" type="date" name="fuel_date" id="inputFuelDate" required>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Fuel Type <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="fuelType">Fuel Type</span> <span class="text-danger">*</span></label>
                 <select class="form-select" name="fuel_type" id="inputFuelType" required>
-                  <option value="DIESEL">DIESEL</option>
-                  <option value="PETROL">PETROL</option>
-                  <option value="OTHER">OTHER</option>
+                  <option value="DIESEL" data-i18n="diesel">DIESEL</option>
+                  <option value="PETROL" data-i18n="petrol">PETROL</option>
+                  <option value="OTHER" data-i18n="fuelOther">OTHER</option>
                 </select>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Liters <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="litersLabel">Liters</span> <span class="text-danger">*</span></label>
                 <input class="form-control" type="number" name="liters" id="inputLiters" step="0.1" min="0" placeholder="0" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Cost/Liter (UGX) <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="costPerLiterLabel">Cost/Liter (UGX)</span> <span class="text-danger">*</span></label>
                 <input class="form-control" type="number" name="cost_per_liter" id="inputCostPerLiter" step="1" min="0" placeholder="0" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Total Cost (UGX)</label>
+                <label class="form-label small fw-semibold"><span data-i18n="totalCostLabel2">Total Cost (UGX)</span></label>
                 <input class="form-control" type="number" name="total_cost" id="inputTotalCost" step="1" min="0" placeholder="Auto-calculated" readonly style="background:#f8fafc;">
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Station</label>
+                <label class="form-label small fw-semibold"><span data-i18n="stationLabel">Station</span></label>
                 <input class="form-control" type="text" name="station" id="inputStation" placeholder="e.g. Shell Total">
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold">Receipt No</label>
+                <label class="form-label small fw-semibold"><span data-i18n="receiptNoLabel">Receipt No</span></label>
                 <input class="form-control" type="text" name="receipt_no" id="inputReceiptNo" placeholder="Receipt reference">
               </div>
               <div class="col-12">
-                <label class="form-label small fw-semibold">Notes</label>
+                <label class="form-label small fw-semibold"><span data-i18n="notesLabel">Notes</span></label>
                 <textarea class="form-control" name="notes" id="inputNotes" rows="2" placeholder="Additional notes..."></textarea>
               </div>
             </div>

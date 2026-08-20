@@ -34,12 +34,12 @@ $workshopBase = workshop_base_path();
   <div class="app-content-header px-4 pt-3 pb-0">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h4 class="fw-bold mb-0"><i class="bi bi-people-fill me-2"></i>User Management</h4>
-        <p class="text-muted small mb-0">Manage system users, roles, and access permissions.</p>
+        <h4 class="fw-bold mb-0"><i class="bi bi-people-fill me-2"></i><span data-i18n="userManagement">User Management</span></h4>
+        <p class="text-muted small mb-0" data-i18n="manageUsersSubtitle">Manage system users, roles, and access permissions.</p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-        <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
-        <li class="breadcrumb-item active">User Management</li>
+        <li class="breadcrumb-item"><a href="../index.php" data-i18n="home">Home</a></li>
+        <li class="breadcrumb-item active" data-i18n="userManagement">User Management</li>
       </ol>
     </div>
   </div>
@@ -55,8 +55,8 @@ $workshopBase = workshop_base_path();
                 <i class="bi bi-shield-lock fs-2 text-danger"></i>
               </div>
               <div class="ms-3">
-                <h6 class="mb-0">Administrators</h6>
-                <p class="text-muted small mb-0">Full system access</p>
+                <h6 class="mb-0" data-i18n="administrators">Administrators</h6>
+                <p class="text-muted small mb-0" data-i18n="fullAccess">Full system access</p>
                 <span class="badge bg-danger" id="adminCount">0</span>
               </div>
             </div>
@@ -71,8 +71,8 @@ $workshopBase = workshop_base_path();
                 <i class="bi bi-person-badge fs-2 text-primary"></i>
               </div>
               <div class="ms-3">
-                <h6 class="mb-0">Owners</h6>
-                <p class="text-muted small mb-0">Business oversight</p>
+                <h6 class="mb-0" data-i18n="owners">Owners</h6>
+                <p class="text-muted small mb-0" data-i18n="businessOversight">Business oversight</p>
                 <span class="badge bg-primary" id="ownerCount">0</span>
               </div>
             </div>
@@ -87,8 +87,8 @@ $workshopBase = workshop_base_path();
                 <i class="bi bi-cash-stack fs-2 text-warning"></i>
               </div>
               <div class="ms-3">
-                <h6 class="mb-0">Cashiers</h6>
-                <p class="text-muted small mb-0">Daily operations</p>
+                <h6 class="mb-0" data-i18n="cashiers">Cashiers</h6>
+                <p class="text-muted small mb-0" data-i18n="dailyOperations">Daily operations</p>
                 <span class="badge bg-warning text-dark" id="cashierCount">0</span>
               </div>
             </div>
@@ -103,10 +103,10 @@ $workshopBase = workshop_base_path();
         <div class="card border-0 shadow-sm">
           <div class="card-header bg-white border-0 pb-0">
             <div class="d-flex justify-content-between align-items-center">
-              <h6 class="mb-0 fw-bold">System Users</h6>
+              <h6 class="mb-0 fw-bold" data-i18n="systemUsers">System Users</h6>
               <div>
                 <button class="btn btn-success btn-sm me-2" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                  <i class="bi bi-plus-circle me-1"></i>Add User
+                  <i class="bi bi-plus-circle me-1"></i><span data-i18n="addUser">Add User</span>
                 </button>
                 <button class="btn btn-outline-primary btn-sm" onclick="loadUsers()" title="Refresh">
                   <i class="bi bi-arrow-clockwise"></i>
@@ -119,17 +119,17 @@ $workshopBase = workshop_base_path();
               <table class="table table-hover" id="usersTable">
                 <thead>
                   <tr>
-                    <th>User</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Last Login</th>
-                    <th>Actions</th>
+                    <th data-i18n="user">User</th>
+                    <th data-i18n="role">Role</th>
+                    <th data-i18n="status">Status</th>
+                    <th data-i18n="lastLogin">Last Login</th>
+                    <th data-i18n="actions">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="usersTableBody">
                   <tr>
                     <td colspan="5" class="text-center py-4">
-                      <div class="spinner-border spinner-border-sm me-2"></div>Loading users...
+                      <div class="spinner-border spinner-border-sm me-2"></div><span data-i18n="loadingUsers">Loading users...</span>
                     </td>
                   </tr>
                 </tbody>
@@ -150,7 +150,7 @@ $workshopBase = workshop_base_path();
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="userManagementModalTitle">User Management</h5>
+        <h5 class="modal-title" id="userManagementModalTitle" data-i18n="userManagement">User Management</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body" id="userManagementModalBody">
@@ -166,47 +166,47 @@ $workshopBase = workshop_base_path();
     <div class="modal-content">
       <form id="lockUserForm">
         <div class="modal-header">
-          <h5 class="modal-title">Lock User Account</h5>
+          <h5 class="modal-title" data-i18n="lockUserTitle">Lock User Account</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="alert alert-warning">
             <i class="bi bi-exclamation-triangle me-2"></i>
-            You are about to lock user: <strong id="lockUserName"></strong>
+            <span data-i18n="aboutToLock">You are about to lock user:</span> <strong id="lockUserName"></strong>
           </div>
           <div class="mb-3">
-            <label for="lockReason" class="form-label">Reason for locking</label>
+            <label for="lockReason" class="form-label" data-i18n="reasonForLocking">Reason for locking</label>
             <select class="form-select" id="lockReason" name="reason" required>
-              <option value="">Select reason</option>
-              <option value="Security violation">Security violation</option>
-              <option value="Policy breach">Policy breach</option>
-              <option value="Suspicious activity">Suspicious activity</option>
-              <option value="Administrative action">Administrative action</option>
-              <option value="Other">Other</option>
+              <option value="" data-i18n="selectReason">Select reason</option>
+              <option value="Security violation" data-i18n="securityViolation">Security violation</option>
+              <option value="Policy breach" data-i18n="policyBreach">Policy breach</option>
+              <option value="Suspicious activity" data-i18n="suspiciousActivity">Suspicious activity</option>
+              <option value="Administrative action" data-i18n="administrativeAction">Administrative action</option>
+              <option value="Other" data-i18n="other">Other</option>
             </select>
           </div>
           <div class="mb-3" id="customReasonGroup" style="display: none;">
-            <label for="customReason" class="form-label">Custom Reason</label>
+            <label for="customReason" class="form-label" data-i18n="customReason">Custom Reason</label>
             <input type="text" class="form-control" id="customReason" name="custom_reason" 
                    placeholder="Enter custom reason">
           </div>
           <div class="mb-3">
-            <label for="lockDuration" class="form-label">Lock Duration</label>
+            <label for="lockDuration" class="form-label" data-i18n="lockDuration">Lock Duration</label>
             <select class="form-select" id="lockDuration" name="duration">
-              <option value="0">Permanent (until manually unlocked)</option>
-              <option value="15">15 minutes</option>
-              <option value="60">1 hour</option>
-              <option value="480">8 hours</option>
-              <option value="1440">24 hours</option>
-              <option value="10080">1 week</option>
+              <option value="0" data-i18n="permanent">Permanent (until manually unlocked)</option>
+              <option value="15" data-i18n="minutes15">15 minutes</option>
+              <option value="60" data-i18n="hour1">1 hour</option>
+              <option value="480" data-i18n="hours8">8 hours</option>
+              <option value="1440" data-i18n="hours24">24 hours</option>
+              <option value="10080" data-i18n="week1">1 week</option>
             </select>
           </div>
           <input type="hidden" id="lockUserId" name="user_id">
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><span data-i18n="cancel">Cancel</span></button>
           <button type="submit" class="btn btn-danger">
-            <i class="bi bi-lock me-1"></i>Lock User
+            <i class="bi bi-lock me-1"></i><span data-i18n="lockUserBtn">Lock User</span>
           </button>
         </div>
       </form>
@@ -220,31 +220,31 @@ $workshopBase = workshop_base_path();
     <div class="modal-content">
       <form id="resetPasswordForm">
         <div class="modal-header">
-          <h5 class="modal-title">Reset Password</h5>
+          <h5 class="modal-title" data-i18n="resetPasswordTitle">Reset Password</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="alert alert-info">
             <i class="bi bi-info-circle me-2"></i>
-            Resetting password for user: <strong id="resetPasswordUserName"></strong>
+            <span data-i18n="resettingPasswordFor">Resetting password for user:</span> <strong id="resetPasswordUserName"></strong>
           </div>
           <div class="mb-3">
-            <label for="newPassword" class="form-label">New Password</label>
-            <input type="password" class="form-control" id="newPassword" name="new_password" 
+            <label for="newPassword" class="form-label" data-i18n="newPassword">New Password</label>
+            <input type="password" class="form-control" id="newPassword" name="new_password"
                    required minlength="8" autocomplete="new-password">
-            <div class="form-text">Password must be at least 8 characters long.</div>
+            <div class="form-text" data-i18n="passwordMinLength">Password must be at least 8 characters long.</div>
           </div>
           <div class="mb-3">
-            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <label for="confirmPassword" class="form-label" data-i18n="confirmPassword">Confirm Password</label>
             <input type="password" class="form-control" id="confirmPassword" 
                    required minlength="8">
           </div>
           <input type="hidden" id="resetPasswordUserId" name="user_id">
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><span data-i18n="cancel">Cancel</span></button>
           <button type="submit" class="btn btn-primary">
-            <i class="bi bi-key me-1"></i>Reset Password
+            <i class="bi bi-key me-1"></i><span data-i18n="resetPasswordBtn">Reset Password</span>
           </button>
         </div>
       </form>
@@ -258,45 +258,45 @@ $workshopBase = workshop_base_path();
     <div class="modal-content">
       <form id="addUserForm">
         <div class="modal-header">
-          <h5 class="modal-title">Add New User</h5>
+          <h5 class="modal-title" data-i18n="addNewUserTitle">Add New User</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="addUsername" class="form-label">Username</label>
+            <label for="addUsername" class="form-label" data-i18n="username">Username</label>
             <input type="text" class="form-control" id="addUsername" name="username" 
                    required pattern="[a-zA-Z0-9_]+" 
                    title="Username can only contain letters, numbers, and underscores">
           </div>
           <div class="mb-3">
-            <label for="addFullName" class="form-label">Full Name</label>
+            <label for="addFullName" class="form-label" data-i18n="fullName">Full Name</label>
             <input type="text" class="form-control" id="addFullName" name="full_name" required>
           </div>
           <div class="mb-3">
-            <label for="addRole" class="form-label">Role</label>
+            <label for="addRole" class="form-label" data-i18n="role">Role</label>
             <select class="form-select" id="addRole" name="role" required>
-              <option value="">Select Role</option>
-              <option value="admin">Administrator - Full System Access</option>
-              <option value="owner">Owner - Business Oversight</option>
-              <option value="cashier">Cashier - Daily Operations</option>
+              <option value="" data-i18n="selectRole">Select Role</option>
+              <option value="admin" data-i18n="roleAdmin">Administrator - Full System Access</option>
+              <option value="owner" data-i18n="roleOwner">Owner - Business Oversight</option>
+              <option value="cashier" data-i18n="roleCashier">Cashier - Daily Operations</option>
             </select>
           </div>
           <div class="mb-3">
-            <label for="addPassword" class="form-label">Password</label>
+            <label for="addPassword" class="form-label" data-i18n="password">Password</label>
             <input type="password" class="form-control" id="addPassword" name="password" 
                    required minlength="8" autocomplete="new-password">
             <div class="form-text">Password must be at least 8 characters long.</div>
           </div>
           <div class="mb-3">
-            <label for="addConfirmPassword" class="form-label">Confirm Password</label>
+            <label for="addConfirmPassword" class="form-label" data-i18n="confirmPassword">Confirm Password</label>
             <input type="password" class="form-control" id="addConfirmPassword" 
                    required minlength="8">
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><span data-i18n="cancel">Cancel</span></button>
           <button type="submit" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i>Create User
+            <i class="bi bi-plus-circle me-1"></i><span data-i18n="createUserBtn">Create User</span>
           </button>
         </div>
       </form>

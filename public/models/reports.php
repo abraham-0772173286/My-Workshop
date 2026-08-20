@@ -237,14 +237,14 @@ $workshopBase = workshop_base_path();
     <!-- Reports Header -->
     <div class="reports-header text-center">
       <div class="container">
-        <h1 class="mb-3"><i class="bi bi-bar-chart-line me-3"></i>Reports</h1>
+        <h1 class="mb-3"><i class="bi bi-bar-chart-line me-3"></i><span data-i18n="reports">Reports</span></h1>
         
         <!-- Period Selection Tabs -->
         <div class="period-tabs">
-          <button class="period-tab active" data-period="today">Today</button>
-          <button class="period-tab" data-period="week">This Week</button>
-          <button class="period-tab" data-period="month">This Month</button>
-          <button class="period-tab" data-period="all">All Time</button>
+          <button class="period-tab active" data-period="today" data-i18n="today">Today</button>
+          <button class="period-tab" data-period="week" data-i18n="thisWeek">This Week</button>
+          <button class="period-tab" data-period="month" data-i18n="thisMonth">This Month</button>
+          <button class="period-tab" data-period="all" data-i18n="allTime">All Time</button>
         </div>
       </div>
     </div>
@@ -255,7 +255,7 @@ $workshopBase = workshop_base_path();
         <div class="card stat-card purple">
           <div class="text-center">
             <div class="stat-number" id="totalOrders">0</div>
-            <p class="stat-label">Total Jobs</p>
+            <p class="stat-label" data-i18n="totalJobs">Total Jobs</p>
           </div>
         </div>
       </div>
@@ -263,7 +263,7 @@ $workshopBase = workshop_base_path();
         <div class="card stat-card green">
           <div class="text-center">
             <div class="stat-number" id="totalRevenue">UGX 0</div>
-            <p class="stat-label">Total Revenue</p>
+            <p class="stat-label" data-i18n="totalRevenue">Total Revenue</p>
           </div>
         </div>
       </div>
@@ -271,7 +271,7 @@ $workshopBase = workshop_base_path();
         <div class="card stat-card blue">
           <div class="text-center">
             <div class="stat-number" id="avgOrderValue">UGX 0</div>
-            <p class="stat-label">Avg Order Value</p>
+            <p class="stat-label" data-i18n="avgOrderValue">Avg Order Value</p>
           </div>
         </div>
       </div>
@@ -279,7 +279,7 @@ $workshopBase = workshop_base_path();
         <div class="card stat-card red">
           <div class="text-center">
             <div class="stat-number" id="itemsSold">0</div>
-            <p class="stat-label">Parts Bought</p>
+            <p class="stat-label" data-i18n="partsBought">Parts Bought</p>
           </div>
         </div>
       </div>
@@ -290,7 +290,7 @@ $workshopBase = workshop_base_path();
       <div class="col-lg-8">
         <div class="card report-card">
           <div class="card-body">
-            <h6 class="card-title mb-3">Repairs This Week</h6>
+            <h6 class="card-title mb-3"><span data-i18n="repairsThisWeek">Repairs This Week</span></h6>
             <div class="chart-container">
               <canvas id="weekChart"></canvas>
             </div>
@@ -300,7 +300,7 @@ $workshopBase = workshop_base_path();
       <div class="col-lg-4">
         <div class="card report-card">
           <div class="card-body">
-            <h6 class="card-title mb-3">Sales by Category</h6>
+            <h6 class="card-title mb-3"><span data-i18n="salesByCategory">Sales by Category</span></h6>
             <div class="chart-container">
               <canvas id="categoryChart"></canvas>
             </div>
@@ -311,20 +311,20 @@ $workshopBase = workshop_base_path();
 
     <!-- Vehicles Worked On Table -->
     <div class="print-header">
-      <h2>SHENGCHI AUTO LTD</h2>
-      <h3>Workshop Vehicles Report</h3>
-      <p>Generated on: <?= date('F j, Y \a\t g:i A') ?> | Period: <span id="printPeriod">Today</span></p>
+      <h2 data-i18n="companyName">SHENGCHI AUTO LTD</h2>
+      <h3 data-i18n="workshopVehiclesReport">Workshop Vehicles Report</h3>
+      <p><span data-i18n="generatedOn">Generated on:</span> <?= date('F j, Y \a\t g:i A') ?> | <span data-i18n="period">Period:</span> <span id="printPeriod" data-i18n="today">Today</span></p>
     </div>
     
     <div class="table-container">
       <div class="table-header">
-        <h6 class="mb-0"><i class="bi bi-car-front me-2"></i>Top Vehicles Worked On</h6>
+        <h6 class="mb-0"><i class="bi bi-car-front me-2"></i><span data-i18n="topVehiclesWorkedOn">Top Vehicles Worked On</span></h6>
         <div class="d-flex gap-2 no-print">
           <button class="btn btn-export" onclick="exportData('vehicles')">
-            <i class="bi bi-download me-1"></i>Export Excel
+            <i class="bi bi-download me-1"></i><span data-i18n="exportExcel">Export Excel</span>
           </button>
           <button class="btn btn-print" onclick="printTable()">
-            <i class="bi bi-printer me-1"></i>Print
+            <i class="bi bi-printer me-1"></i><span data-i18n="print">Print</span>
           </button>
         </div>
       </div>
@@ -332,18 +332,18 @@ $workshopBase = workshop_base_path();
       <div class="p-3">
         <div class="d-flex justify-content-between align-items-center mb-3 no-print">
           <div>
-            <label for="entriesSelect" class="form-label me-2">Show</label>
+            <label for="entriesSelect" class="form-label me-2" data-i18n="show">Show</label>
             <select id="entriesSelect" class="form-select form-select-sm d-inline-block w-auto">
               <option value="10">10</option>
               <option value="25">25</option>
               <option value="50">50</option>
               <option value="100">100</option>
             </select>
-            <span class="ms-2">entries</span>
+            <span class="ms-2" data-i18n="entries">entries</span>
           </div>
           <div>
-            <label for="searchInput" class="form-label me-2">Search:</label>
-            <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block w-auto" placeholder="Search vehicles...">
+            <label for="searchInput" class="form-label me-2" data-i18n="searchColon">Search:</label>
+            <input type="text" id="searchInput" class="form-control form-control-sm d-inline-block w-auto" placeholder="Search vehicles..." data-i18n="searchVehicles">
           </div>
         </div>
         
@@ -352,18 +352,18 @@ $workshopBase = workshop_base_path();
             <thead>
               <tr>
                 <th><i class="bi bi-hash me-1"></i>#</th>
-                <th><i class="bi bi-car-front me-1"></i>Plate Number</th>
-                <th><i class="bi bi-truck me-1"></i>Model</th>
-                <th><i class="bi bi-person me-1"></i>Customer</th>
-                <th><i class="bi bi-wrench me-1"></i>Category</th>
-                <th><i class="bi bi-clipboard-check me-1"></i>Jobs Done</th>
-                <th><i class="bi bi-currency-exchange me-1"></i>Revenue (UGX)</th>
+                <th data-i18n="plateNumber">Plate Number</th>
+                <th data-i18n="model">Model</th>
+                <th data-i18n="customer">Customer</th>
+                <th data-i18n="category">Category</th>
+                <th data-i18n="jobsDone">Jobs Done</th>
+                <th data-i18n="revenueUGX">Revenue (UGX)</th>
               </tr>
             </thead>
             <tbody id="vehiclesTableBody">
               <tr>
                 <td colspan="7" class="text-center py-4">
-                  <div class="spinner-border spinner-border-sm me-2"></div>Loading vehicles data...
+                  <div class="spinner-border spinner-border-sm me-2"></div><span data-i18n="loadingVehiclesData">Loading vehicles data...</span>
                 </td>
               </tr>
             </tbody>

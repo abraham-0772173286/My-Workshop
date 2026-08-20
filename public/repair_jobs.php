@@ -160,8 +160,8 @@ $canExport = workshop_has_permission('export_data');
         <div class="col-sm-6 mb-0 mt-0"><h3 class="mb-0"></h3></div>
         <div class="col-sm-6 mt-0">
           <ol class="breadcrumb float-sm-end" style="--bs-breadcrumb-divider: '›';">
-            <li class="breadcrumb-item text-primary"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Repair Jobs</li>
+            <li class="breadcrumb-item text-primary"><a href="index.php" data-i18n="home">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page"><span data-i18n="repairJobs">Repair Jobs</span></li>
           </ol>
         </div>
       </div>
@@ -172,9 +172,9 @@ $canExport = workshop_has_permission('export_data');
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white py-3">
           <div class="d-flex justify-content-between align-items-center">
-            <h3 class="card-title fw-bold mb-0">Repair Jobs Register</h3>
+            <h3 class="card-title fw-bold mb-0"><span data-i18n="repairJobsRegister">Repair Jobs Register</span></h3>
             <button type="button" id="registerRepairJob" class="btn btn-primary btn-sm shadow-sm">
-              <i class="fa fa-plus me-2"></i>Register Repair Job
+              <i class="fa fa-plus me-2"></i><span data-i18n="registerRepairJob">Register Repair Job</span>
             </button>
           </div>
         </div>
@@ -183,16 +183,16 @@ $canExport = workshop_has_permission('export_data');
           <div id="toolbar" class="mb-4 pb-3 d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div class="d-flex flex-wrap gap-2 align-items-center">
               <div class="action-group d-flex gap-2">
-                <button class="btn btn-outline-success btn-sm edit"><i class="fa fa-edit me-1"></i>Edit</button>
-                <button class="btn btn-outline-warning btn-sm reset"><i class="fa fa-key me-1"></i>Password</button>
+                <button class="btn btn-outline-success btn-sm edit"><i class="fa fa-edit me-1"></i><span data-i18n="edit">Edit</span></button>
+                <button class="btn btn-outline-warning btn-sm reset"><i class="fa fa-key me-1"></i><span data-i18n="password">Password</span></button>
               </div>
               <div class="action-group d-flex gap-2">
-                <button class="btn btn-outline-info btn-sm unlockuser"><i class="fa fa-unlock me-1"></i>Unlock</button>
-                <button class="btn btn-outline-danger btn-sm lockuser"><i class="fa fa-lock me-1"></i>Lock</button>
+                <button class="btn btn-outline-info btn-sm unlockuser"><i class="fa fa-unlock me-1"></i><span data-i18n="unlock">Unlock</span></button>
+                <button class="btn btn-outline-danger btn-sm lockuser"><i class="fa fa-lock me-1"></i><span data-i18n="lock">Lock</span></button>
               </div>
               <div class="d-flex gap-2">
-                <button class="btn btn-outline-dark btn-sm assignrole"><i class="bi bi-shield-lock me-1"></i>Roles</button>
-                <button class="btn btn-outline-secondary btn-sm assignreports"><i class="bi bi-file-earmark-text me-1"></i>Reports</button>
+                <button class="btn btn-outline-dark btn-sm assignrole"><i class="bi bi-shield-lock me-1"></i><span data-i18n="roles">Roles</span></button>
+                <button class="btn btn-outline-secondary btn-sm assignreports"><i class="bi bi-file-earmark-text me-1"></i><span data-i18n="assignReports">Reports</span></button>
                 <button class="btn btn-outline-danger btn-sm deleteuser ms-2"><i class="fa fa-trash"></i></button>
               </div>
             </div>
@@ -200,12 +200,12 @@ $canExport = workshop_has_permission('export_data');
               <button class="btn btn-sm btn-light border" onclick="exportTable('print', table)"><i class="fa fa-print"></i></button>
               <div class="dropdown">
                 <button class="btn btn-sm btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-download me-1"></i> Export
+                  <i class="bi bi-download me-1"></i> <span data-i18n="export">Export</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
-                  <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf', table)"><i class="fa fa-file-pdf text-danger me-2"></i>PDF Document</a></li>
-                  <li><a class="dropdown-item small" href="#" onclick="exportTable('excel')"><i class="fa fa-file-excel text-success me-2"></i>Excel Spreadsheet</a></li>
-                  <li><a class="dropdown-item small" href="#" onclick="exportTable('csv', table)"><i class="fa fa-file-csv text-info me-2"></i>CSV File</a></li>
+                  <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf', table)"><i class="fa fa-file-pdf text-danger me-2"></i><span data-i18n="pdfDocument">PDF Document</span></a></li>
+                  <li><a class="dropdown-item small" href="#" onclick="exportTable('excel')"><i class="fa fa-file-excel text-success me-2"></i><span data-i18n="excelSpreadsheet">Excel Spreadsheet</span></a></li>
+                  <li><a class="dropdown-item small" href="#" onclick="exportTable('csv', table)"><i class="fa fa-file-csv text-info me-2"></i><span data-i18n="csvFile">CSV File</span></a></li>
                 </ul>
               </div>
             </div>
@@ -216,14 +216,14 @@ $canExport = workshop_has_permission('export_data');
               <thead>
                 <tr>
                   <th style="width:30px;"></th>
-                  <th>Job No.</th>
-                  <th>Customer</th>
-                  <th>Vehicle</th>
-                  <th>Repair Type</th>
-                  <th>Parts Cost</th>
-                  <th>Labour Cost</th>
-                  <th>Status</th>
-                  <th>Date</th>
+                  <th data-i18n="jobNo">Job No.</th>
+                  <th data-i18n="customer">Customer</th>
+                  <th data-i18n="vehicle">Vehicle</th>
+                  <th data-i18n="repairType">Repair Type</th>
+                  <th data-i18n="partsCost">Parts Cost</th>
+                  <th data-i18n="labourCost">Labour Cost</th>
+                  <th data-i18n="status">Status</th>
+                  <th data-i18n="date">Date</th>
                 </tr>
               </thead>
             </table>
@@ -237,26 +237,26 @@ $canExport = workshop_has_permission('export_data');
           <div class="modal-content rounded-3">
             <div class="modal-header bg-primary text-white">
               <div>
-                <h5 class="modal-title fw-bold" id="repairJobModalLabel">Register Repair Job</h5>
-                <small class="opacity-75">Customer, vehicle and repair details</small>
+                <h5 class="modal-title fw-bold" id="repairJobModalLabel"><span data-i18n="registerRepairJob">Register Repair Job</span></h5>
+                <small class="opacity-75"><span data-i18n="modalSubtitle">Customer, vehicle and repair details</span></small>
               </div>
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="repairJobForm">
               <div class="modal-body p-4">
                 <div class="row g-3">
-                  <div class="col-12"><h6 class="text-uppercase text-muted small fw-bold mb-0">Customer details</h6></div>
-                  <div class="col-md-6"><label class="form-label small fw-semibold">Customer name <span class="text-danger">*</span></label><input class="form-control" name="customer_name" required></div>
-                  <div class="col-md-6"><label class="form-label small fw-semibold">Phone / contact <span class="text-danger">*</span></label><input class="form-control" name="contact" required></div>
-                  <div class="col-12"><label class="form-label small fw-semibold">Address</label><input class="form-control" name="address"></div>
-                  <div class="col-12 pt-2"><h6 class="text-uppercase text-muted small fw-bold mb-0">Vehicle and repair</h6></div>
-                  <div class="col-md-6"><label class="form-label small fw-semibold">Plate number <span class="text-danger">*</span></label><input class="form-control text-uppercase" name="plate_number" placeholder="KDD 821T" required></div>
-                  <div class="col-md-6"><label class="form-label small fw-semibold">Vehicle make / model</label><input class="form-control" name="model" placeholder="Toyota Prado"></div>
-                  <div class="col-12"><label class="form-label small fw-semibold">Repair type <span class="text-danger">*</span></label><input class="form-control" name="repair_type" placeholder="e.g. Brake pads replacement" required></div>
-                  <div class="col-md-4"><label class="form-label small fw-semibold">Parts cost (UGX) <span class="text-danger">*</span></label><input class="form-control" type="number" name="parts_cost" min="0" step="0.01" value="0" required></div>
-                  <div class="col-md-4"><label class="form-label small fw-semibold">Labour cost (UGX) <span class="text-danger">*</span></label><input class="form-control" type="number" name="labour_cost" min="0" step="0.01" value="0" required></div>
+                  <div class="col-12"><h6 class="text-uppercase text-muted small fw-bold mb-0"><span data-i18n="customerDetails">Customer details</span></h6></div>
+                  <div class="col-md-6"><label class="form-label small fw-semibold"><span data-i18n="customerName">Customer name</span> <span class="text-danger">*</span></label><input class="form-control" name="customer_name" required></div>
+                  <div class="col-md-6"><label class="form-label small fw-semibold"><span data-i18n="phoneContact">Phone / contact</span> <span class="text-danger">*</span></label><input class="form-control" name="contact" required></div>
+                  <div class="col-12"><label class="form-label small fw-semibold"><span data-i18n="address">Address</span></label><input class="form-control" name="address"></div>
+                  <div class="col-12 pt-2"><h6 class="text-uppercase text-muted small fw-bold mb-0"><span data-i18n="vehicleAndRepair">Vehicle and repair</span></h6></div>
+                  <div class="col-md-6"><label class="form-label small fw-semibold"><span data-i18n="plateNumber">Plate number</span> <span class="text-danger">*</span></label><input class="form-control text-uppercase" name="plate_number" placeholder="KDD 821T" required></div>
+                  <div class="col-md-6"><label class="form-label small fw-semibold"><span data-i18n="vehicleMakeModel">Vehicle make / model</span></label><input class="form-control" name="model" placeholder="Toyota Prado"></div>
+                  <div class="col-12"><label class="form-label small fw-semibold"><span data-i18n="repairTypeLabel">Repair type</span> <span class="text-danger">*</span></label><input class="form-control" name="repair_type" placeholder="e.g. Brake pads replacement" required></div>
+                  <div class="col-md-4"><label class="form-label small fw-semibold"><span data-i18n="partsCostLabel">Parts cost (UGX)</span> <span class="text-danger">*</span></label><input class="form-control" type="number" name="parts_cost" min="0" step="0.01" value="0" required></div>
+                  <div class="col-md-4"><label class="form-label small fw-semibold"><span data-i18n="labourCostLabel">Labour cost (UGX)</span> <span class="text-danger">*</span></label><input class="form-control" type="number" name="labour_cost" min="0" step="0.01" value="0" required></div>
                   <div class="col-md-4">
-                    <label class="form-label small fw-semibold">Repair status <span class="text-danger">*</span></label>
+                    <label class="form-label small fw-semibold"><span data-i18n="repairStatusLabel">Repair status</span> <span class="text-danger">*</span></label>
                     <select class="form-select" name="status" required>
                       <option value="REPAIR PENDING">REPAIR PENDING</option>
                       <option value="REPAIR DONE">REPAIR DONE</option>
@@ -265,8 +265,8 @@ $canExport = workshop_has_permission('export_data');
                 </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-primary" id="saveRepairJob"><i class="bi bi-save me-1"></i>Save Repair Job</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal"><span data-i18n="cancel">Cancel</span></button>
+                <button type="submit" class="btn btn-primary" id="saveRepairJob"><i class="bi bi-save me-1"></i><span data-i18n="saveRepairJob">Save Repair Job</span></button>
               </div>
             </form>
           </div>
@@ -278,12 +278,12 @@ $canExport = workshop_has_permission('export_data');
         <div class="modal-dialog modal-sm modal-dialog-centered">
           <div class="modal-content border-top border-danger border-4">
             <div class="modal-header bg-white">
-              <h5 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Are you sure?</h5>
+              <h5 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i><span data-i18n="areYouSure">Are you sure?</span></h5>
             </div>
             <div class="modal-body py-4 text-center"><div id="delete_content" class="fs-6"></div></div>
             <div class="modal-footer border-0 justify-content-center pb-4">
-              <button type="button" class="btn btn-danger px-4 fw-bold" id="confirm">YES, CONTINUE</button>
-              <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">NO</button>
+              <button type="button" class="btn btn-danger px-4 fw-bold" id="confirm"><span data-i18n="yesContinue">YES, CONTINUE</span></button>
+              <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal"><span data-i18n="no">NO</span></button>
             </div>
           </div>
         </div>

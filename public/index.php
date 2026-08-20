@@ -127,10 +127,10 @@ $workshopBase = workshop_base_path();
     <div class="d-flex justify-content-between align-items-center">
       <div>
         <h4 class="fw-bold mb-0" data-i18n="dashboard">Dashboard</h4>
-        <p class="text-muted small mb-0">Welcome back, <?= htmlspecialchars($workshopUser['name'], ENT_QUOTES) ?> — here's what's happening today.</p>
+        <p class="text-muted small mb-0"><span data-i18n="welcomeBack">Welcome back</span>, <?= htmlspecialchars($workshopUser['name'], ENT_QUOTES) ?> — <span data-i18n="dashboardWelcome">here's what's happening today.</span></p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-        <li class="breadcrumb-item active">Home</li>
+        <li class="breadcrumb-item active" data-i18n="home">Home</li>
       </ol>
     </div>
   </div>
@@ -150,7 +150,7 @@ $workshopBase = workshop_base_path();
       <div class="col-12 col-lg-8">
         <div class="card dash-card h-100">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h6><i class="bi bi-bar-chart-line me-2 text-primary"></i>Revenue — Last 6 Months</h6>
+            <h6><i class="bi bi-bar-chart-line me-2 text-primary"></i><span data-i18n="revenueLast6Months">Revenue — Last 6 Months</span></h6>
             <span class="badge bg-light text-muted small fw-normal" id="chartSubtitle">UGX</span>
           </div>
           <div class="card-body p-3"><canvas id="revenueChart" height="110"></canvas></div>
@@ -159,7 +159,7 @@ $workshopBase = workshop_base_path();
       <div class="col-12 col-lg-4">
         <div class="card dash-card h-100">
           <div class="card-header">
-            <h6><i class="bi bi-pie-chart me-2 text-primary"></i>Repair Types</h6>
+            <h6><i class="bi bi-pie-chart me-2 text-primary"></i><span data-i18n="repairTypesChart">Repair Types</span></h6>
           </div>
           <div class="card-body p-3 d-flex align-items-center justify-content-center">
             <canvas id="typesChart" height="190"></canvas>
@@ -174,15 +174,15 @@ $workshopBase = workshop_base_path();
       <div class="col-12 col-xl-7">
         <div class="card dash-card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h6><i class="bi bi-clock-history me-2 text-primary"></i>Recent Repair Jobs</h6>
-            <a href="repair_jobs.php" class="btn btn-sm btn-outline-secondary" style="font-size:.75rem;">View all</a>
+            <h6><i class="bi bi-clock-history me-2 text-primary"></i><span data-i18n="recentRepairJobs">Recent Repair Jobs</span></h6>
+            <a href="repair_jobs.php" class="btn btn-sm btn-outline-secondary" style="font-size:.75rem;" data-i18n="viewAll">View all</a>
           </div>
           <div class="card-body p-0">
             <div class="table-responsive">
               <table class="table dash-table mb-0" id="recentTable">
                 <thead><tr>
-                  <th>Job No.</th><th>Customer</th><th>Vehicle</th>
-                  <th>Total (UGX)</th><th>Status</th><th>Date</th>
+                  <th data-i18n="jobNo">Job No.</th><th data-i18n="customer">Customer</th><th data-i18n="vehicle">Vehicle</th>
+                  <th data-i18n="totalUGX">Total (UGX)</th><th data-i18n="status">Status</th><th data-i18n="date">Date</th>
                 </tr></thead>
                 <tbody id="recentBody"><tr><td colspan="6" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading…</td></tr></tbody>
               </table>
@@ -195,13 +195,13 @@ $workshopBase = workshop_base_path();
       <div class="col-12 col-xl-5">
         <div class="card dash-card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h6><i class="bi bi-exclamation-circle me-2 text-warning"></i>Pending Jobs</h6>
+            <h6><i class="bi bi-exclamation-circle me-2 text-warning"></i><span data-i18n="pendingJobs">Pending Jobs</span></h6>
             <span class="badge bg-warning text-dark" id="pendingBadge">—</span>
           </div>
           <div class="card-body p-0">
             <div class="table-responsive" style="max-height:340px;overflow-y:auto;">
               <table class="table dash-table mb-0">
-                <thead><tr><th>Job No.</th><th>Customer</th><th>Plate</th><th>Amount</th></tr></thead>
+                <thead><tr><th data-i18n="jobNo">Job No.</th><th data-i18n="customer">Customer</th><th data-i18n="plate">Plate</th><th data-i18n="amount">Amount</th></tr></thead>
                 <tbody id="pendingBody"><tr><td colspan="4" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading…</td></tr></tbody>
               </table>
             </div>
@@ -234,29 +234,37 @@ $workshopBase = workshop_base_path();
 const API = '../classes/Dashboard.php';
 const fmt = n => 'UGX ' + Number(n).toLocaleString('en-UG', {minimumFractionDigits:0, maximumFractionDigits:0});
 
+function t(key, fallback) {
+  if (typeof window._getTranslation === 'function') return window._getTranslation(key) || fallback || key;
+  if (typeof _translations !== 'undefined' && _translations[key]) return _translations[key];
+  return fallback || key;
+}
+
 // ── KPI cards ────────────────────────────────────────────────────────────────
 function loadStats() {
   $.getJSON(API + '?f=stats', function(s) {
     const cards = [
-      { label:'Total Jobs',       val: s.total_jobs,        sub: s.jobs_this_month + ' this month',          icon:'bi-clipboard2-check', cls:'kpi-blue'  },
-      { label:'Revenue Earned',   val: fmt(s.total_revenue), sub: fmt(s.revenue_this_month) + ' this month', icon:'bi-cash-coin',        cls:'kpi-green' },
-      { label:'Pending Repairs',  val: s.pending_jobs,      sub: 'awaiting completion',                      icon:'bi-hourglass-split',  cls:'kpi-amber' },
-      { label:'Completed Jobs',   val: s.done_jobs,         sub: 'repairs done',                             icon:'bi-check-circle',     cls:'kpi-sky'   },
-      { label:'Customers',        val: s.total_customers,   sub: 'registered owners',                        icon:'bi-people',           cls:'kpi-violet'},
-      { label:'Vehicles',         val: s.total_vehicles,    sub: 'on record',                                icon:'bi-car-front',        cls:'kpi-red'   },
+      { labelKey:'totalJobs',     fallback:'Total Jobs',       val: s.total_jobs,        subKey:'thisMonth',          subFallback:'this month',          icon:'bi-clipboard2-check', cls:'kpi-blue'  },
+      { labelKey:'revenueEarned', fallback:'Revenue Earned',   val: fmt(s.total_revenue), subVal: fmt(s.revenue_this_month), subKey:'thisMonth', subFallback:'this month', icon:'bi-cash-coin', cls:'kpi-green' },
+      { labelKey:'pendingRepairs',fallback:'Pending Repairs',  val: s.pending_jobs,      subKey:'awaitingCompletion', subFallback:'awaiting completion',  icon:'bi-hourglass-split',  cls:'kpi-amber' },
+      { labelKey:'completedJobs', fallback:'Completed Jobs',   val: s.done_jobs,         subKey:'repairsDone',        subFallback:'repairs done',         icon:'bi-check-circle',     cls:'kpi-sky'   },
+      { labelKey:'customers',     fallback:'Customers',        val: s.total_customers,   subKey:'registeredOwners',   subFallback:'registered owners',    icon:'bi-people',           cls:'kpi-violet'},
+      { labelKey:'vehicles',      fallback:'Vehicles',         val: s.total_vehicles,    subKey:'onRecord',           subFallback:'on record',            icon:'bi-car-front',        cls:'kpi-red'   },
     ];
     let html = '';
     cards.forEach(c => {
-      html += `<div class="col-12 col-sm-6 col-xl-4">
-        <div class="kpi-card ${c.cls}">
-          <div class="kpi-icon"><i class="bi ${c.icon}"></i></div>
-          <div>
-            <div class="kpi-val">${c.val}</div>
-            <div class="kpi-label">${c.label}</div>
-            <div class="kpi-sub text-muted">${c.sub}</div>
-          </div>
-        </div>
-      </div>`;
+      var label = t(c.labelKey, c.fallback);
+      var sub = c.subVal ? c.subVal + ' ' + t(c.subKey, c.subFallback) : t(c.subKey, c.subFallback);
+      html += '<div class="col-12 col-sm-6 col-xl-4">' +
+        '<div class="kpi-card ' + c.cls + '">' +
+          '<div class="kpi-icon"><i class="bi ' + c.icon + '"></i></div>' +
+          '<div>' +
+            '<div class="kpi-val">' + c.val + '</div>' +
+            '<div class="kpi-label">' + label + '</div>' +
+            '<div class="kpi-sub text-muted">' + sub + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
     });
     $('#kpiRow').html(html);
   }).fail(() => toastr.error('Could not load stats.'));
@@ -277,7 +285,7 @@ function loadRevenueChart() {
         labels,
         datasets: [
           {
-            label: 'Revenue (UGX)',
+            label: t('revenueUGX', 'Revenue (UGX)'),
             data: revenue,
             backgroundColor: 'rgba(99,102,241,.15)',
             borderColor: '#6366f1',
@@ -286,7 +294,7 @@ function loadRevenueChart() {
             yAxisID: 'y',
           },
           {
-            label: 'Jobs',
+            label: t('jobs', 'Jobs'),
             data: jobs,
             type: 'line',
             borderColor: '#14b8a6',
@@ -318,10 +326,10 @@ function loadRevenueChart() {
       }
     });
     const total = revenue.reduce((a,b) => a+b, 0);
-    $('#chartSubtitle').text('Total: UGX ' + total.toLocaleString());
+    $('#chartSubtitle').text(t('total', 'Total') + ': UGX ' + total.toLocaleString());
   }).fail(() => {
     toastr.error('Could not load revenue chart.');
-    $('#chartSubtitle').text('Failed to load');
+    $('#chartSubtitle').text(t('failedToLoad', 'Failed to load'));
   });
 }
 
@@ -329,7 +337,7 @@ function loadRevenueChart() {
 let typesChart = null;
 function loadTypesChart() {
   $.getJSON(API + '?f=repair_types', function(rows) {
-    if (!rows.length) { $('#typesChart').closest('.card-body').html('<p class="text-muted text-center py-4 small">No data yet.</p>'); return; }
+    if (!rows.length) { $('#typesChart').closest('.card-body').html('<p class="text-muted text-center py-4 small">' + t('noDataYet', 'No data yet.') + '</p>'); return; }
     const palette = ['#6366f1','#14b8a6','#f59e0b','#f97316','#10b981','#7c3aed','#ff7f50','#0ea5e9'];
     if (typesChart) typesChart.destroy();
     typesChart = new Chart(document.getElementById('typesChart'), {
@@ -354,12 +362,12 @@ function loadTypesChart() {
 // ── Recent jobs table ─────────────────────────────────────────────────────────
 function loadRecentJobs() {
   $.getJSON(API + '?f=recent_jobs', function(rows) {
-    if (!rows.length) { $('#recentBody').html('<tr><td colspan="6" class="text-center py-4 text-muted">No jobs recorded yet.</td></tr>'); return; }
+    if (!rows.length) { $('#recentBody').html('<tr><td colspan="6" class="text-center py-4 text-muted">' + t('noJobsYet', 'No jobs recorded yet.') + '</td></tr>'); return; }
     let html = '';
     rows.forEach(r => {
       const pill = r.status === 'REPAIR DONE'
-        ? '<span class="pill pill-done">Done</span>'
-        : '<span class="pill pill-pending">Pending</span>';
+        ? '<span class="pill pill-done">' + t('done', 'Done') + '</span>'
+        : '<span class="pill pill-pending">' + t('pending', 'Pending') + '</span>';
       html += `<tr>
         <td><code class="fw-bold text-primary">${r.job_no}</code></td>
         <td class="fw-semibold">${r.customer}</td>
@@ -370,14 +378,14 @@ function loadRecentJobs() {
       </tr>`;
     });
     $('#recentBody').html(html);
-  }).fail(() => $('#recentBody').html('<tr><td colspan="6" class="text-center text-danger py-3">Failed to load.</td></tr>'));
+  }).fail(() => $('#recentBody').html('<tr><td colspan="6" class="text-center text-danger py-3">' + t('failedToLoad', 'Failed to load.') + '</td></tr>'));
 }
 
 // ── Pending jobs table ────────────────────────────────────────────────────────
 function loadPendingJobs() {
   $.getJSON(API + '?f=pending_jobs', function(rows) {
     $('#pendingBadge').text(rows.length);
-    if (!rows.length) { $('#pendingBody').html('<tr><td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-check2-circle text-success me-1"></i>All clear!</td></tr>'); return; }
+    if (!rows.length) { $('#pendingBody').html('<tr><td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-check2-circle text-success me-1"></i>' + t('allClear', 'All clear!') + '</td></tr>'); return; }
     let html = '';
     rows.forEach(r => {
       html += `<tr>
@@ -391,7 +399,7 @@ function loadPendingJobs() {
       </tr>`;
     });
     $('#pendingBody').html(html);
-  }).fail(() => $('#pendingBody').html('<tr><td colspan="4" class="text-center text-danger py-3">Failed to load.</td></tr>'));
+  }).fail(() => $('#pendingBody').html('<tr><td colspan="4" class="text-center text-danger py-3">' + t('failedToLoad', 'Failed to load.') + '</td></tr>'));
 }
 
 $(document).ready(function() {

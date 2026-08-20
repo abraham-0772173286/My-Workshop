@@ -755,40 +755,40 @@ workshop_redirect_if_logged_in();
             <div class="brand"><span class="brand-mark"><i class="bi bi-wrench-adjustable"></i></span><span>SHENG CHI GARAGE<small>盛驰汽修 · WORKSHOP OPERATIONS</small></span></div>
             <div class="d-flex gap-2">
                 <button class="btn-access btn-role-admin" onclick="toggleDrawer('admin')" title="Full system access - All permissions">
-                    <i class="bi bi-shield-lock me-1"></i>ADMIN
+                    <i class="bi bi-shield-lock me-1"></i><span data-landing-i18n="adminBtn">ADMIN</span>
                 </button>
                 <button class="btn-access btn-role-owner" onclick="toggleDrawer('owner')" title="Business owner dashboard - Financial oversight">
-                    <i class="bi bi-person-badge me-1"></i>OWNER
+                    <i class="bi bi-person-badge me-1"></i><span data-landing-i18n="ownerBtn">OWNER</span>
                 </button>
                 <button class="btn-access btn-role-cashier" onclick="toggleDrawer('cashier')" title="Cashier operations - Daily transactions">
-                    <i class="bi bi-cash-stack me-1"></i>CASHIER
+                    <i class="bi bi-cash-stack me-1"></i><span data-landing-i18n="cashierBtn">CASHIER</span>
                 </button>
             </div>
         </header>
         <section class="hero-copy">
-            <div class="eyebrow animate__animated animate__fadeInDown">REPAIR JOBS · PAYMENTS · RECEIPTS</div>
-            <h1 class="hero-title animate__animated animate__fadeInLeft">BUILT FOR THE<br><span>BUSY WORKSHOP.</span></h1>
+            <div class="eyebrow animate__animated animate__fadeInDown" data-landing-i18n="eyebrow">REPAIR JOBS · PAYMENTS · RECEIPTS</div>
+            <h1 class="hero-title animate__animated animate__fadeInLeft"><span data-landing-i18n="heroLine1">BUILT FOR THE</span><br><span data-landing-i18n="heroLine2">BUSY WORKSHOP.</span></h1>
             
-            <p class="hero-text">A comprehensive workshop management system with role-based access control. Administrators have full system access, owners can oversee all operations and finances, while cashiers focus on daily transactions and customer service.</p>
+            <p class="hero-text" data-landing-i18n="heroDesc">A comprehensive workshop management system with role-based access control. Administrators have full system access, owners can oversee all operations and finances, while cashiers focus on daily transactions and customer service.</p>
             
             <div class="service-tags animate__animated animate__fadeInUp">
-                <span class="service-tag"><i class="bi bi-car-front-fill"></i>Vehicle records</span>
-                <span class="service-tag"><i class="bi bi-clipboard2-check"></i>Repair jobs</span>
-                <span class="service-tag"><i class="bi bi-cash-stack"></i>Payments</span>
-                <span class="service-tag"><i class="bi bi-receipt"></i>Receipts</span>
-                <span class="service-tag"><i class="bi bi-shield-check"></i>Role-based access</span>
+                <span class="service-tag"><i class="bi bi-car-front-fill"></i><span data-landing-i18n="vehicleRecords">Vehicle records</span></span>
+                <span class="service-tag"><i class="bi bi-clipboard2-check"></i><span data-landing-i18n="repairJobs">Repair jobs</span></span>
+                <span class="service-tag"><i class="bi bi-cash-stack"></i><span data-landing-i18n="payments">Payments</span></span>
+                <span class="service-tag"><i class="bi bi-receipt"></i><span data-landing-i18n="receipts">Receipts</span></span>
+                <span class="service-tag"><i class="bi bi-shield-check"></i><span data-landing-i18n="roleBased">Role-based access</span></span>
             </div>
         </section>
         <footer class="dock animate__animated animate__fadeInUp">
-            <div><strong><span class="status-dot"></span>Workshop system online</strong><small>Secure access for the owner and cashier</small></div><small>© <?= date('Y') ?> Jin Long Garage. All rights reserved.</small>
+            <div><strong><span class="status-dot"></span><span data-landing-i18n="systemOnline">Workshop system online</span></strong><small data-landing-i18n="secureAccess">Secure access for the owner and cashier</small></div><small>© <?= date('Y') ?> Jin Long Garage. <span data-landing-i18n="allRights">All rights reserved.</span></small>
         </footer>
     </main>
         <aside class="login-drawer" id="loginDrawer">
         <div class="d-flex justify-content-between align-items-start mb-5">
             <div>
-                <div class="eyebrow" style="font-size:9px" id="roleLabel">STAFF PORTAL</div>
-                <h4 class="fw-bold mt-2 mb-0">Welcome back</h4>
-                <small style="color:#9db0c5" id="roleDescription">Sign in to access workshop operations.</small>
+                <div class="eyebrow" style="font-size:9px" id="roleLabel" data-landing-i18n="staffPortal">STAFF PORTAL</div>
+                <h4 class="fw-bold mt-2 mb-0" data-landing-i18n="welcomeBack">Welcome back</h4>
+                <small style="color:#9db0c5" id="roleDescription" data-landing-i18n="signInDesc">Sign in to access workshop operations.</small>
             </div>
             <!-- Cancel button (top-right) closes the login popup.
                  It calls toggleDrawer() with NO argument, which removes
@@ -800,28 +800,134 @@ workshop_redirect_if_logged_in();
         <form id="loginform">
             <div class="form-group">
                 <input type="text" name="username" id="username" required placeholder=" " autocomplete="username">
-                <label for="username">Username</label>
+                <label for="username" data-landing-i18n="username">Username</label>
             </div>
             <div class="form-group">
                 <input type="password" name="password" id="password" required placeholder=" " autocomplete="current-password">
-                <label for="password">Password</label>
+                <label for="password" data-landing-i18n="password">Password</label>
                 <i class="bi bi-eye toggle-pass" id="togglePassword" onclick="togglePassword()"></i>
             </div>
-            <button class="btn-login w-100" type="submit">LOGIN TO SYSTEM <i class="bi bi-arrow-right ms-1"></i></button>
+            <button class="btn-login w-100" type="submit"><span data-landing-i18n="loginBtn">LOGIN TO SYSTEM</span> <i class="bi bi-arrow-right ms-1"></i></button>
             <div class="security-note">
-                <i class="bi bi-shield-check me-1"></i> Your session is secure and protected
+                <i class="bi bi-shield-check me-1"></i> <span data-landing-i18n="secureSession">Your session is secure and protected</span>
             </div>
             <input name="deviceId" type="hidden" id="deviceId">
             <input name="selectedRole" type="hidden" id="selectedRole">
             <div class="text-center mt-4">
                 <a href="#" class="small text-decoration-none" style="color:#c2d4e6" onclick="showForgotPassword()">
-                    Forgot password?
+                    <span data-landing-i18n="forgotPassword">Forgot password?</span>
                 </a>
             </div>
         </form>
     </aside>
+    <!-- Language Switcher (Landing) -->
+    <div style="position:fixed;top:18px;right:18px;z-index:1100;">
+      <div class="dropdown">
+        <button class="btn btn-link dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" style="text-decoration:none;color:#d5e0ec;font-size:13px;font-weight:600;">
+          <i class="bi bi-globe me-1"></i><span id="landingLangLabel">EN</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" id="landingLangDropdown" style="max-height:320px;overflow-y:auto;min-width:170px;background:rgba(10,25,45,.85);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);">
+        </ul>
+      </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+    /* ── Landing Page Translation System ─────────────────── */
+    (function() {
+      'use strict';
+      var LANGUAGES = [
+        { code: 'en', name: 'English',    native: 'English',    flag: '🇺🇸' },
+        { code: 'zh', name: 'Chinese',    native: '中文',       flag: '🇨🇳' },
+        { code: 'es', name: 'Spanish',    native: 'Español',    flag: '🇪🇸' },
+        { code: 'fr', name: 'French',     native: 'Français',   flag: '🇫🇷' },
+        { code: 'ar', name: 'Arabic',     native: 'العربية',    flag: '🇸🇦' },
+        { code: 'de', name: 'German',     native: 'Deutsch',    flag: '🇩🇪' },
+        { code: 'pt', name: 'Portuguese', native: 'Português',  flag: '🇧🇷' },
+        { code: 'ja', name: 'Japanese',   native: '日本語',     flag: '🇯🇵' },
+        { code: 'ko', name: 'Korean',     native: '한국어',     flag: '🇰🇷' },
+        { code: 'hi', name: 'Hindi',      native: 'हिन्दी',     flag: '🇮🇳' },
+        { code: 'sw', name: 'Swahili',    native: 'Kiswahili',  flag: '🇰🇪' },
+        { code: 'ru', name: 'Russian',    native: 'Русский',    flag: '🇷🇺' },
+        { code: 'tr', name: 'Turkish',    native: 'Türkçe',     flag: '🇹🇷' },
+        { code: 'id', name: 'Indonesian', native: 'Bahasa',     flag: '🇮🇩' },
+        { code: 'th', name: 'Thai',       native: 'ไทย',        flag: '🇹🇭' },
+        { code: 'vi', name: 'Vietnamese', native: 'Tiếng Việt', flag: '🇻🇳' },
+        { code: 'it', name: 'Italian',    native: 'Italiano',   flag: '🇮🇹' },
+        { code: 'nl', name: 'Dutch',      native: 'Nederlands', flag: '🇳🇱' },
+        { code: 'pl', name: 'Polish',     native: 'Polski',     flag: '🇵🇱' },
+        { code: 'sv', name: 'Swedish',    native: 'Svenska',    flag: '🇸🇪' }
+      ];
+
+      var _translations = {};
+      var _base = '/workshop/';
+      var LANG_KEYS = {
+        eyebrow: 'landingEyebrow', heroLine1: 'landingHeroLine1', heroLine2: 'landingHeroLine2',
+        heroDesc: 'landingHeroDesc', vehicleRecords: 'vehicleRecordsTag', repairJobs: 'repairJobsTag',
+        payments: 'paymentsTag', receipts: 'receiptsTag', roleBased: 'roleBasedAccessTag',
+        systemOnline: 'systemOnline', secureAccess: 'secureAccess', allRights: 'allRightsReserved',
+        staffPortal: 'staffPortal', welcomeBack: 'welcomeBack', signInDesc: 'signInDesc',
+        username: 'username', password: 'password', loginBtn: 'loginBtn',
+        secureSession: 'secureSession', forgotPassword: 'forgotPassword',
+        adminBtn: 'adminBtn', ownerBtn: 'ownerBtn', cashierBtn: 'cashierBtn',
+        adminPortal: 'adminPortal', adminPortalDesc: 'adminPortalDesc',
+        ownerPortal: 'ownerPortal', ownerPortalDesc: 'ownerPortalDesc',
+        cashierPortal: 'cashierPortal', cashierPortalDesc: 'cashierPortalDesc'
+      };
+
+      function buildDropdown() {
+        var dd = document.getElementById('landingLangDropdown');
+        if (!dd) return;
+        var html = '';
+        var current = localStorage.getItem('appLanguage') || 'en';
+        LANGUAGES.forEach(function(l) {
+          var active = l.code === current ? ' active' : '';
+          html += '<li><a class="dropdown-item' + active + '" href="#" onclick="window._landingLang(\'' + l.code + '\'); return false;" style="color:#d5e0ec;font-size:12px;padding:6px 12px;">'
+            + '<span class="me-1">' + l.flag + '</span> ' + l.native + ' <small class="text-muted">' + l.name + '</small></a></li>';
+        });
+        dd.innerHTML = html;
+      }
+
+      function applyLanding() {
+        Object.keys(LANG_KEYS).forEach(function(key) {
+          var i18nKey = LANG_KEYS[key];
+          if (!_translations[i18nKey]) return;
+          var els = document.querySelectorAll('[data-landing-i18n="' + key + '"]');
+          els.forEach(function(el) { el.textContent = _translations[i18nKey]; });
+        });
+      }
+
+      function loadLandingLang(lang) {
+        if (lang === 'en') {
+          fetch(_base + 'assets/lang/en.json').then(function(r){return r.json();}).then(function(d){
+            _translations = d; localStorage.setItem('appLanguage', lang);
+            var label = document.getElementById('landingLangLabel');
+            if (label) label.textContent = '🇺🇸 EN';
+            buildDropdown(); applyLanding();
+          }); return;
+        }
+        fetch(_base + 'classes/Translation.php?lang=' + lang)
+          .then(function(r){return r.json();})
+          .then(function(d){
+            _translations = d; localStorage.setItem('appLanguage', lang);
+            var info = LANGUAGES.find(function(l){return l.code===lang;});
+            var label = document.getElementById('landingLangLabel');
+            if (label && info) label.textContent = info.flag + ' ' + lang.toUpperCase();
+            buildDropdown(); applyLanding();
+          })
+          .catch(function(){ loadLandingLang('en'); });
+      }
+
+      window._landingLang = loadLandingLang;
+
+      document.addEventListener('DOMContentLoaded', function() {
+        buildDropdown();
+        var saved = localStorage.getItem('appLanguage') || 'en';
+        loadLandingLang(saved);
+      });
+    })();
+    </script>
     <script>
         // Preload background image for smooth animation
         function preloadBackgroundImage() {

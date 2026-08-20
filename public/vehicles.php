@@ -54,15 +54,15 @@ $filterCustomer = (int) ($_GET['customer_id'] ?? 0);
   <div class="app-content-header px-4 pt-3 pb-0">
     <div class="d-flex justify-content-between align-items-center">
       <div>
-        <h4 class="fw-bold mb-0">Vehicles</h4>
-        <p class="text-muted small mb-0" id="pageSubtitle">All registered vehicles</p>
+        <h4 class="fw-bold mb-0" data-i18n="vehicles">Vehicles</h4>
+        <p class="text-muted small mb-0" id="pageSubtitle" data-i18n="allVehicles">All registered vehicles</p>
       </div>
       <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-        <li class="breadcrumb-item"><a href="index.php" class="text-primary">Home</a></li>
+        <li class="breadcrumb-item"><a href="index.php" class="text-primary" data-i18n="home">Home</a></li>
         <?php if($filterCustomer): ?>
-        <li class="breadcrumb-item"><a href="customers.php" class="text-primary">Customers</a></li>
+        <li class="breadcrumb-item"><a href="customers.php" class="text-primary" data-i18n="customers">Customers</a></li>
         <?php endif; ?>
-        <li class="breadcrumb-item active">Vehicles</li>
+        <li class="breadcrumb-item active" data-i18n="vehicles">Vehicles</li>
       </ol>
     </div>
   </div>
@@ -72,17 +72,17 @@ $filterCustomer = (int) ($_GET['customer_id'] ?? 0);
     <?php if($filterCustomer): ?>
     <div class="alert alert-info d-flex align-items-center gap-2 mb-3 py-2" style="border-radius:10px;">
       <i class="bi bi-funnel-fill"></i>
-      <span>Showing vehicles for one customer only.</span>
-      <a href="vehicles.php" class="ms-auto btn btn-sm btn-outline-secondary">Clear filter</a>
+      <span data-i18n="showingOneCustomer">Showing vehicles for one customer only.</span>
+      <a href="vehicles.php" class="ms-auto btn btn-sm btn-outline-secondary" data-i18n="clearFilter">Clear filter</a>
     </div>
     <?php endif; ?>
 
     <div class="card border-0 shadow-sm" style="border-radius:16px;">
       <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
         <div class="d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold mb-0"><i class="bi bi-car-front me-2 text-primary"></i>Vehicle Register</h5>
+          <h5 class="fw-bold mb-0"><i class="bi bi-car-front me-2 text-primary"></i><span data-i18n="vehicleRegister">Vehicle Register</span></h5>
           <button class="btn btn-primary btn-sm" id="btnAddVehicle">
-            <i class="fa fa-plus me-1"></i> Register Vehicle
+            <i class="fa fa-plus me-1"></i> <span data-i18n="registerVehicle">Register Vehicle</span>
           </button>
         </div>
       </div>
@@ -91,21 +91,21 @@ $filterCustomer = (int) ($_GET['customer_id'] ?? 0);
         <div class="mb-3 d-flex flex-wrap gap-2 align-items-center justify-content-between">
           <div class="d-flex flex-wrap gap-2">
             <div class="d-flex gap-2 border-end pe-3 me-1">
-              <button class="btn btn-outline-success btn-sm btnEdit"><i class="fa fa-edit me-1"></i>Edit</button>
-              <button class="btn btn-outline-danger  btn-sm btnDelete"><i class="fa fa-trash me-1"></i>Delete</button>
+              <button class="btn btn-outline-success btn-sm btnEdit"><i class="fa fa-edit me-1"></i><span data-i18n="edit">Edit</span></button>
+              <button class="btn btn-outline-danger  btn-sm btnDelete"><i class="fa fa-trash me-1"></i><span data-i18n="delete">Delete</span></button>
             </div>
-            <button class="btn btn-outline-info btn-sm btnJobs"><i class="bi bi-clipboard2-check me-1"></i>View Jobs</button>
+            <button class="btn btn-outline-info btn-sm btnJobs"><i class="bi bi-clipboard2-check me-1"></i><span data-i18n="viewJobs">View Jobs</span></button>
           </div>
           <div class="d-flex gap-2">
             <button class="btn btn-sm btn-light border" onclick="exportTable('print')"><i class="fa fa-print"></i></button>
             <div class="dropdown">
               <button class="btn btn-sm btn-light border dropdown-toggle" data-bs-toggle="dropdown">
-                <i class="bi bi-download me-1"></i>Export
+                <i class="bi bi-download me-1"></i><span data-i18n="export">Export</span>
               </button>
               <ul class="dropdown-menu dropdown-menu-end shadow">
-                <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf')"><i class="fa fa-file-pdf text-danger me-2"></i>PDF</a></li>
-                <li><a class="dropdown-item small" href="#" onclick="exportTable('excel')"><i class="fa fa-file-excel text-success me-2"></i>Excel</a></li>
-                <li><a class="dropdown-item small" href="#" onclick="exportTable('csv')"><i class="fa fa-file-csv text-info me-2"></i>CSV</a></li>
+                <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf')"><i class="fa fa-file-pdf text-danger me-2"></i><span data-i18n="pdf">PDF</span></a></li>
+                <li><a class="dropdown-item small" href="#" onclick="exportTable('excel')"><i class="fa fa-file-excel text-success me-2"></i><span data-i18n="excel">Excel</span></a></li>
+                <li><a class="dropdown-item small" href="#" onclick="exportTable('csv')"><i class="fa fa-file-csv text-info me-2"></i><span data-i18n="csv">CSV</span></a></li>
               </ul>
             </div>
           </div>
@@ -116,13 +116,13 @@ $filterCustomer = (int) ($_GET['customer_id'] ?? 0);
             <thead>
               <tr>
                 <th style="width:30px;"></th>
-                <th>Plate</th>
-                <th>Model</th>
-                <th>Owner</th>
-                <th>Contact</th>
-                <th class="text-center">Jobs</th>
-                <th>Total Spent</th>
-                <th>Date Received</th>
+                <th data-i18n="plate">Plate</th>
+                <th data-i18n="model">Model</th>
+                <th data-i18n="owner">Owner</th>
+                <th data-i18n="contact">Contact</th>
+                <th class="text-center" data-i18n="jobs">Jobs</th>
+                <th data-i18n="totalSpent">Total Spent</th>
+                <th data-i18n="dateReceived">Date Received</th>
               </tr>
             </thead>
           </table>
@@ -138,8 +138,8 @@ $filterCustomer = (int) ($_GET['customer_id'] ?? 0);
     <div class="modal-content rounded-3">
       <div class="modal-header bg-primary text-white">
         <div>
-          <h5 class="modal-title fw-bold" id="vehicleModalTitle">Register Vehicle</h5>
-          <small class="opacity-75">Plate number, owner and model details</small>
+          <h5 class="modal-title fw-bold" id="vehicleModalTitle"><span data-i18n="registerVehicle">Register Vehicle</span></h5>
+          <small class="opacity-75"><span data-i18n="vehicleModalSub">Plate number, owner and model details</span></small>
         </div>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
@@ -148,33 +148,33 @@ $filterCustomer = (int) ($_GET['customer_id'] ?? 0);
         <div class="modal-body p-4">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label small fw-semibold">Customer (owner) <span class="text-danger">*</span></label>
+              <label class="form-label small fw-semibold"><span data-i18n="customerOwner">Customer (owner)</span> <span class="text-danger">*</span></label>
               <select class="form-select" name="customer_id" id="selectCustomer" required>
-                <option value="">— select customer —</option>
+                <option value="">— <span data-i18n="selectCustomer">select customer</span> —</option>
               </select>
             </div>
             <div class="col-md-6">
-              <label class="form-label small fw-semibold">Owner name (on vehicle) <span class="text-danger">*</span></label>
+              <label class="form-label small fw-semibold"><span data-i18n="ownerNameOnVehicle">Owner name (on vehicle)</span> <span class="text-danger">*</span></label>
               <input class="form-control" name="car_owner" id="inputCarOwner" placeholder="e.g. John Kamau" required>
             </div>
             <div class="col-md-6">
-              <label class="form-label small fw-semibold">Plate number <span class="text-danger">*</span></label>
+              <label class="form-label small fw-semibold"><span data-i18n="plateNumber">Plate number</span> <span class="text-danger">*</span></label>
               <input class="form-control text-uppercase" name="plate_number" id="inputPlate" placeholder="KDD 821T" required>
             </div>
             <div class="col-md-6">
-              <label class="form-label small fw-semibold">Make / Model</label>
+              <label class="form-label small fw-semibold"><span data-i18n="makeModel">Make / Model</span></label>
               <input class="form-control" name="model" id="inputModel" placeholder="Toyota Prado">
             </div>
             <div class="col-md-6">
-              <label class="form-label small fw-semibold">Date received <span class="text-danger">*</span></label>
+              <label class="form-label small fw-semibold"><span data-i18n="dateReceived">Date received</span> <span class="text-danger">*</span></label>
               <input class="form-control" type="date" name="date_received" id="inputDateReceived">
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal"><span data-i18n="cancel">Cancel</span></button>
           <button type="submit" class="btn btn-primary" id="btnSaveVehicle">
-            <i class="bi bi-save me-1"></i>Save Vehicle
+            <i class="bi bi-save me-1"></i><span data-i18n="saveVehicle">Save Vehicle</span>
           </button>
         </div>
       </form>
@@ -187,12 +187,12 @@ $filterCustomer = (int) ($_GET['customer_id'] ?? 0);
   <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content border-top border-danger border-4">
       <div class="modal-header bg-white">
-        <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Are you sure?</h6>
+        <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i><span data-i18n="areYouSure">Are you sure?</span></h6>
       </div>
-      <div class="modal-body text-center py-4" id="confirmBody">This action cannot be undone.</div>
+      <div class="modal-body text-center py-4" id="confirmBody"><span data-i18n="actionCannotUndone">This action cannot be undone.</span></div>
       <div class="modal-footer border-0 justify-content-center pb-4">
-        <button class="btn btn-danger px-4 fw-bold" id="btnConfirm">YES, DELETE</button>
-        <button class="btn btn-light px-4" data-bs-dismiss="modal">CANCEL</button>
+        <button class="btn btn-danger px-4 fw-bold" id="btnConfirm"><span data-i18n="yesDelete">YES, DELETE</span></button>
+        <button class="btn btn-light px-4" data-bs-dismiss="modal"><span data-i18n="cancel">CANCEL</span></button>
       </div>
     </div>
   </div>

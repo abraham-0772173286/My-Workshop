@@ -98,10 +98,10 @@ $activePage   = 'drivers_register';
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <h4 class="fw-bold mb-0" data-i18n="driversRegister">Register Driver</h4>
-          <p class="text-muted small mb-0">Add a new driver to the system</p>
+          <p class="text-muted small mb-0" data-i18n="driverRegisterSubtitle">Add a new driver to the system</p>
         </div>
         <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-          <li class="breadcrumb-item"><a href="../index.php" class="text-primary">Home</a></li>
+          <li class="breadcrumb-item"><a href="../index.php" class="text-primary" data-i18n="home">Home</a></li>
           <li class="breadcrumb-item active" data-i18n="driversRegister">Register Driver</li>
         </ol>
       </div>
@@ -112,10 +112,10 @@ $activePage   = 'drivers_register';
       <div class="card border-0 shadow-sm register-form-card mb-4">
         <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
           <div class="d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0"><i class="bi bi-person-plus me-2 text-primary"></i>Driver Details</h5>
+            <h5 class="fw-bold mb-0"><i class="bi bi-person-plus me-2 text-primary"></i><span data-i18n="driverDetails">Driver Details</span></h5>
             <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-light border" id="btnNew" title="New"><i class="fa fa-file me-1"></i>New</button>
-              <button class="btn btn-sm btn-danger" id="btnDeleteDriver" title="Delete"><i class="fa fa-trash me-1"></i>Delete</button>
+              <button class="btn btn-sm btn-light border" id="btnNew" title="New"><i class="fa fa-file me-1"></i><span data-i18n="newBtn">New</span></button>
+              <button class="btn btn-sm btn-danger" id="btnDeleteDriver" title="Delete"><i class="fa fa-trash me-1"></i><span data-i18n="delete">Delete</span></button>
             </div>
           </div>
         </div>
@@ -124,39 +124,39 @@ $activePage   = 'drivers_register';
             <input type="hidden" name="driver_id" id="driverId" value="0">
             <div class="row g-3">
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Driver Name <span class="text-danger">*</span></label>
+                <label class="form-label small fw-semibold"><span data-i18n="driverName">Driver Name</span> <span class="text-danger">*</span></label>
                 <input class="form-control" type="text" name="driver_name" id="inputName" placeholder="Enter full name" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Mobile Number</label>
+                <label class="form-label small fw-semibold"><span data-i18n="mobileNumber">Mobile Number</span></label>
                 <input class="form-control" type="text" name="mobile" id="inputMobile" placeholder="e.g. 0700123456">
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">License Number</label>
+                <label class="form-label small fw-semibold"><span data-i18n="licenseNumber">License Number</span></label>
                 <input class="form-control" type="text" name="license_no" id="inputLicense" placeholder="e.g. U1234567">
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">ID Number</label>
+                <label class="form-label small fw-semibold"><span data-i18n="idNumber">ID Number</span></label>
                 <input class="form-control" type="text" name="id_number" id="inputIdNumber" placeholder="National ID / Passport">
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Address</label>
+                <label class="form-label small fw-semibold"><span data-i18n="address">Address</span></label>
                 <input class="form-control" type="text" name="address" id="inputAddress" placeholder="Physical address">
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Emergency Contact</label>
+                <label class="form-label small fw-semibold"><span data-i18n="emergencyContact">Emergency Contact</span></label>
                 <input class="form-control" type="text" name="emergency_contact" id="inputEmergency" placeholder="Name & phone">
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold">Status</label>
+                <label class="form-label small fw-semibold"><span data-i18n="status">Status</span></label>
                 <select class="form-select" name="status" id="inputStatus">
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
+                  <option value="active" data-i18n="active">Active</option>
+                  <option value="inactive" data-i18n="inactive">Inactive</option>
                 </select>
               </div>
             </div>
             <div class="mt-4">
-              <button type="submit" class="btn btn-primary px-4" id="btnSaveDriver"><i class="bi bi-save me-1"></i>Save Driver</button>
+              <button type="submit" class="btn btn-primary px-4" id="btnSaveDriver"><i class="bi bi-save me-1"></i><span data-i18n="saveDriver">Save Driver</span></button>
             </div>
           </form>
         </div>
@@ -165,21 +165,21 @@ $activePage   = 'drivers_register';
       <!-- Drivers list -->
       <div class="card border-0 shadow-sm" style="border-radius:16px;">
         <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
-          <h5 class="fw-bold mb-0"><i class="bi bi-list-ul me-2 text-primary"></i>Existing Drivers</h5>
+          <h5 class="fw-bold mb-0"><i class="bi bi-list-ul me-2 text-primary"></i><span data-i18n="existingDrivers">Existing Drivers</span></h5>
         </div>
         <div class="card-body p-4">
           <div class="table-responsive">
             <table id="driversTable" class="table align-middle w-100">
               <thead>
                 <tr>
-                  <th>Driver Name</th>
-                  <th>Mobile</th>
-                  <th>License No</th>
-                  <th>ID Number</th>
-                  <th>Status</th>
-                  <th>Trips</th>
-                  <th>Assignments</th>
-                  <th>Total Fuel</th>
+                  <th data-i18n="driverName">Driver Name</th>
+                  <th data-i18n="mobile">Mobile</th>
+                  <th data-i18n="licenseNo">License No</th>
+                  <th data-i18n="idNumber">ID Number</th>
+                  <th data-i18n="status">Status</th>
+                  <th data-i18n="trips">Trips</th>
+                  <th data-i18n="assignments">Assignments</th>
+                  <th data-i18n="totalFuel">Total Fuel</th>
                 </tr>
               </thead>
             </table>
@@ -194,12 +194,12 @@ $activePage   = 'drivers_register';
     <div class="modal-dialog modal-sm modal-dialog-centered">
       <div class="modal-content border-top border-danger border-4">
         <div class="modal-header bg-white">
-          <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Are you sure?</h6>
+          <h6 class="modal-title text-danger fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i><span data-i18n="areYouSure">Are you sure?</span></h6>
         </div>
-        <div class="modal-body text-center py-4" id="confirmBody">This action cannot be undone.</div>
+        <div class="modal-body text-center py-4" id="confirmBody"><span data-i18n="actionCannotUndone">This action cannot be undone.</span></div>
         <div class="modal-footer border-0 justify-content-center pb-4">
-          <button class="btn btn-danger px-4 fw-bold" id="btnConfirm">YES, DELETE</button>
-          <button class="btn btn-light px-4" data-bs-dismiss="modal">CANCEL</button>
+          <button class="btn btn-danger px-4 fw-bold" id="btnConfirm"><span data-i18n="yesDelete">YES, DELETE</span></button>
+          <button class="btn btn-light px-4" data-bs-dismiss="modal"><span data-i18n="cancel">CANCEL</span></button>
         </div>
       </div>
     </div>
@@ -207,10 +207,10 @@ $activePage   = 'drivers_register';
 
   <footer class="app-footer">
     <div class="footer-content">
-      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| All Rights Reserved.</span></div>
+      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| <span data-i18n="allRightsReserved">All Rights Reserved.</span></span></div>
       <div class="order-1 order-md-2 text-center">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1">Think of it, We Develop it.</div>
-        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> AB Solutions</a>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1"><span data-i18n="tagline">Think of it, We Develop it.</span></div>
+        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> <span data-i18n="abSolutions">AB Solutions</span></a>
       </div>
       <div class="footer-contacts order-3">
         <a href="https://wa.me/256772173286" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>

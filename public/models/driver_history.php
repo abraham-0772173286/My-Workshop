@@ -77,10 +77,10 @@ $activePage   = 'drivers_history';
       <div class="d-flex justify-content-between align-items-center">
         <div>
           <h4 class="fw-bold mb-0" data-i18n="driversHistory">Driver History</h4>
-          <p class="text-muted small mb-0">Complete activity timeline for all drivers</p>
+          <p class="text-muted small mb-0" data-i18n="historySubtitle">Complete activity timeline for all drivers</p>
         </div>
         <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider:'›';">
-          <li class="breadcrumb-item"><a href="../index.php" class="text-primary">Home</a></li>
+          <li class="breadcrumb-item"><a href="../index.php" class="text-primary" data-i18n="home">Home</a></li>
           <li class="breadcrumb-item active" data-i18n="driversHistory">Driver History</li>
         </ol>
       </div>
@@ -91,14 +91,14 @@ $activePage   = 'drivers_history';
       <div class="filter-bar mb-4">
         <div class="d-flex align-items-center gap-3 flex-wrap">
           <div class="flex-grow-1">
-            <label class="form-label small fw-semibold text-muted mb-1">Select Driver</label>
+            <label class="form-label small fw-semibold text-muted mb-1"><span data-i18n="selectDriver">Select Driver</span></label>
             <select class="form-select" id="selectDriver">
-              <option value="">All Drivers</option>
+              <option value="" data-i18n="allDrivers">All Drivers</option>
             </select>
           </div>
           <div>
             <label class="form-label small fw-semibold text-muted mb-1">&nbsp;</label>
-            <button class="btn btn-primary" id="btnLoad"><i class="bi bi-arrow-clockwise me-1"></i>Load History</button>
+            <button class="btn btn-primary" id="btnLoad"><i class="bi bi-arrow-clockwise me-1"></i><span data-i18n="loadHistoryBtn">Load History</span></button>
           </div>
         </div>
       </div>
@@ -107,7 +107,7 @@ $activePage   = 'drivers_history';
       <div id="timelineContainer">
         <div class="loading-placeholder">
           <div class="spinner-border text-primary mb-3"></div>
-          <p>Loading driver history...</p>
+<p><span data-i18n="loadingHistory">Loading driver history...</span></p>
         </div>
       </div>
     </div>
@@ -115,10 +115,10 @@ $activePage   = 'drivers_history';
 
   <footer class="app-footer">
     <div class="footer-content">
-      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| All Rights Reserved.</span></div>
+      <div class="text-muted small order-2 order-md-1"><strong>Copyright &copy; 2026</strong> <span class="d-none d-sm-inline">| <span data-i18n="allRightsReserved">All Rights Reserved.</span></span></div>
       <div class="order-1 order-md-2 text-center">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1">Think of it, We Develop it.</div>
-        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> AB Solutions</a>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#adb5bd;font-weight:600;" class="mb-1"><span data-i18n="tagline">Think of it, We Develop it.</span></div>
+        <a href="https://pearl-host.com/" target="_blank" class="text-decoration-none text-primary text-uppercase fw-bold"><i class="bi bi-gem me-1"></i> <span data-i18n="abSolutions">AB Solutions</span></a>
       </div>
       <div class="footer-contacts order-3">
         <a href="https://wa.me/256772173286" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
