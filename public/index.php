@@ -33,11 +33,7 @@ $workshopBase = workshop_base_path();
       position:fixed;z-index:1045;top:0;left:0;
       width:260px;height:100vh;overflow:hidden;
       display:flex;flex-direction:column;
-      /* subtle glass: mostly opaque gradient + light blur */
-      background:linear-gradient(180deg,rgba(64,21,191,.84) 0%,rgba(32,13,96,.9) 100%);
-      -webkit-backdrop-filter:blur(16px) saturate(150%);
-      backdrop-filter:blur(16px) saturate(150%);
-      border-right:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,#4015bf 0%,#29106f 100%);
       transition:transform .28s ease;
       box-shadow:5px 0 24px rgba(21,5,64,.16);
     }
