@@ -700,6 +700,34 @@ workshop_redirect_if_logged_in();
             color: #58d5a0;
         }
 
+        /* ── Language switcher (dark panel) ── */
+        #landingLangDropdown {
+            max-height: 320px;
+            overflow-y: auto;
+            min-width: 170px;
+            background: rgba(10, 25, 45, .97);
+            border: 1px solid rgba(255, 255, 255, .15);
+        }
+
+        #landingLangDropdown .dropdown-item {
+            color: #d5e0ec;
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        #landingLangDropdown .dropdown-item:hover,
+        #landingLangDropdown .dropdown-item.active {
+            background: rgba(245, 166, 35, .15);
+            color: #fff;
+        }
+
+        @media(max-width:700px) {
+            /* icon-only globe on small screens so the header fits */
+            #langPickerBtn #landingLangLabel {
+                display: none;
+            }
+        }
+
         .overlay {
             position: fixed;
             inset: 0;
@@ -753,7 +781,13 @@ workshop_redirect_if_logged_in();
     <main class="main-content">
         <header class="d-flex justify-content-between align-items-center">
             <div class="brand"><span class="brand-mark"><i class="bi bi-wrench-adjustable"></i></span><span>SHENG CHI GARAGE<small>盛驰汽修 · WORKSHOP OPERATIONS</small></span></div>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 align-items-center">
+                <div class="dropdown">
+                    <button class="btn btn-link dropdown-toggle nav-link" type="button" id="langPickerBtn" data-bs-toggle="dropdown" aria-label="Change language" style="text-decoration:none;color:#d5e0ec;font-size:13px;font-weight:600;">
+                        <i class="bi bi-globe me-1"></i><span id="landingLangLabel">EN</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" id="landingLangDropdown"></ul>
+                </div>
                 <button class="btn-access btn-role-admin" onclick="toggleDrawer('admin')" title="Full system access - All permissions">
                     <i class="bi bi-shield-lock me-1"></i><span data-landing-i18n="adminBtn">ADMIN</span>
                 </button>
@@ -820,16 +854,6 @@ workshop_redirect_if_logged_in();
             </div>
         </form>
     </aside>
-    <!-- Language Switcher (Landing) -->
-    <div style="position:fixed;top:18px;right:18px;z-index:1100;">
-      <div class="dropdown">
-        <button class="btn btn-link dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" style="text-decoration:none;color:#d5e0ec;font-size:13px;font-weight:600;">
-          <i class="bi bi-globe me-1"></i><span id="landingLangLabel">EN</span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" id="landingLangDropdown" style="max-height:320px;overflow-y:auto;min-width:170px;background:rgba(10,25,45,.85);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);">
-        </ul>
-      </div>
-    </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -898,28 +922,46 @@ workshop_redirect_if_logged_in();
         });
       }
 
+      function fetchTranslations(lang, cb) {
+        // Static JSON file first (fast, reliable), API endpoint as fallback
+        fetch(_base + 'assets/lang/' + lang + '.json')
+          .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(function(d) { cb(null, d); })
+          .catch(function() {
+            fetch(_base + 'classes/Translation.php?lang=' + lang)
+              .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+              .then(function(d) { cb(null, d); })
+              .catch(function(e) { cb(e); });
+          });
+      }
+
+      function setLang(lang, data) {
+        _translations = data;
+        localStorage.setItem('appLanguage', lang);
+        var info = LANGUAGES.find(function(l){ return l.code === lang; });
+        var label = document.getElementById('landingLangLabel');
+        if (label && info) label.textContent = info.flag + ' ' + info.code.toUpperCase();
+        buildDropdown();
+        applyLanding();
+      }
+
       function loadLandingLang(lang) {
-        if (lang === 'en') {
-          fetch(_base + 'assets/lang/en.json').then(function(r){return r.json();}).then(function(d){
-            _translations = d; localStorage.setItem('appLanguage', lang);
-            var label = document.getElementById('landingLangLabel');
-            if (label) label.textContent = '🇺🇸 EN';
-            buildDropdown(); applyLanding();
-          }); return;
-        }
-        fetch(_base + 'classes/Translation.php?lang=' + lang)
-          .then(function(r){return r.json();})
-          .then(function(d){
-            _translations = d; localStorage.setItem('appLanguage', lang);
-            var info = LANGUAGES.find(function(l){return l.code===lang;});
-            var label = document.getElementById('landingLangLabel');
-            if (label && info) label.textContent = info.flag + ' ' + lang.toUpperCase();
-            buildDropdown(); applyLanding();
-          })
-          .catch(function(){ loadLandingLang('en'); });
+        fetchTranslations(lang, function(err, data) {
+          if (err) {
+            console.warn('Language not loaded for ' + lang + ':', err);
+            if (lang !== 'en') loadLandingLang('en');
+            return;
+          }
+          setLang(lang, data);
+        });
       }
 
       window._landingLang = loadLandingLang;
+      /* lookup helper for other scripts: window._landingT('loginBtn') */
+      window._landingT = function(key) {
+        var k = LANG_KEYS[key] || key;
+        return _translations[k] || '';
+      };
 
       document.addEventListener('DOMContentLoaded', function() {
         buildDropdown();
@@ -957,29 +999,30 @@ workshop_redirect_if_logged_in();
                 // Opening drawer with specific role
                 drawer.classList.add('active');
                 overlay.classList.add('active');
-                
+
                 // Update label, description and pre-fill username
+                const T = window._landingT || function() { return ''; };
                 const roleConfig = {
                     'admin': {
-                        label: 'ADMIN PORTAL',
-                        description: 'Full system access - Manage all operations, users, and settings',
+                        label: T('adminPortal') || 'ADMIN PORTAL',
+                        description: T('adminPortalDesc') || 'Full system access - Manage all operations, users, and settings',
                         username: 'admin'
                     },
                     'owner': {
-                        label: 'OWNER PORTAL',
-                        description: 'Business oversight - View all data, manage operations and reports',
+                        label: T('ownerPortal') || 'OWNER PORTAL',
+                        description: T('ownerPortalDesc') || 'Business oversight - View all data, manage operations and reports',
                         username: 'owner'
                     },
                     'cashier': {
-                        label: 'CASHIER PORTAL',
-                        description: 'Daily operations - Handle transactions, customers, and repair jobs',
+                        label: T('cashierPortal') || 'CASHIER PORTAL',
+                        description: T('cashierPortalDesc') || 'Daily operations - Handle transactions, customers, and repair jobs',
                         username: 'cashier'
                     }
                 };
-                
+
                 const config = roleConfig[role] || {
-                    label: 'STAFF PORTAL',
-                    description: 'Sign in to access workshop operations.',
+                    label: T('staffPortal') || 'STAFF PORTAL',
+                    description: T('signInDesc') || 'Sign in to access workshop operations.',
                     username: role
                 };
                 
@@ -993,10 +1036,11 @@ workshop_redirect_if_logged_in();
             } else {
                 // Closing drawer - triggered by the top-right "Cancel" button
                 // (or by clicking the dark overlay behind the popup).
+                const T = window._landingT || function() { return ''; };
                 drawer.classList.remove('active');
                 overlay.classList.remove('active');
-                roleLabel.textContent = 'STAFF PORTAL';
-                roleDescription.textContent = 'Sign in to access workshop operations.';
+                roleLabel.textContent = T('staffPortal') || 'STAFF PORTAL';
+                roleDescription.textContent = T('signInDesc') || 'Sign in to access workshop operations.';
                 usernameField.value = '';
                 selectedRoleInput.value = '';
                 document.getElementById('password').value = '';
@@ -1016,10 +1060,11 @@ workshop_redirect_if_logged_in();
         }
         $('#loginform').on('submit', function(e) {
             e.preventDefault();
+            const T = window._landingT || function() { return ''; };
             const button = $(this).find('button[type="submit"]');
             const originalText = button.html();
-            button.prop('disabled', true).text('SIGNING IN...');
-            
+            button.prop('disabled', true).text(T('signingIn') || 'SIGNING IN...');
+
             $.ajax({
                 url: '../classes/Login.php?f=login',
                 method: 'POST',
@@ -1027,27 +1072,27 @@ workshop_redirect_if_logged_in();
                 data: $(this).serialize(),
                 success: function(resp) {
                     if (resp.status === 'success') {
-                        toastr.success('Login successful! Redirecting...', resp.user?.name || 'Welcome');
+                        toastr.success(T('loginSuccessful') || 'Login successful! Redirecting...', resp.user?.name || 'Welcome');
                         setTimeout(() => {
                             window.location.href = resp.redirect || '../public/';
                         }, 1000);
                     } else {
-                        toastr.error(resp.msg || 'Login failed. Please try again.');
+                        toastr.error(resp.msg || T('loginFailed') || 'Login failed. Please try again.');
                     }
                 },
                 error: function(xhr) {
-                    let errorMsg = 'Connection error. Please check your network and try again.';
-                    
+                    let errorMsg = T('connectionError') || 'Connection error. Please check your network and try again.';
+
                     if (xhr.responseJSON?.msg) {
                         errorMsg = xhr.responseJSON.msg;
                     } else if (xhr.status === 401) {
-                        errorMsg = 'Invalid username or password.';
+                        errorMsg = T('invalidCredentials') || 'Invalid username or password.';
                     } else if (xhr.status === 423) {
-                        errorMsg = 'Account is temporarily locked. Please try again later.';
+                        errorMsg = T('accountLocked') || 'Account is temporarily locked. Please try again later.';
                     } else if (xhr.status === 403) {
-                        errorMsg = 'Insufficient permissions for selected role.';
+                        errorMsg = T('insufficientPermissions') || 'Insufficient permissions for selected role.';
                     }
-                    
+
                     toastr.error(errorMsg);
                 },
                 complete: function() {
