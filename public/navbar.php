@@ -153,6 +153,13 @@
     });
   }
 
+  /* ── Apply + notify listeners that translations changed ── */
+  function _applyAndNotify() {
+    _applyTranslations();
+    window._i18nLoaded = true;
+    document.dispatchEvent(new Event('languageChanged'));
+  }
+
   /* ── Fetch translations from server ────────────────────── */
   function fetchTranslations(lang, callback) {
     // First try the static JSON file (fast, no API needed)
@@ -194,7 +201,7 @@
         _translations = data;
         localStorage.setItem('appLanguage', lang);
         updateUI(lang);
-        _applyTranslations();
+        _applyAndNotify();
       });
       return;
     }
@@ -209,7 +216,7 @@
       _translations = data;
       localStorage.setItem('appLanguage', lang);
       updateUI(lang);
-      _applyTranslations();
+      _applyAndNotify();
     });
   }
 
@@ -221,7 +228,7 @@
         _translations = data;
         localStorage.setItem('appLanguage', lang);
         updateUI(lang);
-        _applyTranslations();
+        _applyAndNotify();
       })
       .catch(function (err) {
         console.warn('Google Translate fallback failed for ' + lang + ':', err);
@@ -251,23 +258,12 @@
     set: function (v) { _translations = v; }
   });
 
-  /* ── Re-apply translations on language change ─────────── */
-  var origLoad = loadLanguage;
-  window.changeLanguage = function (lang) {
-    origLoad(lang);
-    setTimeout(function () {
-      _applyTranslations();
-      window._translations = _translations;
-      document.dispatchEvent(new Event('languageChanged'));
-    }, 300);
-  };
-
   /* ── Init on page load ─────────────────────────────────── */
   document.addEventListener('DOMContentLoaded', function () {
     var saved = localStorage.getItem('appLanguage') || 'en';
     _currentLang = saved;
     buildLangDropdown();
-    origLoad(saved);
+    loadLanguage(saved);
   });
 })();
 </script>

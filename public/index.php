@@ -184,7 +184,7 @@ $workshopBase = workshop_base_path();
                   <th data-i18n="jobNo">Job No.</th><th data-i18n="customer">Customer</th><th data-i18n="vehicle">Vehicle</th>
                   <th data-i18n="totalUGX">Total (UGX)</th><th data-i18n="status">Status</th><th data-i18n="date">Date</th>
                 </tr></thead>
-                <tbody id="recentBody"><tr><td colspan="6" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading…</td></tr></tbody>
+                <tbody id="recentBody"><tr><td colspan="6" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div><span data-i18n="loading">Loading…</span></td></tr></tbody>
               </table>
             </div>
           </div>
@@ -202,7 +202,7 @@ $workshopBase = workshop_base_path();
             <div class="table-responsive" style="max-height:340px;overflow-y:auto;">
               <table class="table dash-table mb-0">
                 <thead><tr><th data-i18n="jobNo">Job No.</th><th data-i18n="customer">Customer</th><th data-i18n="plate">Plate</th><th data-i18n="amount">Amount</th></tr></thead>
-                <tbody id="pendingBody"><tr><td colspan="4" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div>Loading…</td></tr></tbody>
+                <tbody id="pendingBody"><tr><td colspan="4" class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm me-2"></div><span data-i18n="loading">Loading…</span></td></tr></tbody>
               </table>
             </div>
           </div>
@@ -267,7 +267,7 @@ function loadStats() {
       '</div>';
     });
     $('#kpiRow').html(html);
-  }).fail(() => toastr.error('Could not load stats.'));
+  }).fail(() => toastr.error(t('couldNotLoadStats', 'Could not load stats.')));
 }
 
 // ── Revenue bar chart ─────────────────────────────────────────────────────────
@@ -328,7 +328,7 @@ function loadRevenueChart() {
     const total = revenue.reduce((a,b) => a+b, 0);
     $('#chartSubtitle').text(t('total', 'Total') + ': UGX ' + total.toLocaleString());
   }).fail(() => {
-    toastr.error('Could not load revenue chart.');
+    toastr.error(t('couldNotLoadRevenueChart', 'Could not load revenue chart.'));
     $('#chartSubtitle').text(t('failedToLoad', 'Failed to load'));
   });
 }
@@ -355,7 +355,7 @@ function loadTypesChart() {
       }
     });
   }).fail(() => {
-    toastr.error('Could not load repair types chart.');
+    toastr.error(t('couldNotLoadTypesChart', 'Could not load repair types chart.'));
   });
 }
 
@@ -402,12 +402,35 @@ function loadPendingJobs() {
   }).fail(() => $('#pendingBody').html('<tr><td colspan="4" class="text-center text-danger py-3">' + t('failedToLoad', 'Failed to load.') + '</td></tr>'));
 }
 
-$(document).ready(function() {
+function renderDashboard() {
   loadStats();
   loadRevenueChart();
   loadTypesChart();
   loadRecentJobs();
   loadPendingJobs();
+}
+
+$(document).ready(function() {
+  var booted = false;
+
+  function onLanguageChanged() {
+    renderDashboard();
+    booted = true;
+  }
+
+  // If a non-English language is saved, wait for translations to arrive
+  // before first render (avoids flashing English), with a safety timeout.
+  var savedLang = localStorage.getItem('appLanguage') || 'en';
+  if (savedLang !== 'en' && !window._i18nLoaded) {
+    document.addEventListener('languageChanged', onLanguageChanged);
+    setTimeout(function () {
+      if (!booted) { renderDashboard(); booted = true; }
+    }, 1500);
+  } else {
+    renderDashboard();
+    booted = true;
+    document.addEventListener('languageChanged', onLanguageChanged);
+  }
 });
 </script>
 </body>
