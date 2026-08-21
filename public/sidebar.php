@@ -96,21 +96,61 @@ $driversOpen  = in_array($activePage, $driverPages);
   </nav>
 </aside>
 
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-  var toggle  = document.getElementById('sidebarToggle');
-  var sidebar = document.getElementById('garageSidebar');
+  var toggle   = document.getElementById('sidebarToggle');
+  var sidebar  = document.getElementById('garageSidebar');
+  var backdrop = document.getElementById('sidebarBackdrop');
+  var mq       = window.matchMedia('(max-width:991px)');
+
+  function syncBackdrop() {
+    if (backdrop) {
+      backdrop.classList.toggle('show', mq.matches && sidebar.classList.contains('is-open'));
+    }
+  }
+
+  function closeMobile() {
+    sidebar.classList.remove('is-open');
+    syncBackdrop();
+  }
+
   if (toggle && sidebar) {
     toggle.addEventListener('click', function (e) {
       e.preventDefault();
-      var compact = window.matchMedia('(max-width:991px)').matches;
-      sidebar.classList.toggle(compact ? 'is-open' : 'is-collapsed');
-      document.body.classList.toggle('garage-sidebar-collapsed',
-        !compact && sidebar.classList.contains('is-collapsed'));
+      if (mq.matches) {
+        sidebar.classList.toggle('is-open');
+      } else {
+        sidebar.classList.toggle('is-collapsed');
+        document.body.classList.toggle('garage-sidebar-collapsed',
+          sidebar.classList.contains('is-collapsed'));
+      }
+      syncBackdrop();
       window.dispatchEvent(new Event('resize'));
       setTimeout(function () { window.dispatchEvent(new Event('resize')); }, 300);
     });
   }
+
+  // Tap outside (backdrop) closes the sidebar on mobile
+  if (backdrop) backdrop.addEventListener('click', closeMobile);
+
+  // Close after tapping a nav link on mobile
+  document.querySelectorAll('.nav-sidebar a:not([data-toggle="submenu"])').forEach(function (link) {
+    link.addEventListener('click', function () {
+      if (mq.matches) closeMobile();
+    });
+  });
+
+  // Reset state when crossing the mobile/desktop breakpoint
+  function onBreakpointChange(e) {
+    if (!e.matches) {
+      closeMobile();
+      document.body.classList.remove('garage-sidebar-collapsed');
+    }
+  }
+  if (mq.addEventListener) mq.addEventListener('change', onBreakpointChange);
+  else if (mq.addListener) mq.addListener(onBreakpointChange);
 
   document.querySelectorAll('[data-toggle="submenu"]').forEach(function(link) {
     link.addEventListener('click', function(e) {
@@ -122,14 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var isOpen = submenu.style.display === 'block';
       if (isOpen) { submenu.style.display = 'none'; this.classList.remove('open'); }
       else        { submenu.style.display = 'block'; this.classList.add('open'); }
-    });
-  });
-
-  document.querySelectorAll('.sub-link').forEach(function(link) {
-    link.addEventListener('click', function() {
-      if (window.matchMedia('(max-width:991px)').matches && sidebar) {
-        sidebar.classList.remove('is-open');
-      }
     });
   });
 });

@@ -33,9 +33,19 @@ $workshopBase = workshop_base_path();
       position:fixed;z-index:1045;top:0;left:0;
       width:260px;height:100vh;overflow:hidden;
       display:flex;flex-direction:column;
-      background:linear-gradient(180deg,#4015bf 0%,#29106f 100%);
+      /* subtle glass: mostly opaque gradient + light blur */
+      background:linear-gradient(180deg,rgba(64,21,191,.84) 0%,rgba(32,13,96,.9) 100%);
+      -webkit-backdrop-filter:blur(16px) saturate(150%);
+      backdrop-filter:blur(16px) saturate(150%);
+      border-right:1px solid rgba(255,255,255,.08);
       transition:transform .28s ease;
       box-shadow:5px 0 24px rgba(21,5,64,.16);
+    }
+    .sidebar-backdrop{
+      position:fixed;inset:0;z-index:1040;
+      background:rgba(15,10,40,.45);
+      opacity:0;visibility:hidden;
+      transition:opacity .28s ease,visibility .28s ease;
     }
     .garage-sidebar.is-collapsed{transform:translateX(-100%);}
     .app-header{margin-left:260px;transition:margin-left .28s ease;}
@@ -62,6 +72,7 @@ $workshopBase = workshop_base_path();
       .app-header,.app-main{margin-left:0!important;}
       .garage-sidebar{transform:translateX(-100%);}
       .garage-sidebar.is-open{transform:translateX(0);}
+      .sidebar-backdrop.show{opacity:1;visibility:visible;}
     }
 
     /* ── KPI cards ── */
