@@ -298,7 +298,9 @@
   });
 
   document.addEventListener('fullscreenchange', function () {
-    setIcon(!!document.fullscreenElement);
+    var isFullscreen = !!document.fullscreenElement;
+    setIcon(isFullscreen);
+    document.body.classList.toggle('is-fullscreen', isFullscreen);
   });
 })();
 </script>

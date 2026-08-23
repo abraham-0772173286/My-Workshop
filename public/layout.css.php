@@ -30,8 +30,16 @@
     transition: margin-left .28s ease;
 }
 
+/* ── Page Layout (footer always at bottom) ───────────────────────────── */
+.app-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 .app-main {
     margin-left: 260px !important;
+    flex: 1 0 auto;
     transition: margin-left .28s ease;
 }
 
@@ -364,4 +372,25 @@ body.garage-sidebar-collapsed .app-main {
 
 .footer-contacts a:hover {
     color: #25d366;
+}
+
+/* ── Compact Footer (while maximized/fullscreen) ─────────────────────── */
+body.is-fullscreen .app-footer,
+:root:fullscreen .app-footer {
+    padding: 6px 0;
+}
+
+body.is-fullscreen .footer-content,
+:root:fullscreen .footer-content {
+    gap: 3px;
+}
+
+body.is-fullscreen .footer-content > div,
+:root:fullscreen .footer-content > div {
+    font-size: 11px;
+}
+
+body.is-fullscreen .footer-content > div strong,
+:root:fullscreen .footer-content > div strong {
+    font-weight: 600;
 }
