@@ -40,48 +40,276 @@ $activePage   = 'drivers_all';
   </script>
 
   <style>
+    :root {
+      --tbl-header-bg: #1e293b;
+      --tbl-header-color: #e2e8f0;
+      --tbl-header-accent: #818cf8;
+      --tbl-row-odd: #ffffff;
+      --tbl-row-even: #f8fafc;
+      --tbl-row-hover: #eef2ff;
+      --tbl-row-selected: #e0e7ff;
+      --tbl-border: #e5e7eb;
+      --tbl-border-light: #f1f5f9;
+      --tbl-text-primary: #1e293b;
+      --tbl-text-secondary: #64748b;
+      --tbl-text-muted: #94a3b8;
+      --tbl-accent: #6366f1;
+      --tbl-accent-light: #eef2ff;
+      --tbl-success-bg: #dcfce7;
+      --tbl-success-text: #166534;
+      --tbl-success-border: #bbf7d0;
+      --tbl-danger-bg: #fee2e2;
+      --tbl-danger-text: #991b1b;
+      --tbl-danger-border: #fecaca;
+      --tbl-radius: 12px;
+      --tbl-radius-sm: 8px;
+    }
+
     .toast-success { background-color: #28a745 !important; color: white !important; }
     .toast-error   { background-color: #dc3545 !important; color: white !important; }
 
-    #driversTable { font-size: .85rem; border-collapse: separate; border-spacing: 0; }
+    #driversTable {
+      font-size: .875rem;
+      border-collapse: separate;
+      border-spacing: 0;
+      color: var(--tbl-text-primary);
+      width: 100%;
+    }
+
+    /* ── Header ────────────────────────────────────────────── */
     #driversTable thead th {
-      background: #f8fafc; color: #64748b; font-size: .72rem; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .5px; border-bottom: 2px solid #eef2f7;
-      border-top: 0; white-space: nowrap; padding: .8rem .9rem;
+      background: var(--tbl-header-bg);
+      color: var(--tbl-header-color);
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      border: none;
+      border-bottom: 3px solid var(--tbl-accent);
+      white-space: nowrap;
+      padding: 1rem 1.1rem;
+      position: sticky;
+      top: 0;
+      z-index: 2;
     }
+    #driversTable thead th:first-child { border-radius: var(--tbl-radius) 0 0 0; }
+    #driversTable thead th:last-child  { border-radius: 0 var(--tbl-radius) 0 0; }
+    #driversTable thead th.text-center { text-align: center; }
+
+    /* ── Body cells ────────────────────────────────────────── */
     #driversTable tbody td {
-      padding: .7rem .9rem; vertical-align: middle; border-bottom: 1px solid #f8fafc; white-space: nowrap;
+      padding: .85rem 1.1rem;
+      vertical-align: middle;
+      border: none;
+      border-bottom: 1px solid var(--tbl-border-light);
+      white-space: nowrap;
+      transition: background .15s ease;
     }
-    #driversTable tbody tr:hover td { background: #f8fafc; }
-    #driversTable .dataTables_empty { text-align: center; padding: 2.5rem !important; color: #94a3b8; font-size: .9rem; }
-    #driversTable_wrapper .dataTables_scrollBody::-webkit-scrollbar { height: 8px; }
-    #driversTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+    /* ── Zebra striping ────────────────────────────────────── */
+    #driversTable tbody tr:nth-child(odd)  td { background: var(--tbl-row-odd); }
+    #driversTable tbody tr:nth-child(even) td { background: var(--tbl-row-even); }
+
+    /* ── Hover & selection ─────────────────────────────────── */
+    #driversTable tbody tr:hover td {
+      background: var(--tbl-row-hover);
+    }
+    #driversTable tbody tr.selected td,
+    #driversTable tbody tr.dt-rowSelected td {
+      background: var(--tbl-row-selected) !important;
+    }
+
+    /* ── Last row no border ────────────────────────────────── */
+    #driversTable tbody tr:last-child td { border-bottom: none; }
+
+    /* ── Empty state ───────────────────────────────────────── */
+    #driversTable .dataTables_empty {
+      text-align: center;
+      padding: 3rem !important;
+      color: var(--tbl-text-muted);
+      font-size: .95rem;
+    }
+
+    /* ── Scrollbar ─────────────────────────────────────────── */
+    #driversTable_wrapper .dataTables_scrollBody::-webkit-scrollbar { height: 6px; }
+    #driversTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-track { background: transparent; }
+    #driversTable_wrapper .dataTables_scrollBody::-webkit-scrollbar-thumb {
+      background: #cbd5e1; border-radius: 3px;
+    }
+
+    /* ── Controls: length, filter ──────────────────────────── */
     #driversTable_wrapper .dataTables_length,
-    #driversTable_wrapper .dataTables_filter { margin-bottom: .9rem; }
+    #driversTable_wrapper .dataTables_filter {
+      margin-bottom: 1rem;
+    }
+    #driversTable_wrapper .dataTables_length label,
+    #driversTable_wrapper .dataTables_filter label {
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--tbl-text-secondary);
+    }
     #driversTable_wrapper .dataTables_length select,
     #driversTable_wrapper .dataTables_filter input {
-      border: 1px solid #e2e8f0; border-radius: 8px; padding: .35rem .6rem; font-size: .85rem; outline: none;
+      border: 1px solid var(--tbl-border);
+      border-radius: var(--tbl-radius-sm);
+      padding: .4rem .75rem;
+      font-size: .85rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      background: #fff;
+      color: var(--tbl-text-primary);
     }
-    #driversTable_wrapper .dataTables_filter input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.12); }
-    #driversTable_wrapper .dataTables_info { color: #94a3b8; font-size: .8rem; padding-top: 1rem; }
-    #driversTable_wrapper .dataTables_paginate { padding-top: .9rem; }
+    #driversTable_wrapper .dataTables_filter input:focus {
+      border-color: var(--tbl-accent);
+      box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+    }
+
+    /* ── Info & pagination ─────────────────────────────────── */
+    #driversTable_wrapper .dataTables_info {
+      color: var(--tbl-text-muted);
+      font-size: .8rem;
+      padding-top: 1rem;
+    }
+    #driversTable_wrapper .dataTables_paginate { padding-top: 1rem; }
     #driversTable_wrapper .dataTables_paginate .paginate_button {
-      border: 1px solid #e2e8f0 !important; border-radius: 8px !important; background: #fff !important;
-      color: #64748b !important; font-size: .8rem; margin: 0 2px; padding: .3rem .75rem !important;
+      border: 1px solid var(--tbl-border) !important;
+      border-radius: var(--tbl-radius-sm) !important;
+      background: #fff !important;
+      color: var(--tbl-text-secondary) !important;
+      font-size: .8rem;
+      font-weight: 500;
+      margin: 0 2px;
+      padding: .35rem .85rem !important;
+      transition: all .15s ease;
     }
     #driversTable_wrapper .dataTables_paginate .paginate_button:hover {
-      background: #f8fafc !important; color: #6366f1 !important; border-color: #c7d2fe !important;
+      background: var(--tbl-accent-light) !important;
+      color: var(--tbl-accent) !important;
+      border-color: #c7d2fe !important;
     }
     #driversTable_wrapper .dataTables_paginate .paginate_button.current,
     #driversTable_wrapper .dataTables_paginate .paginate_button.current:hover {
-      background: #6366f1 !important; border-color: #6366f1 !important; color: #fff !important;
+      background: var(--tbl-accent) !important;
+      border-color: var(--tbl-accent) !important;
+      color: #fff !important;
+      font-weight: 600;
     }
-    .status-pill {
-      padding: .28em .75em; font-size: .68rem; font-weight: 700; text-transform: uppercase; border-radius: 50px;
+
+    /* ── Status badges ─────────────────────────────────────── */
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: .35em;
+      padding: .3em .85em;
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-radius: 50px;
+      line-height: 1.4;
+      white-space: nowrap;
     }
-    .status-active { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-    .status-inactive { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-    #driversTable td code { font-size: .8rem; background: #eef2ff; padding: .2rem .5rem; border-radius: 6px; }
+    .badge-active {
+      background: var(--tbl-success-bg);
+      color: var(--tbl-success-text);
+      border: 1px solid var(--tbl-success-border);
+    }
+    .badge-inactive {
+      background: var(--tbl-danger-bg);
+      color: var(--tbl-danger-text);
+      border: 1px solid var(--tbl-danger-border);
+    }
+
+    /* ── Driver name cell ──────────────────────────────────── */
+    .driver-cell {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+    }
+    .driver-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--tbl-accent-light);
+      color: var(--tbl-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .driver-name { font-weight: 600; color: var(--tbl-text-primary); }
+
+    /* ── License tag ───────────────────────────────────────── */
+    .license-tag {
+      font-size: .78rem;
+      font-weight: 600;
+      background: var(--tbl-accent-light);
+      color: var(--tbl-accent);
+      padding: .25em .65em;
+      border-radius: 6px;
+      letter-spacing: .02em;
+    }
+
+    /* ── Numeric cells ─────────────────────────────────────── */
+    .num-cell {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--tbl-text-primary);
+    }
+    .num-cell.zero { color: var(--tbl-text-muted); font-weight: 400; }
+
+    /* ── Fuel cost ─────────────────────────────────────────── */
+    .fuel-amount {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--tbl-text-primary);
+    }
+
+    /* ── Action buttons ────────────────────────────────────── */
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--tbl-radius-sm);
+      font-size: .8rem;
+      border: 1px solid var(--tbl-border);
+      background: #fff;
+      transition: all .15s ease;
+    }
+    .action-btn.btn-edit {
+      color: var(--tbl-accent);
+    }
+    .action-btn.btn-edit:hover {
+      background: var(--tbl-accent);
+      color: #fff;
+      border-color: var(--tbl-accent);
+    }
+    .action-btn.btn-delete {
+      color: var(--tbl-danger-text);
+    }
+    .action-btn.btn-delete:hover {
+      background: var(--tbl-danger-text);
+      color: #fff;
+      border-color: var(--tbl-danger-text);
+    }
+
+    /* ── Phone & ID cells ──────────────────────────────────── */
+    .phone-text {
+      font-variant-numeric: tabular-nums;
+      color: var(--tbl-text-primary);
+      font-size: .84rem;
+    }
+    .id-text {
+      font-size: .84rem;
+      font-weight: 500;
+      color: var(--tbl-text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
   </style>
 </head>
 
@@ -129,17 +357,17 @@ $activePage   = 'drivers_all';
 
         <div class="card-body p-4">
           <div class="table-responsive">
-            <table id="driversTable" class="table align-middle w-100">
+            <table id="driversTable" class="align-middle w-100">
               <thead>
                 <tr>
-                  <th style="width:30px;"></th>
-                  <th data-i18n="driverName">Driver Name</th>
+                  <th style="width:42px;"></th>
+                  <th data-i18n="driverName">Driver</th>
                   <th data-i18n="mobile">Mobile</th>
                   <th data-i18n="licenseNo">License No</th>
                   <th data-i18n="idNumber">ID Number</th>
                   <th data-i18n="status">Status</th>
-                  <th data-i18n="trips">Trips</th>
-                  <th data-i18n="assignments">Assignments</th>
+                  <th class="text-center" data-i18n="trips">Trips</th>
+                  <th class="text-center" data-i18n="assignments">Assignments</th>
                   <th data-i18n="totalFuel">Total Fuel</th>
                   <th class="text-center" data-i18n="action">Action</th>
                 </tr>
@@ -168,27 +396,32 @@ $activePage   = 'drivers_all';
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label small fw-semibold"><span data-i18n="driverName">Driver Name</span> <span class="text-danger">*</span></label>
-                <input class="form-control" type="text" name="driver_name" id="inputName" required>
+                <input class="form-control" type="text" name="driver_name" id="inputName" required maxlength="50">
+                <div class="invalid-feedback">Driver name is required (max 50 characters).</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold"><span data-i18n="mobileNumber">Mobile Number</span></label>
-                <input class="form-control" type="text" name="mobile" id="inputMobile">
+                <input class="form-control" type="text" name="mobile" id="inputMobile" pattern="[0-9]*" inputmode="numeric">
+                <div class="invalid-feedback">Phone number must contain only digits.</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold"><span data-i18n="licenseNumber">License Number</span></label>
                 <input class="form-control" type="text" name="license_no" id="inputLicense">
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold"><span data-i18n="idNumber">ID Number</span></label>
-                <input class="form-control" type="text" name="id_number" id="inputIdNumber">
+                <label class="form-label small fw-semibold"><span data-i18n="idNumber">ID Number</span> <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" name="id_number" id="inputIdNumber" required maxlength="30">
+                <div class="invalid-feedback">ID number is required (max 30 characters).</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold"><span data-i18n="address">Address</span></label>
-                <input class="form-control" type="text" name="address" id="inputAddress">
+                <input class="form-control" type="text" name="address" id="inputAddress" pattern="[A-Za-z0-9\s]*" inputmode="text">
+                <div class="invalid-feedback">Address may only contain letters and numbers.</div>
               </div>
               <div class="col-md-6">
-                <label class="form-label small fw-semibold"><span data-i18n="emergencyContact">Emergency Contact</span></label>
-                <input class="form-control" type="text" name="emergency_contact" id="inputEmergency">
+                <label class="form-label small fw-semibold"><span data-i18n="emergencyContact">Emergency Contact</span> <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" name="emergency_contact" id="inputEmergency" required pattern="[0-9]*" inputmode="numeric">
+                <div class="invalid-feedback">Emergency contact must contain only digits.</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label small fw-semibold"><span data-i18n="status">Status</span></label>
@@ -248,13 +481,29 @@ let selectedId = null;
 
 const fmt = n => 'UGX ' + Number(n).toLocaleString('en-UG');
 
+function formatPhone(val) {
+  if (!val) return '<span class="text-muted">\u2014</span>';
+  const digits = String(val).replace(/\D/g, '');
+  if (digits.startsWith('254')) return '+' + digits;
+  if (digits.startsWith('0')) return '+254' + digits.substring(1);
+  if (digits.length >= 9) return '+254' + digits;
+  return '+' + digits;
+}
+
 $(document).ready(function () {
   table = $('#driversTable').DataTable({
     scrollX: true,
     scrollCollapse: true,
     processing: true,
-    pageLength: 50,
-    dom: 'lfrtip',
+    pageLength: 25,
+    lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, 'All']],
+    dom: '<"row align-items-center mb-3"<"col-sm-6"l><"col-sm-6"f>>rtip',
+    language: {
+      info: 'Showing _START_ to _END_ of _TOTAL_ drivers',
+      infoEmpty: 'No drivers found',
+      infoFiltered: '(filtered from _MAX_ total)',
+      emptyTable: '<div style="padding:2rem;"><i class="bi bi-inbox" style="font-size:2rem;color:var(--tbl-text-muted);display:block;margin-bottom:.5rem;"></i>No drivers registered yet.</div>'
+    },
     buttons: [
       { extend:'copy',  exportOptions:{ columns:[1,2,3,4,5,6,7,8,9] } },
       { extend:'csv',   exportOptions:{ columns:[1,2,3,4,5,6,7,8,9] } },
@@ -275,25 +524,40 @@ $(document).ready(function () {
     columns: [
       { data:'driver_id', orderable:false, className:'text-center',
         render: d => `<div class="form-check"><input class="form-check-input row-check" type="checkbox" value="${d}"></div>` },
-      { data:'driver_name', render: d => `<span class="fw-bold text-dark">${d}</span>` },
-      { data:'mobile', render: d => d || '<span class="text-muted">—</span>' },
-      { data:'license_no', render: d => d ? `<code class="text-primary fw-bold">${d}</code>` : '<span class="text-muted">—</span>' },
-      { data:'id_number', render: d => d || '<span class="text-muted">—</span>' },
-      { data:'status', className:'text-center',
-        render: d => {
-          if (d === 'active') return '<span class="status-pill status-active"><i class="bi bi-check-circle-fill me-1"></i>ACTIVE</span>';
-          return '<span class="status-pill status-inactive"><i class="bi bi-x-circle me-1"></i>INACTIVE</span>';
+      { data:'driver_name',
+        render: function(d) {
+          const initials = d.split(' ').map(w => w.charAt(0)).join('').substring(0, 2);
+          return `<div class="driver-cell"><div class="driver-avatar">${initials}</div><span class="driver-name">${d}</span></div>`;
         }
       },
-      { data:'total_trips', className:'text-center', render: d => d || 0 },
-      { data:'total_assignments', className:'text-center', render: d => d || 0 },
-      { data:'total_fuel', render: d => Number(d) > 0 ? `<span class="fw-semibold">${fmt(d)}</span>` : '<span class="text-muted">—</span>' },
+      { data:'mobile', render: d => `<span class="phone-text">${formatPhone(d)}</span>` },
+      { data:'license_no',
+        render: d => d ? `<span class="license-tag">${d}</span>` : '<span style="color:var(--tbl-text-muted)">—</span>'
+      },
+      { data:'id_number', render: d => d ? `<span class="id-text">${d}</span>` : '<span style="color:var(--tbl-text-muted)">—</span>' },
+      { data:'status', className:'text-center',
+        render: d => {
+          if (d === 'active') return '<span class="badge-status badge-active"><i class="bi bi-check-circle-fill"></i>Active</span>';
+          return '<span class="badge-status badge-inactive"><i class="bi bi-x-circle-fill"></i>Inactive</span>';
+        }
+      },
+      { data:'total_trips', className:'text-center',
+        render: d => { const v = d || 0; return `<span class="num-cell${v === 0 ? ' zero' : ''}">${v}</span>`; }
+      },
+      { data:'total_assignments', className:'text-center',
+        render: d => { const v = d || 0; return `<span class="num-cell${v === 0 ? ' zero' : ''}">${v}</span>`; }
+      },
+      { data:'total_fuel',
+        render: d => Number(d) > 0
+          ? `<span class="fuel-amount">${fmt(d)}</span>`
+          : '<span style="color:var(--tbl-text-muted)">—</span>'
+      },
       { data:'driver_id', orderable:false, className:'text-center',
-        render: function(d, t, r) {
-          let btns = '';
-          btns += `<button class="btn btn-sm btn-outline-primary btn-edit-driver me-1" data-id="${d}" title="Edit" style="border-radius:8px;"><i class="fa fa-edit"></i></button>`;
-          btns += `<button class="btn btn-sm btn-outline-danger btn-delete-driver" data-id="${d}" title="Delete" style="border-radius:8px;"><i class="fa fa-trash"></i></button>`;
-          return btns;
+        render: function(d) {
+          return `<div class="d-flex gap-1 justify-content-center">
+            <button class="action-btn btn-edit btn-edit-driver" data-id="${d}" title="Edit"><i class="fa fa-pen"></i></button>
+            <button class="action-btn btn-delete btn-delete-driver" data-id="${d}" title="Delete"><i class="fa fa-trash-can"></i></button>
+          </div>`;
         }
       }
     ]
@@ -333,6 +597,23 @@ $(document).on('click', '.btn-edit-driver', function(e) {
 
 $('#driverForm').on('submit', function(e) {
   e.preventDefault();
+  const fields = $(this)[0].querySelectorAll('.form-control, .form-select');
+  fields.forEach(f => f.classList.remove('is-invalid'));
+
+  const name = $('#inputName').val().trim();
+  const idNum = $('#inputIdNumber').val().trim();
+  const mobile = $('#inputMobile').val().trim();
+  const address = $('#inputAddress').val().trim();
+  const emergency = $('#inputEmergency').val().trim();
+  let valid = true;
+
+  if (!name || name.length > 50) { $('#inputName').addClass('is-invalid'); valid = false; }
+  if (!idNum || idNum.length > 30) { $('#inputIdNumber').addClass('is-invalid'); valid = false; }
+  if (mobile && !/^[0-9]+$/.test(mobile)) { $('#inputMobile').addClass('is-invalid'); valid = false; }
+  if (address && !/^[A-Za-z0-9\s]+$/.test(address)) { $('#inputAddress').addClass('is-invalid'); valid = false; }
+  if (!emergency || !/^[0-9]+$/.test(emergency)) { $('#inputEmergency').addClass('is-invalid'); valid = false; }
+  if (!valid) { toastr.warning('Please fix the highlighted fields.'); return; }
+
   const btn = $('#btnSaveDriver').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Saving...');
   $.ajax({
     url: API + '?f=save', method: 'POST', dataType: 'json', data: $(this).serialize(),

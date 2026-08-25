@@ -89,6 +89,24 @@ try {
         if ($driverName === '') {
             reply(['status' => 'error', 'msg' => 'Driver name is required.'], 422);
         }
+        if (mb_strlen($driverName) > 50) {
+            reply(['status' => 'error', 'msg' => 'Driver name must not exceed 50 characters.'], 422);
+        }
+        if ($idNumber === '') {
+            reply(['status' => 'error', 'msg' => 'ID number is required.'], 422);
+        }
+        if (mb_strlen($idNumber) > 30) {
+            reply(['status' => 'error', 'msg' => 'ID number must not exceed 30 characters.'], 422);
+        }
+        if ($driverMobile !== '' && !preg_match('/^[0-9]+$/', $driverMobile)) {
+            reply(['status' => 'error', 'msg' => 'Phone number must contain only digits.'], 422);
+        }
+        if ($address !== '' && !preg_match('/^[A-Za-z0-9\s]+$/', $address)) {
+            reply(['status' => 'error', 'msg' => 'Address may only contain letters and numbers.'], 422);
+        }
+        if ($emergencyContact === '' || !preg_match('/^[0-9]+$/', $emergencyContact)) {
+            reply(['status' => 'error', 'msg' => 'Emergency contact is required and must contain only digits.'], 422);
+        }
 
         if ($id > 0) {
             $stmt = $db->prepare(

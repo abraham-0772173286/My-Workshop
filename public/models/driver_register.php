@@ -125,27 +125,32 @@ $activePage   = 'drivers_register';
             <div class="row g-3">
               <div class="col-md-4">
                 <label class="form-label small fw-semibold"><span data-i18n="driverName">Driver Name</span> <span class="text-danger">*</span></label>
-                <input class="form-control" type="text" name="driver_name" id="inputName" placeholder="Enter full name" required>
+                <input class="form-control" type="text" name="driver_name" id="inputName" placeholder="Enter full name" required maxlength="50">
+                <div class="invalid-feedback">Driver name is required (max 50 characters).</div>
               </div>
               <div class="col-md-4">
                 <label class="form-label small fw-semibold"><span data-i18n="mobileNumber">Mobile Number</span></label>
-                <input class="form-control" type="text" name="mobile" id="inputMobile" placeholder="e.g. 0700123456">
+                <input class="form-control" type="text" name="mobile" id="inputMobile" placeholder="e.g. 0700123456" pattern="[0-9]*" inputmode="numeric">
+                <div class="invalid-feedback">Phone number must contain only digits.</div>
               </div>
               <div class="col-md-4">
                 <label class="form-label small fw-semibold"><span data-i18n="licenseNumber">License Number</span></label>
                 <input class="form-control" type="text" name="license_no" id="inputLicense" placeholder="e.g. U1234567">
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold"><span data-i18n="idNumber">ID Number</span></label>
-                <input class="form-control" type="text" name="id_number" id="inputIdNumber" placeholder="National ID / Passport">
+                <label class="form-label small fw-semibold"><span data-i18n="idNumber">ID Number</span> <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" name="id_number" id="inputIdNumber" placeholder="National ID (20) / Passport (30)" required maxlength="30">
+                <div class="invalid-feedback">ID number is required (max 30 characters).</div>
               </div>
               <div class="col-md-4">
                 <label class="form-label small fw-semibold"><span data-i18n="address">Address</span></label>
-                <input class="form-control" type="text" name="address" id="inputAddress" placeholder="Physical address">
+                <input class="form-control" type="text" name="address" id="inputAddress" placeholder="Physical address" pattern="[A-Za-z0-9\s]*" inputmode="text">
+                <div class="invalid-feedback">Address may only contain letters and numbers.</div>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-semibold"><span data-i18n="emergencyContact">Emergency Contact</span></label>
-                <input class="form-control" type="text" name="emergency_contact" id="inputEmergency" placeholder="Name & phone">
+                <label class="form-label small fw-semibold"><span data-i18n="emergencyContact">Emergency Contact</span> <span class="text-danger">*</span></label>
+                <input class="form-control" type="text" name="emergency_contact" id="inputEmergency" placeholder="Phone number" required pattern="[0-9]*" inputmode="numeric">
+                <div class="invalid-feedback">Emergency contact must contain only digits.</div>
               </div>
               <div class="col-md-4">
                 <label class="form-label small fw-semibold"><span data-i18n="status">Status</span></label>
@@ -228,6 +233,15 @@ let table = null;
 
 const fmt = n => 'UGX ' + Number(n).toLocaleString('en-UG');
 
+function formatPhone(val) {
+  if (!val) return '<span class="text-muted">\u2014</span>';
+  const digits = String(val).replace(/\D/g, '');
+  if (digits.startsWith('254')) return '+' + digits;
+  if (digits.startsWith('0')) return '+254' + digits.substring(1);
+  if (digits.length >= 9) return '+254' + digits;
+  return '+' + digits;
+}
+
 function loadTable() {
   if (table) { table.ajax.reload(null, false); return; }
   table = $('#driversTable').DataTable({
@@ -248,7 +262,7 @@ function loadTable() {
     },
     columns: [
       { data:'driver_name', render: d => `<span class="fw-bold text-dark">${d}</span>` },
-      { data:'mobile', render: d => d || '<span class="text-muted">—</span>' },
+      { data:'mobile', render: d => formatPhone(d) },
       { data:'license_no', render: d => d ? `<code class="text-primary fw-bold">${d}</code>` : '<span class="text-muted">—</span>' },
       { data:'id_number', render: d => d || '<span class="text-muted">—</span>' },
       { data:'status', className:'text-center',
@@ -299,6 +313,24 @@ $(document).ready(function () {
 
   $('#driverForm').on('submit', function(e) {
     e.preventDefault();
+    const form = $(this)[0];
+    const fields = form.querySelectorAll('.form-control, .form-select');
+    fields.forEach(f => f.classList.remove('is-invalid'));
+
+    const name = $('#inputName').val().trim();
+    const idNum = $('#inputIdNumber').val().trim();
+    const mobile = $('#inputMobile').val().trim();
+    const address = $('#inputAddress').val().trim();
+    const emergency = $('#inputEmergency').val().trim();
+    let valid = true;
+
+    if (!name || name.length > 50) { $('#inputName').addClass('is-invalid'); valid = false; }
+    if (!idNum || idNum.length > 30) { $('#inputIdNumber').addClass('is-invalid'); valid = false; }
+    if (mobile && !/^[0-9]+$/.test(mobile)) { $('#inputMobile').addClass('is-invalid'); valid = false; }
+    if (address && !/^[A-Za-z0-9\s]+$/.test(address)) { $('#inputAddress').addClass('is-invalid'); valid = false; }
+    if (!emergency || !/^[0-9]+$/.test(emergency)) { $('#inputEmergency').addClass('is-invalid'); valid = false; }
+    if (!valid) { toastr.warning('Please fix the highlighted fields.'); return; }
+
     const btn = $('#btnSaveDriver').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1"></span>Saving...');
     $.ajax({
       url: API + '?f=save', method: 'POST', dataType: 'json', data: $(this).serialize(),
