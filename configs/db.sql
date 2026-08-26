@@ -1,12 +1,6 @@
 -- ============================================================
 --  SHENGCHI AUTO LTD (金龙汽车维修)
 --  Workshop Management System — Full Database Schema
---
---  HOW TO USE IN MYSQL WORKBENCH:
---  1. Open MySQL Workbench and connect to localhost (root / your password)
---  2. Open this file:  File → Open SQL Script → select this file
---  3. Click the lightning-bolt ⚡ button to execute
---  4. Refresh the Schemas panel — you will see the "workshop" database
 -- ============================================================
 
 -- Drop and recreate for a clean slate (remove these two lines if you
@@ -52,13 +46,17 @@ INSERT INTO `users` (`username`, `password_hash`, `full_name`, `role`) VALUES
 CREATE TABLE `customers` (
     `id`         INT           NOT NULL AUTO_INCREMENT,
     `fullname`   VARCHAR(120)  NOT NULL COMMENT 'Full name of the customer',
-    `contact`    VARCHAR(40)   NOT NULL COMMENT 'Phone number — must be unique',
+    `contact`    VARCHAR(40)   NOT NULL COMMENT 'Phone number — must be unique per active customer',
     `address`    VARCHAR(255)  NULL COMMENT 'Optional physical address',
     `created_at` TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP     NULL     DEFAULT NULL COMMENT 'Soft-delete timestamp — NULL means active',
+    `deleted_by` INT           NULL     DEFAULT NULL COMMENT 'FK → users.id who deleted this customer',
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uq_customers_contact` (`contact`)
+    UNIQUE KEY `uq_customers_contact` (`contact`),
+    CONSTRAINT `fk_customers_deleted_by` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`)
+        ON UPDATE CASCADE ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  COMMENT='Registered vehicle owners';
+  COMMENT='Registered vehicle owners (soft-delete enabled)';
 
 -- ============================================================
 -- TABLE 2 — vehicles
@@ -239,8 +237,9 @@ CREATE TABLE `receipts` (
 -- ------------------------------------------------------------
 -- Q1. Repair Jobs Register (mirrors the UI table exactly)
 --     JOIN: repair_jobs → vehicles → customers
+--     Excludes soft-deleted customers
 -- ------------------------------------------------------------
-SELECT CONCAT('RJ-', LPAD(rj.id, 5, '0')) AS `Job No`
+SELECT CONCAT('RJ-', LPAD(rj.id, 5, '0')) AS `Job No`,
     c.fullname AS `Customer`,
     c.contact AS `Phone`,
     CONCAT(v.plate_number, ' · ',
@@ -253,12 +252,13 @@ SELECT CONCAT('RJ-', LPAD(rj.id, 5, '0')) AS `Job No`
     DATE_FORMAT(rj.created_at, '%d %b %Y') AS `Date`
 FROM repair_jobs rj
 INNER JOIN vehicles  v  ON v.id  = rj.vehicle_id
-INNER JOIN customers c  ON c.id  = v.customer_id
+INNER JOIN customers c  ON c.id  = v.customer_id AND c.deleted_at IS NULL
 ORDER BY rj.id DESC;
 
 -- ------------------------------------------------------------
 -- Q2. Full payment summary with receipt
 --     JOIN: payments → repair_jobs → vehicles → customers → receipts
+--     Excludes soft-deleted customers
 -- ------------------------------------------------------------
 SELECT
     CONCAT('RJ-', LPAD(rj.id, 5, '0')) AS `Job No`,
@@ -273,13 +273,14 @@ SELECT
 FROM payments p
 INNER JOIN repair_jobs rj ON rj.id = p.repair_job_id
 INNER JOIN vehicles v ON v.id = rj.vehicle_id
-INNER JOIN customers c ON c.id = v.customer_id
+INNER JOIN customers c ON c.id = v.customer_id AND c.deleted_at IS NULL
 LEFT  JOIN receipts r ON r.payment_id = p.id
 ORDER BY p.paid_at DESC;
 
 -- ------------------------------------------------------------
 -- Q3. All vehicles per customer
 --     JOIN: customers → vehicles
+--     Excludes soft-deleted customers
 -- ------------------------------------------------------------
 SELECT
     c.id AS `Customer ID`,
@@ -293,11 +294,13 @@ SELECT
 FROM customers c
 LEFT JOIN vehicles v ON v.customer_id = c.id
 LEFT JOIN repair_jobs rj ON rj.vehicle_id = v.id
+WHERE c.deleted_at IS NULL
 GROUP BY c.id, v.id
 ORDER BY c.fullname;
 
 -- ------------------------------------------------------------
 -- Q4. Pending jobs only
+--     Excludes soft-deleted customers
 -- ------------------------------------------------------------
 SELECT
     CONCAT('RJ-', LPAD(rj.id, 5, '0')) AS `Job No`,
@@ -308,10 +311,52 @@ SELECT
     (rj.parts_cost + rj.labour_cost) AS `Amount (UGX)`,
     DATE_FORMAT(rj.created_at, '%d %b %Y') AS `Logged On`
 FROM repair_jobs rj
-INNER JOIN vehicles  v ON v.id = rj.vehicle_id
-INNER JOIN customers c ON c.id = v.customer_id
+INNER JOIN vehicles  v ON v.id  = rj.vehicle_id
+INNER JOIN customers c ON c.id  = v.customer_id AND c.deleted_at IS NULL
 WHERE rj.status = 'REPAIR PENDING'
 ORDER BY rj.created_at ASC;
+
+-- ============================================================
+-- SOFT-DELETE HELPER QUERIES
+-- ============================================================
+
+-- ------------------------------------------------------------
+-- Q5. View all deleted customers with full history
+-- ------------------------------------------------------------
+SELECT
+    c.id AS `Customer ID`,
+    c.fullname AS `Customer`,
+    c.contact AS `Phone`,
+    c.address AS `Address`,
+    COUNT(DISTINCT v.id) AS `Total Vehicles`,
+    COUNT(DISTINCT rj.id) AS `Total Jobs`,
+    COALESCE(SUM(rj.parts_cost + rj.labour_cost), 0) AS `Lifetime Value (UGX)`,
+    DATE_FORMAT(c.created_at, '%d %b %Y') AS `Registered`,
+    DATE_FORMAT(c.deleted_at, '%d %b %Y') AS `Deleted On`,
+    u.full_name AS `Deleted By`
+FROM customers c
+LEFT JOIN vehicles v ON v.customer_id = c.id
+LEFT JOIN repair_jobs rj ON rj.vehicle_id = v.id
+LEFT JOIN users u ON u.id = c.deleted_by
+WHERE c.deleted_at IS NOT NULL
+GROUP BY c.id
+ORDER BY c.deleted_at DESC;
+
+-- ------------------------------------------------------------
+-- Q6. Restore a soft-deleted customer
+--     Replace 123 with the actual customer id
+-- ------------------------------------------------------------
+-- UPDATE customers
+-- SET deleted_at = NULL, deleted_by = NULL
+-- WHERE id = 123 AND deleted_at IS NOT NULL;
+
+-- ------------------------------------------------------------
+-- Q7. Permanently purge old deleted customers (older than 1 year)
+--     ⚠️ This is irreversible — backup first!
+-- ------------------------------------------------------------
+-- DELETE FROM customers
+-- WHERE deleted_at IS NOT NULL
+--   AND deleted_at < DATE_SUB(NOW(), INTERVAL 1 YEAR);
 
 -- ============================================================
 -- END OF SCHEMA
