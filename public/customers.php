@@ -66,10 +66,15 @@ $activePage   = 'customers';
     <div class="card border-0 shadow-sm" style="border-radius:16px;">
       <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
         <div class="d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold mb-0"><i class="bi bi-people me-2 text-primary"></i><span data-i18n="customerRegister">Customer Register</span></h5>
-          <button class="btn btn-primary btn-sm" id="btnAddCustomer">
-            <i class="fa fa-plus me-1"></i> <span data-i18n="addCustomer">Add Customer</span>
-          </button>
+          <h5 class="fw-bold mb-0"><i class="bi bi-people me-2 text-primary"></i><span id="tableTitle" data-i18n="customerRegister">Customer Register</span></h5>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm" id="btnViewDeleted">
+              <i class="bi bi-trash3 me-1"></i><span data-i18n="viewDeleted">View Deleted</span>
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnAddCustomer">
+              <i class="fa fa-plus me-1"></i> <span data-i18n="addCustomer">Add Customer</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -77,9 +82,12 @@ $activePage   = 'customers';
         <!-- toolbar -->
         <div class="mb-3 d-flex flex-wrap gap-2 align-items-center justify-content-between">
           <div class="d-flex flex-wrap gap-2">
-            <div class="d-flex gap-2 border-end pe-3 me-1">
+            <div class="d-flex gap-2 border-end pe-3 me-1" id="activeActions">
               <button class="btn btn-outline-success btn-sm btnEdit"><i class="fa fa-edit me-1"></i><span data-i18n="edit">Edit</span></button>
               <button class="btn btn-outline-danger  btn-sm btnDelete"><i class="fa fa-trash me-1"></i><span data-i18n="delete">Delete</span></button>
+            </div>
+            <div class="d-flex gap-2 border-end pe-3 me-1" id="deletedActions" style="display:none;">
+              <button class="btn btn-outline-success btn-sm" id="btnRestore"><i class="fa fa-undo me-1"></i><span data-i18n="restore">Restore</span></button>
             </div>
             <a class="btn btn-outline-info btn-sm" id="btnViewVehicles" href="#"><i class="bi bi-car-front me-1"></i><span data-i18n="vehicles">Vehicles</span></a>
           </div>
@@ -110,6 +118,8 @@ $activePage   = 'customers';
                 <th class="text-center" data-i18n="jobs">Jobs</th>
                 <th data-i18n="lifetimeValue">Lifetime Value</th>
                 <th data-i18n="joined">Joined</th>
+                <th class="deleted-col" data-i18n="deletedOn" style="display:none;">Deleted On</th>
+                <th class="deleted-col" data-i18n="deletedBy" style="display:none;">Deleted By</th>
               </tr>
             </thead>
           </table>
@@ -195,12 +205,43 @@ $activePage   = 'customers';
 <script>
 let table = null;
 let selectedId = null;
+let viewingDeleted = false;
 const API = '../classes/Customers.php';
 const colors = ['#4f46e5','#16a34a','#d97706','#dc2626','#0284c7','#7c3aed','#db2777','#0891b2'];
 const initials = name => name.split(' ').slice(0,2).map(w=>w[0]?.toUpperCase()||'').join('');
 const colorFor  = name => colors[name.charCodeAt(0) % colors.length];
 
-$(document).ready(function () {
+function buildColumns(deleted) {
+  const cols = [
+    { data:'customer_id', orderable:false,
+      render: d => `<div class="form-check"><input class="form-check-input row-check" type="checkbox" value="${d}"></div>` },
+    { data:'fullname',
+      render: (d,t,r) => {
+        const bg = colorFor(d);
+        return `<div class="d-flex align-items-center gap-2">
+          <div class="avatar-circle" style="background:${bg}20;color:${bg}">${initials(d)}</div>
+          <div><span class="fw-semibold">${d}</span></div>
+        </div>`;
+      }},
+    { data:'contact',  render: d => `<a href="tel:${d}" class="text-decoration-none">${d}</a>` },
+    { data:'address' },
+    { data:'total_vehicles', className:'text-center',
+      render: d => `<span class="badge bg-light text-dark border fw-bold">${d}</span>` },
+    { data:'total_jobs', className:'text-center',
+      render: d => `<span class="badge bg-light text-dark border fw-bold">${d}</span>` },
+    { data:'lifetime_value',
+      render: d => `<span class="lifetime-badge">UGX ${Number(d).toLocaleString()}</span>` },
+    { data:'joined', className:'text-muted small' }
+  ];
+  if (deleted) {
+    cols.push({ data:'deleted_on', className:'text-muted small' });
+    cols.push({ data:'deleted_by_name', className:'text-muted small' });
+  }
+  return cols;
+}
+
+function initTable(deleted) {
+  if (table) { table.destroy(); $('#customersTable tbody').empty(); }
   table = $('#customersTable').DataTable({
     responsive: true,
     pageLength: 25,
@@ -213,31 +254,11 @@ $(document).ready(function () {
       {extend:'print',exportOptions:{columns:':not(:first-child)'}}
     ],
     ajax: {
-      url: API + '?f=viewall',
+      url: deleted ? API + '?f=viewdeleted' : API + '?f=viewall',
       dataSrc: function(json){ return Array.isArray(json) ? json : []; },
       error: () => toastr.error('Could not load customers.')
     },
-    columns: [
-      { data:'customer_id', orderable:false,
-        render: d => `<div class="form-check"><input class="form-check-input row-check" type="checkbox" value="${d}"></div>` },
-      { data:'fullname',
-        render: (d,t,r) => {
-          const bg = colorFor(d);
-          return `<div class="d-flex align-items-center gap-2">
-            <div class="avatar-circle" style="background:${bg}20;color:${bg}">${initials(d)}</div>
-            <div><span class="fw-semibold">${d}</span></div>
-          </div>`;
-        }},
-      { data:'contact',  render: d => `<a href="tel:${d}" class="text-decoration-none">${d}</a>` },
-      { data:'address' },
-      { data:'total_vehicles', className:'text-center',
-        render: d => `<span class="badge bg-light text-dark border fw-bold">${d}</span>` },
-      { data:'total_jobs', className:'text-center',
-        render: d => `<span class="badge bg-light text-dark border fw-bold">${d}</span>` },
-      { data:'lifetime_value',
-        render: d => `<span class="lifetime-badge">UGX ${Number(d).toLocaleString()}</span>` },
-      { data:'joined', className:'text-muted small' }
-    ]
+    columns: buildColumns(deleted)
   });
 
   // row selection
@@ -248,6 +269,34 @@ $(document).ready(function () {
     $(this).find('.row-check').prop('checked',sel);
     selectedId = sel ? table.row(this).data().customer_id : null;
   });
+}
+
+$(document).ready(function () {
+  initTable(false);
+});
+
+// ── Toggle Active / Deleted ──────────────────────────────────────────────────
+$('#btnViewDeleted').click(function() {
+  viewingDeleted = !viewingDeleted;
+  if (viewingDeleted) {
+    $(this).removeClass('btn-outline-secondary').addClass('btn-secondary')
+           .html('<i class="bi bi-arrow-left me-1"></i>Back to Active');
+    $('#tableTitle').text('Deleted Customers');
+    $('#btnAddCustomer').hide();
+    $('#activeActions').hide();
+    $('#deletedActions').show();
+    $('.deleted-col').show();
+  } else {
+    $(this).removeClass('btn-secondary').addClass('btn-outline-secondary')
+           .html('<i class="bi bi-trash3 me-1"></i><span data-i18n="viewDeleted">View Deleted</span>');
+    $('#tableTitle').text('Customer Register');
+    $('#btnAddCustomer').show();
+    $('#activeActions').show();
+    $('#deletedActions').hide();
+    $('.deleted-col').hide();
+  }
+  selectedId = null;
+  initTable(viewingDeleted);
 });
 
 // ── Add ───────────────────────────────────────────────────────────────────────
@@ -286,10 +335,10 @@ $('#customerForm').on('submit', function(e){
   });
 });
 
-// ── Delete ────────────────────────────────────────────────────────────────────
+// ── Delete (soft-delete) ──────────────────────────────────────────────────────
 $('.btnDelete').click(function(){
   if (!selectedId) return toastr.error('Select a customer first.');
-  $('#confirmBody').text('Delete this customer? This cannot be undone.');
+  $('#confirmBody').text('Archive this customer? You can restore them later from View Deleted.');
   const m = new bootstrap.Modal('#confirmModal');
   $('#btnConfirm').off('click').on('click', function(){
     $.post(API + '?f=delete', {id: selectedId}, function(r){
@@ -299,6 +348,15 @@ $('.btnDelete').click(function(){
     }, 'json').fail(() => toastr.error('Delete failed.'));
   });
   m.show();
+});
+
+// ── Restore ───────────────────────────────────────────────────────────────────
+$('#btnRestore').click(function(){
+  if (!selectedId) return toastr.error('Select a customer first.');
+  $.post(API + '?f=restore', {id: selectedId}, function(r){
+    if(r.status==='success'){ toastr.success(r.msg); table.ajax.reload(); selectedId=null; }
+    else toastr.error(r.msg);
+  }, 'json').fail(() => toastr.error('Restore failed.'));
 });
 
 // ── View vehicles ─────────────────────────────────────────────────────────────

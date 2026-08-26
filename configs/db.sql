@@ -1,6 +1,7 @@
 -- ============================================================
 --  SHENGCHI AUTO LTD (金龙汽车维修)
 --  Workshop Management System — Full Database Schema
+
 -- ============================================================
 
 -- Drop and recreate for a clean slate (remove these two lines if you
@@ -357,6 +358,16 @@ ORDER BY c.deleted_at DESC;
 -- DELETE FROM customers
 -- WHERE deleted_at IS NOT NULL
 --   AND deleted_at < DATE_SUB(NOW(), INTERVAL 1 YEAR);
+
+-- ============================================================
+-- MIGRATION: Add soft-delete to existing customers table
+-- Run this if the customers table already exists
+-- ============================================================
+-- ALTER TABLE `customers`
+--     ADD COLUMN `deleted_at` TIMESTAMP NULL DEFAULT NULL COMMENT 'Soft-delete timestamp — NULL means active' AFTER `created_at`,
+--     ADD COLUMN `deleted_by` INT NULL DEFAULT NULL COMMENT 'FK → users.id who deleted this customer' AFTER `deleted_at`,
+--     ADD CONSTRAINT `fk_customers_deleted_by` FOREIGN KEY (`deleted_by`) REFERENCES `users` (`id`)
+--         ON UPDATE CASCADE ON DELETE SET NULL;
 
 -- ============================================================
 -- END OF SCHEMA
