@@ -56,6 +56,13 @@ $workshopBase = workshop_base_path();
       transform: translateY(-1px);
     }
     
+    .period-tab:not(.active):hover {
+      background: rgba(255, 255, 255, 0.25);
+      color: white;
+      transform: translateY(-1px);
+      cursor: pointer;
+    }
+    
     .stat-card {
       border-radius: 20px;
       border: 1px solid #eef2f7;
@@ -155,6 +162,13 @@ $workshopBase = workshop_base_path();
       border-radius: 20px;
       padding: 0.4rem 1rem;
       font-size: 0.85rem;
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .btn-print:hover {
+      background: #e84a59;
+      transform: translateY(-1px);
+      box-shadow: 0 0.35rem 0.9rem rgba(220, 53, 69, 0.35);
     }
     
     .custom-table {

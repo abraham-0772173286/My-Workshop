@@ -299,6 +299,34 @@ body.garage-sidebar-collapsed .app-main {
     border-top: 1px solid #e9ecef;
 }
 
+/* ── Buttons (hover keeps each button's own colour) ─────────────────── */
+.btn {
+    transition: color .15s ease-in-out,
+                background-color .15s ease-in-out,
+                border-color .15s ease-in-out,
+                box-shadow .15s ease-in-out,
+                transform .15s ease,
+                filter .15s ease;
+}
+
+.btn:not(.btn-light):not(.btn-link):hover,
+.btn:not(.btn-light):not(.btn-link):focus-visible {
+    filter: brightness(1.08) saturate(1.08);
+    box-shadow: 0 .35rem .9rem rgba(15, 23, 42, .14);
+    transform: translateY(-1px);
+}
+
+.btn:not(.btn-light):not(.btn-link):active {
+    transform: translateY(0);
+    filter: brightness(.98);
+}
+
+.btn-light:hover,
+.btn-light:focus-visible {
+    border-color: #cbd5e1;
+    box-shadow: 0 .25rem .6rem rgba(15, 23, 42, .12);
+}
+
 /* ── Status Pills ────────────────────────────────────────────────────── */
 .status-pill {
     padding: .28em .75em;
