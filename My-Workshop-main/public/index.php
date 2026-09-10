@@ -3,7 +3,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>JIN LONG GARAGE - Workshop Management</title>
+  <title>SHENGCHI - Workshop Management</title>
   <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
@@ -417,8 +417,7 @@
         <div class="nav-item"><a href="#" class="nav-link"><i class="bi bi-car-front"></i><span data-i18n="vehicles">Vehicles</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
         <div class="nav-item"><a href="#" class="nav-link"><i class="bi bi-cash-stack"></i><span data-i18n="payments">Payments</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
         <div class="nav-item"><a href="#" class="nav-link"><i class="bi bi-receipt"></i><span data-i18n="receipts">Receipts</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
-        <div class="nav-item"><a href="#" class="nav-link" data-section="invoice"><i class="bi bi-file-earmark-text"></i><span>Invoice</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
-        
+        <div class="nav-item"><a href="#" class="nav-link" data-panel="invoices"><i class="bi bi-file-earmark-text"></i><span data-i18n="invoices">Invoices</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
         <div class="nav-item"><a href="#" class="nav-link"><i class="bi bi-bar-chart-line"></i><span data-i18n="reports">Reports</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
         <div class="nav-item"><a href="#" class="nav-link"><i class="bi bi-gear"></i><span data-i18n="settings">Settings</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
         <div class="nav-item"><a href="#" class="nav-link"><i class="bi bi-receipt"></i><span data-i18n="signOut">Sign Out</span><i class="bi bi-chevron-right nav-arrow"></i></a></div>
@@ -1139,6 +1138,627 @@
           </script>
         </div><!-- /#panel-customers -->
 
+        <!-- ═══════════════════════════════ INVOICES PANEL ═══════════════════════════════ -->
+        <div id="panel-invoices" class="app-panel" style="display:none;">
+
+          <!-- ── Invoices list card ── -->
+          <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h3 class="card-title fw-bold mb-0"><i class="bi bi-file-earmark-text me-2 text-primary"></i><span data-i18n="invoices">Invoices</span></h3>
+                  <small class="text-muted" data-i18n="invoicesSubtitle">Create and manage customer invoices</small>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-primary btn-sm" id="newInvoiceBtn"><i class="bi bi-plus-lg me-1"></i><span data-i18n="newInvoice">New Invoice</span></button>
+                  <button class="btn btn-sm btn-light border" onclick="exportTable('print', invTable)" title="Print / PDF"><i class="fa fa-print"></i></button>
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-light border dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                      <i class="bi bi-download me-1"></i><span data-i18n="export">Export</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                      <li><a class="dropdown-item small" href="#" onclick="exportTable('pdf', invTable)"><i class="fa fa-file-pdf text-danger me-2"></i><span data-i18n="pdfDocument">PDF Document</span></a></li>
+                      <li><a class="dropdown-item small" href="#" onclick="exportTable('excel', invTable)"><i class="fa fa-file-excel text-success me-2"></i><span data-i18n="excelSpreadsheet">Excel Spreadsheet</span></a></li>
+                      <li><a class="dropdown-item small" href="#" onclick="exportTable('csv', invTable)"><i class="fa fa-file-csv text-info me-2"></i><span data-i18n="csvFile">CSV File</span></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body p-4">
+              <div class="table-responsive">
+                <table id="invoicestable" class="table align-middle w-100">
+                  <thead>
+                    <tr>
+                      <th style="width:30px;"></th>
+                      <th data-i18n="invoiceNo">Invoice No.</th>
+                      <th data-i18n="customerName">Customer</th>
+                      <th data-i18n="phoneContact">Contact</th>
+                      <th data-i18n="plateNumber">Plate</th>
+                      <th data-i18n="issueDate">Issue Date</th>
+                      <th data-i18n="dueDate">Due Date</th>
+                      <th data-i18n="grandTotal">Amount (USH)</th>
+                      <th data-i18n="status">Status</th>
+                      <th data-i18n="actions">Actions</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ════════════════════════ CREATE INVOICE MODAL ════════════════════════ -->
+          <div class="modal fade" id="createInvoiceModal" tabindex="-1" aria-labelledby="createInvoiceLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header" style="background:linear-gradient(135deg,#1d1d4e,#4015bf);color:#fff;">
+                  <div>
+                    <h5 class="modal-title fw-bold" id="createInvoiceLabel"><i class="bi bi-file-earmark-plus me-2"></i><span data-i18n="newInvoice">New Invoice</span></h5>
+                    <small class="opacity-75" data-i18n="invoicesSubtitle">Fill in customer, vehicle and line items</small>
+                  </div>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="createInvoiceForm">
+                  <div class="modal-body">
+                    <div class="row g-3">
+
+                      <!-- Left column: header fields -->
+                      <div class="col-md-6">
+                        <div class="card border-0 bg-light p-3 h-100">
+                          <h6 class="fw-bold text-uppercase text-muted small mb-3"><i class="bi bi-person me-1"></i> Customer & Vehicle</h6>
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold" data-i18n="customerName">Customer <span class="text-danger">*</span></label>
+                            <select class="form-select" id="inv_customer_id" name="customer_id" required>
+                              <option value="">— Select customer —</option>
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold" data-i18n="vehicle">Vehicle (optional)</label>
+                            <select class="form-select" id="inv_vehicle_id" name="vehicle_id">
+                              <option value="">— None / not applicable —</option>
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold" data-i18n="paymentTerms">Payment Terms</label>
+                            <input class="form-control" name="payment_terms" value="Payment due on receipt">
+                          </div>
+                          <div class="mb-0">
+                            <label class="form-label small fw-semibold" data-i18n="invoiceNotes">Notes</label>
+                            <textarea class="form-control" name="notes" rows="2" placeholder="Any additional remarks…"></textarea>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Right column: dates + status -->
+                      <div class="col-md-6">
+                        <div class="card border-0 bg-light p-3 h-100">
+                          <h6 class="fw-bold text-uppercase text-muted small mb-3"><i class="bi bi-calendar3 me-1"></i> Dates & Status</h6>
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold" data-i18n="issueDate">Issue Date <span class="text-danger">*</span></label>
+                            <input class="form-control" type="date" name="issue_date" id="inv_issue_date" required>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label small fw-semibold" data-i18n="dueDate">Due Date</label>
+                            <input class="form-control" type="date" name="due_date">
+                          </div>
+                          <div class="mb-0">
+                            <label class="form-label small fw-semibold" data-i18n="status">Payment Status</label>
+                            <select class="form-select" name="status">
+                              <option value="UNPAID" selected>Unpaid</option>
+                              <option value="PARTIAL">Partial</option>
+                              <option value="PAID">Paid</option>
+                              <option value="CANCELLED">Cancelled</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Line items -->
+                      <div class="col-12">
+                        <div class="card border-0 bg-light p-3">
+                          <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="fw-bold text-uppercase text-muted small mb-0"><i class="bi bi-list-ul me-1"></i> Line Items <span class="text-danger">*</span></h6>
+                            <button type="button" class="btn btn-sm btn-primary" id="addLineItemBtn"><i class="bi bi-plus me-1"></i>Add Item</button>
+                          </div>
+                          <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0" id="lineItemsTable">
+                              <thead class="table-dark">
+                                <tr>
+                                  <th style="width:35%">Description <span class="text-danger">*</span></th>
+                                  <th style="width:12%">Type</th>
+                                  <th style="width:10%">Qty</th>
+                                  <th style="width:15%">Unit Price (USH)</th>
+                                  <th style="width:10%">VAT %</th>
+                                  <th style="width:13%">Total (USH)</th>
+                                  <th style="width:5%"></th>
+                                </tr>
+                              </thead>
+                              <tbody id="lineItemsBody">
+                                <!-- rows added by JS -->
+                              </tbody>
+                              <tfoot>
+                                <tr class="table-light">
+                                  <td colspan="5" class="text-end fw-semibold small">Subtotal</td>
+                                  <td class="fw-bold" id="inv_subtotal">USH 0.00</td>
+                                  <td></td>
+                                </tr>
+                                <tr class="table-light">
+                                  <td colspan="5" class="text-end fw-semibold small">VAT Total</td>
+                                  <td class="fw-bold text-muted" id="inv_vat_total">USH 0.00</td>
+                                  <td></td>
+                                </tr>
+                                <tr style="background:#1d1d4e;color:#fff;">
+                                  <td colspan="5" class="text-end fw-bold">GRAND TOTAL</td>
+                                  <td class="fw-bold fs-6" id="inv_grand_total">USH 0.00</td>
+                                  <td></td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div><!-- /.row -->
+                  </div><!-- /.modal-body -->
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveInvoiceBtn"><i class="bi bi-save me-1"></i><span data-i18n="saveInvoice">Save Invoice</span></button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- ════════════════════════ VIEW / PRINT INVOICE MODAL ════════════════════════ -->
+          <div class="modal fade" id="viewInvoiceModal" tabindex="-1" aria-labelledby="viewInvoiceLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header" style="background:linear-gradient(135deg,#1d1d4e,#4015bf);color:#fff;">
+                  <h5 class="modal-title fw-bold" id="viewInvoiceLabel"><i class="bi bi-file-earmark-text me-2"></i>Invoice Preview</h5>
+                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                  <div id="invoicePrintArea" style="padding:28px 32px;font-family:Arial,Helvetica,sans-serif;font-size:13px;"></div>
+                </div>
+                <div class="modal-footer">
+                  <select class="form-select form-select-sm w-auto" id="invStatusSelect">
+                    <option value="UNPAID">Unpaid</option>
+                    <option value="PARTIAL">Partial</option>
+                    <option value="PAID">Paid</option>
+                    <option value="CANCELLED">Cancelled</option>
+                  </select>
+                  <button class="btn btn-sm btn-outline-secondary" id="updateInvStatusBtn"><i class="bi bi-arrow-repeat me-1"></i>Update Status</button>
+                  <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary" id="printInvoiceBtn"><i class="bi bi-printer me-1"></i>Print / PDF</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ════════ INVOICES JAVASCRIPT ════════ -->
+          <script>
+            let invTable = null;
+            let _currentInvId = null;
+            let _invCustomers = [];
+
+            /* ── format helpers ── */
+            const fmtNum = n => Number(n).toLocaleString('en-UG', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+            /* ── status badge ── */
+            function invStatusBadge(s) {
+              const map = {
+                'PAID':      'bg-success',
+                'UNPAID':    'bg-danger',
+                'PARTIAL':   'bg-warning text-dark',
+                'CANCELLED': 'bg-secondary'
+              };
+              return `<span class="badge ${map[s]||'bg-secondary'}">${s}</span>`;
+            }
+
+            /* ── load / reload the invoices DataTable ── */
+            function loadInvoicesTable() {
+              if ($.fn.DataTable.isDataTable('#invoicestable')) {
+                invTable.ajax.reload(null, false);
+                return;
+              }
+              invTable = $('#invoicestable').DataTable({
+                responsive: true,
+                processing: true,
+                pageLength: 25,
+                dom: 'lfrtip',
+                buttons: [
+                  { extend:'copy',  text:'<i class="fa fa-copy"></i> Copy',  className:'btn btn-secondary btn-flat btn-sm', exportOptions:{columns:':not(:first-child):not(:last-child)'} },
+                  { extend:'csv',   text:'<i class="fa fa-file-csv"></i> CSV',   className:'btn btn-success btn-flat btn-sm', exportOptions:{columns:':not(:first-child):not(:last-child)'} },
+                  { extend:'excel', text:'<i class="fa fa-file-excel"></i> Excel', className:'btn btn-success btn-flat btn-sm', exportOptions:{columns:':not(:first-child):not(:last-child)'} }
+                ],
+                ajax: { url: '../classes/Invoices.php?f=viewall', dataSrc: '' },
+                columns: [
+                  { data: 'id', orderable: false,
+                    render: d => `<div class="form-check"><input class="form-check-input inv-check" type="checkbox" value="${d}"></div>` },
+                  { data: 'invoice_no',
+                    render: d => `<code class="text-primary fw-bold">${d}</code>` },
+                  { data: 'customer_name',
+                    render: (d,t,r) => `<div class="fw-semibold">${d}</div><small class="text-muted">${r.contact}</small>` },
+                  { data: 'contact', visible: false },
+                  { data: 'plate_number',
+                    render: d => d === '—' ? '<span class="text-muted">—</span>' : `<code class="fw-bold text-success">${d}</code>` },
+                  { data: 'issue_date' },
+                  { data: 'due_date', render: d => d || '<span class="text-muted">—</span>' },
+                  { data: 'grand_total',
+                    render: d => `<span class="fw-bold">USH ${fmtNum(d)}</span>` },
+                  { data: 'status',
+                    render: d => invStatusBadge(d) },
+                  { data: 'id', orderable: false,
+                    render: d => `
+                      <div class="d-flex gap-1">
+                        <button class="btn btn-xs btn-outline-primary inv-view-btn" data-id="${d}" title="View / Print"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-xs btn-outline-danger inv-del-btn"  data-id="${d}" title="Delete"><i class="bi bi-trash"></i></button>
+                      </div>` }
+                ]
+              });
+
+              /* row actions */
+              $('#invoicestable tbody')
+                .on('click', '.inv-view-btn', function(e) {
+                  e.stopPropagation();
+                  openViewInvoice($(this).data('id'));
+                })
+                .on('click', '.inv-del-btn', function(e) {
+                  e.stopPropagation();
+                  deleteInvoice($(this).data('id'));
+                });
+            }
+
+            /* ── load customers into create-modal dropdown ── */
+            function loadInvCustomers() {
+              $.getJSON('../classes/Invoices.php?f=customers_list', function(data) {
+                _invCustomers = data;
+                const sel = document.getElementById('inv_customer_id');
+                sel.innerHTML = '<option value="">— Select customer —</option>';
+                data.forEach(c => {
+                  sel.innerHTML += `<option value="${c.id}" data-vehicles="${encodeURIComponent(c.vehicles||'')}">${c.fullname} (${c.contact})</option>`;
+                });
+              });
+            }
+
+            /* ── when customer changes, populate vehicle dropdown ── */
+            document.getElementById('inv_customer_id').addEventListener('change', function() {
+              const opt = this.options[this.selectedIndex];
+              const raw = decodeURIComponent(opt.dataset.vehicles || '');
+              const vSel = document.getElementById('inv_vehicle_id');
+              vSel.innerHTML = '<option value="">— None / not applicable —</option>';
+              if (raw) {
+                raw.split(';;').forEach(function(v) {
+                  const parts = v.split('|');
+                  const vid = parts[0], plate = parts[1], model = parts[2]||'';
+                  vSel.innerHTML += `<option value="${vid}">${plate}${model ? ' · '+model : ''}</option>`;
+                });
+              }
+            });
+
+            /* ── line items: add row ── */
+            function addLineRow(desc='', type='Labour', qty=1, price=0, vat=0) {
+              const tbody = document.getElementById('lineItemsBody');
+              const idx = tbody.rows.length;
+              const tr = document.createElement('tr');
+              tr.innerHTML = `
+                <td><input class="form-control form-control-sm li-desc" placeholder="Description" value="${desc}" required></td>
+                <td>
+                  <select class="form-select form-select-sm li-type">
+                    <option ${type==='Labour'?'selected':''}>Labour</option>
+                    <option ${type==='Part'?'selected':''}>Part</option>
+                    <option ${type==='Other'?'selected':''}>Other</option>
+                  </select>
+                </td>
+                <td><input type="number" class="form-control form-control-sm li-qty" min="0.01" step="0.01" value="${qty}"></td>
+                <td><input type="number" class="form-control form-control-sm li-price" min="0" step="1" value="${price}"></td>
+                <td><input type="number" class="form-control form-control-sm li-vat" min="0" max="100" step="0.5" value="${vat}"></td>
+                <td class="li-total fw-bold small text-end">0.00</td>
+                <td><button type="button" class="btn btn-xs btn-outline-danger li-remove-btn"><i class="bi bi-x"></i></button></td>`;
+              tbody.appendChild(tr);
+              tr.querySelector('.li-remove-btn').addEventListener('click', () => { tr.remove(); recalcTotals(); });
+              ['li-qty','li-price','li-vat'].forEach(cls => {
+                tr.querySelector('.' + cls).addEventListener('input', recalcTotals);
+              });
+              recalcTotals();
+            }
+
+            document.getElementById('addLineItemBtn').addEventListener('click', () => addLineRow());
+
+            /* ── recalc footer totals ── */
+            function recalcTotals() {
+              let sub = 0, vatSum = 0;
+              document.querySelectorAll('#lineItemsBody tr').forEach(function(tr) {
+                const qty   = parseFloat(tr.querySelector('.li-qty')?.value)   || 0;
+                const price = parseFloat(tr.querySelector('.li-price')?.value) || 0;
+                const vat   = parseFloat(tr.querySelector('.li-vat')?.value)   || 0;
+                const taxable = qty * price;
+                const tax     = taxable * vat / 100;
+                const total   = taxable + tax;
+                sub    += taxable;
+                vatSum += tax;
+                const td = tr.querySelector('.li-total');
+                if (td) td.textContent = fmtNum(total);
+              });
+              document.getElementById('inv_subtotal').textContent   = 'USH ' + fmtNum(sub);
+              document.getElementById('inv_vat_total').textContent  = 'USH ' + fmtNum(vatSum);
+              document.getElementById('inv_grand_total').textContent = 'USH ' + fmtNum(sub + vatSum);
+            }
+
+            /* ── open create modal ── */
+            document.getElementById('newInvoiceBtn').addEventListener('click', function() {
+              document.getElementById('createInvoiceForm').reset();
+              document.getElementById('lineItemsBody').innerHTML = '';
+              document.getElementById('inv_issue_date').value = new Date().toISOString().split('T')[0];
+              recalcTotals();
+              loadInvCustomers();
+              addLineRow(); // start with one empty row
+              new bootstrap.Modal(document.getElementById('createInvoiceModal')).show();
+            });
+
+            /* ── save invoice ── */
+            document.getElementById('createInvoiceForm').addEventListener('submit', function(e) {
+              e.preventDefault();
+              const form = this;
+              const items = [];
+              let valid = true;
+              document.querySelectorAll('#lineItemsBody tr').forEach(function(tr) {
+                const desc  = tr.querySelector('.li-desc')?.value.trim();
+                const type  = tr.querySelector('.li-type')?.value;
+                const qty   = parseFloat(tr.querySelector('.li-qty')?.value)   || 0;
+                const price = parseFloat(tr.querySelector('.li-price')?.value) || 0;
+                const vat   = parseFloat(tr.querySelector('.li-vat')?.value)   || 0;
+                if (!desc) { valid = false; return; }
+                items.push({ description: desc, item_type: type, quantity: qty, unit_price: price, vat_pct: vat });
+              });
+              if (!valid || items.length === 0) {
+                toastr.error('Please fill in all item descriptions.');
+                return;
+              }
+              const fd = new FormData(form);
+              fd.set('items', JSON.stringify(items));
+              document.getElementById('saveInvoiceBtn').disabled = true;
+              $.ajax({
+                url: '../classes/Invoices.php?f=add',
+                method: 'POST',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function(resp) {
+                  document.getElementById('saveInvoiceBtn').disabled = false;
+                  if (resp.status === 'ok') {
+                    toastr.success(resp.msg);
+                    bootstrap.Modal.getInstance(document.getElementById('createInvoiceModal')).hide();
+                    if (invTable) invTable.ajax.reload(null, false);
+                  } else {
+                    toastr.error(resp.msg || 'Could not save invoice.');
+                  }
+                },
+                error: function() {
+                  document.getElementById('saveInvoiceBtn').disabled = false;
+                  toastr.error('Server error. Please try again.');
+                }
+              });
+            });
+
+            /* ── view / print invoice ── */
+            function openViewInvoice(id) {
+              _currentInvId = id;
+              document.getElementById('invoicePrintArea').innerHTML =
+                '<div class="text-center py-5"><span class="spinner-border text-primary"></span></div>';
+              new bootstrap.Modal(document.getElementById('viewInvoiceModal')).show();
+              $.getJSON('../classes/Invoices.php?f=get&id=' + id, function(inv) {
+                document.getElementById('invStatusSelect').value = inv.status;
+                document.getElementById('invoicePrintArea').innerHTML = buildInvoiceHTML(inv);
+              }).fail(function() {
+                document.getElementById('invoicePrintArea').innerHTML =
+                  '<p class="text-danger text-center py-4">Failed to load invoice.</p>';
+              });
+            }
+
+            /* ── build branded invoice HTML (reused for modal preview + print window) ── */
+            function buildInvoiceHTML(inv, forPrint) {
+              const logoSrc = new URL('../assets/images/logo.png', window.location.href).href;
+              let itemRows = '';
+              let sub = 0, vatSum = 0;
+              (inv.items || []).forEach(function(item, i) {
+                const taxable = parseFloat(item.taxable)    || 0;
+                const tax     = parseFloat(item.tax_amount) || 0;
+                const total   = parseFloat(item.line_total) || 0;
+                sub    += taxable;
+                vatSum += tax;
+                itemRows += `<tr>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;">${i+1}</td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;"><strong>${item.description}</strong></td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;text-align:center;">${item.item_type}</td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;text-align:center;">${item.vat_pct}%</td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;text-align:center;">${fmtNum(item.quantity)}</td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;text-align:right;">${fmtNum(item.unit_price)}</td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;text-align:right;">${fmtNum(taxable)}</td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;text-align:right;">${fmtNum(tax)}</td>
+                  <td style="padding:7px 8px;border:1px solid #d1d5db;text-align:right;font-weight:700;">${fmtNum(total)}</td>
+                </tr>`;
+              });
+              const grandTotal = sub + vatSum;
+              const statusColor = {'PAID':'#16a34a','UNPAID':'#dc2626','PARTIAL':'#d97706','CANCELLED':'#6b7280'}[inv.status] || '#6b7280';
+
+              return `
+<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#111;max-width:960px;margin:0 auto;">
+
+  <!-- Header -->
+  <table style="width:100%;border-bottom:2.5px solid #1d1d4e;padding-bottom:12px;margin-bottom:8px;">
+    <tr>
+      <td style="vertical-align:middle;">
+        <img src="${logoSrc}" style="width:68px;height:68px;object-fit:contain;vertical-align:middle;" onerror="this.style.display='none'">
+        <span style="vertical-align:middle;margin-left:10px;">
+          <div style="font-size:18px;font-weight:900;letter-spacing:.3px;">SHENGCHI AUTO LTD</div>
+          <div style="font-size:10px;color:#555;line-height:1.5;">5 Edinburgh Ave, near Uganda Passport Collection Centre, Kyambogo, Kampala.</div>
+          <div style="font-size:10px;color:#555;">Tel: +256 777552940 / +256 757063365 &nbsp;|&nbsp; Email: shengchiauto@gmail.com</div>
+        </span>
+      </td>
+      <td style="text-align:right;vertical-align:middle;">
+        <img src="${logoSrc}" style="width:58px;height:58px;object-fit:contain;opacity:.5;" onerror="this.style.display='none'">
+        <div style="font-size:10px;color:#555;margin-top:4px;">TIN: [TIN NUMBER]</div>
+        <div style="font-size:10px;color:#555;">VAT: [VAT NUMBER]</div>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Title band -->
+  <div style="background:#1d1d4e;color:#fff;text-align:center;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:7px 0;border-radius:3px;margin-bottom:14px;">
+    INVOICE
+  </div>
+
+  <!-- Invoice meta + customer -->
+  <table style="width:100%;margin-bottom:14px;border:1px solid #d1d5db;border-radius:4px;overflow:hidden;">
+    <tr>
+      <td style="padding:10px 14px;vertical-align:top;border-right:1px solid #d1d5db;width:50%;">
+        <div style="font-size:10px;color:#888;text-transform:uppercase;font-weight:700;margin-bottom:4px;">Bill To</div>
+        <div style="font-size:13px;font-weight:800;">${inv.customer_name}</div>
+        <div style="font-size:11px;color:#555;">Mobile: ${inv.contact}</div>
+        ${inv.address ? `<div style="font-size:11px;color:#555;">Address: ${inv.address}</div>` : ''}
+        ${inv.plate_number ? `<div style="font-size:11px;color:#555;margin-top:4px;">Vehicle: <strong>${inv.plate_number}</strong>${inv.vehicle_model?' · '+inv.vehicle_model:''}</div>` : ''}
+      </td>
+      <td style="padding:10px 14px;vertical-align:top;width:50%;">
+        <table style="width:100%;font-size:11px;">
+          <tr><td style="color:#888;padding:2px 0;">Invoice No:</td>    <td style="font-weight:700;color:#1d1d4e;">${inv.invoice_no}</td></tr>
+          <tr><td style="color:#888;padding:2px 0;">Issue Date:</td>    <td>${inv.issue_date}</td></tr>
+          <tr><td style="color:#888;padding:2px 0;">Due Date:</td>      <td>${inv.due_date || 'Upon receipt'}</td></tr>
+          <tr><td style="color:#888;padding:2px 0;">Status:</td>
+            <td><span style="background:${statusColor};color:#fff;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700;">${inv.status}</span></td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Line items table -->
+  <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px;">
+    <thead>
+      <tr style="background:#1d1d4e;color:#fff;">
+        <th style="padding:7px 8px;text-align:center;width:32px;">#</th>
+        <th style="padding:7px 8px;text-align:left;">Description</th>
+        <th style="padding:7px 8px;text-align:center;width:70px;">Type</th>
+        <th style="padding:7px 8px;text-align:center;width:60px;">VAT%</th>
+        <th style="padding:7px 8px;text-align:center;width:70px;">Qty</th>
+        <th style="padding:7px 8px;text-align:right;width:110px;">Unit Price (USH)</th>
+        <th style="padding:7px 8px;text-align:right;width:100px;">Taxable (USH)</th>
+        <th style="padding:7px 8px;text-align:right;width:90px;">Tax (USH)</th>
+        <th style="padding:7px 8px;text-align:right;width:110px;">Total (USH)</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${itemRows || '<tr><td colspan="9" style="text-align:center;padding:16px;color:#888;">No items.</td></tr>'}
+    </tbody>
+    <tfoot>
+      <tr style="background:#f8fafc;">
+        <td colspan="8" style="padding:6px 8px;text-align:right;font-weight:700;border-top:1px solid #d1d5db;">Subtotal</td>
+        <td style="padding:6px 8px;text-align:right;font-weight:700;border-top:1px solid #d1d5db;">USH ${fmtNum(sub)}</td>
+      </tr>
+      <tr style="background:#f8fafc;">
+        <td colspan="8" style="padding:6px 8px;text-align:right;color:#555;border-top:1px solid #d1d5db;">VAT Total</td>
+        <td style="padding:6px 8px;text-align:right;color:#555;border-top:1px solid #d1d5db;">USH ${fmtNum(vatSum)}</td>
+      </tr>
+      <tr style="background:#1d1d4e;color:#fff;">
+        <td colspan="8" style="padding:8px 8px;text-align:right;font-weight:900;font-size:13px;">GRAND TOTAL</td>
+        <td style="padding:8px 8px;text-align:right;font-weight:900;font-size:13px;">USH ${fmtNum(grandTotal)}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- Totals summary box (right-aligned, matches estimate template) -->
+  <table style="margin-left:auto;font-size:11px;border-collapse:collapse;margin-bottom:14px;">
+    <tr><td style="padding:4px 12px;color:#555;">Parts Total</td><td style="padding:4px 12px;font-weight:600;">USH ${fmtNum((inv.items||[]).filter(i=>i.item_type==='Part').reduce((a,i)=>a+parseFloat(i.line_total||0),0))}</td></tr>
+    <tr><td style="padding:4px 12px;color:#555;">Labour Total</td><td style="padding:4px 12px;font-weight:600;">USH ${fmtNum((inv.items||[]).filter(i=>i.item_type==='Labour').reduce((a,i)=>a+parseFloat(i.line_total||0),0))}</td></tr>
+    <tr><td style="padding:4px 12px;color:#555;">VAT Total</td><td style="padding:4px 12px;font-weight:600;">USH ${fmtNum(vatSum)}</td></tr>
+    <tr style="border-top:2px solid #1d1d4e;"><td style="padding:6px 12px;font-weight:800;font-size:13px;">Balance</td><td style="padding:6px 12px;font-weight:800;font-size:13px;color:#1d1d4e;">USH ${fmtNum(grandTotal)}</td></tr>
+  </table>
+
+  <!-- Payment terms + notes -->
+  ${inv.payment_terms ? `<div style="font-size:10.5px;color:#444;margin-bottom:6px;"><strong>PAYMENT TERMS:</strong> ${inv.payment_terms}</div>` : ''}
+  ${inv.notes ? `<div style="font-size:10.5px;color:#555;margin-bottom:12px;"><strong>Notes:</strong> ${inv.notes}</div>` : ''}
+  <div style="font-size:10px;color:#555;margin-bottom:18px;">
+    Bank: <strong>Stanbic</strong> &nbsp;|&nbsp; Branch: William Street &nbsp;|&nbsp; ACC No: <strong>9030021955204</strong> &nbsp;|&nbsp; ACC Name: Shengchi Auto Ltd
+  </div>
+
+  <!-- Signatures -->
+  <table style="width:100%;margin-top:48px;font-size:10px;text-align:center;">
+    <tr>
+      <td style="width:33%;padding-top:36px;border-top:1px solid #333;">Customer / Authorized Signatory</td>
+      <td style="width:33%;padding-top:36px;border-top:1px solid #333;">Service Advisor Signature</td>
+      <td style="width:33%;padding-top:36px;border-top:1px solid #333;">Cashier / Authorized Signature</td>
+    </tr>
+  </table>
+
+</div>`;
+            }
+
+            /* ── print invoice ── */
+            document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+              if (!_currentInvId) return;
+              $.getJSON('../classes/Invoices.php?f=get&id=' + _currentInvId, function(inv) {
+                const logoSrc = new URL('../assets/images/logo.png', window.location.href).href;
+                const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+                  <title>Invoice ${inv.invoice_no}</title>
+                  <style>
+                    @page{size:A4 portrait;margin:14mm 12mm;}
+                    @media print{.no-print{display:none!important;}}
+                    body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:12px 16px;}
+                    .no-print{text-align:right;margin-bottom:10px;}
+                    .no-print button{padding:8px 18px;background:#1d4ed8;color:#fff;border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;}
+                  </style>
+                </head><body>
+                  <div class="no-print"><button onclick="window.print()">&#128438; Print / Save as PDF</button></div>
+                  ${buildInvoiceHTML(inv, true)}
+                </body></html>`;
+                const win = window.open('','_blank','width=1000,height=800,scrollbars=yes');
+                if (!win) { toastr.error('Pop-up blocked. Please allow pop-ups.'); return; }
+                win.document.write(html);
+                win.document.close();
+                win.focus();
+              });
+            });
+
+            /* ── update status ── */
+            document.getElementById('updateInvStatusBtn').addEventListener('click', function() {
+              if (!_currentInvId) return;
+              const newStatus = document.getElementById('invStatusSelect').value;
+              $.post('../classes/Invoices.php?f=update_status', { id: _currentInvId, status: newStatus }, function(resp) {
+                if (resp.status === 'ok') {
+                  toastr.success('Status updated to ' + newStatus);
+                  if (invTable) invTable.ajax.reload(null, false);
+                } else {
+                  toastr.error(resp.msg || 'Failed to update status.');
+                }
+              });
+            });
+
+            /* ── delete invoice ── */
+            function deleteInvoice(id) {
+              Swal.fire({
+                title: 'Delete Invoice?',
+                text: 'This will permanently remove the invoice and all its line items.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                confirmButtonText: 'Yes, delete',
+                cancelButtonText: 'Cancel'
+              }).then(function(result) {
+                if (result.isConfirmed) {
+                  $.post('../classes/Invoices.php?f=delete', { id: id }, function(resp) {
+                    if (resp.status === 'ok') {
+                      toastr.success('Invoice deleted.');
+                      if (invTable) invTable.ajax.reload(null, false);
+                    } else {
+                      toastr.error(resp.msg || 'Could not delete invoice.');
+                    }
+                  });
+                }
+              });
+            }
+          </script>
+
+        </div><!-- /#panel-invoices -->
+
         <!-- ═══════════════════════ PANEL SWITCHER ═══════════════════════ -->
         <script>
           (function() {
@@ -1152,9 +1772,12 @@
                 a.classList.toggle('active', a.dataset.panel === panelId);
               });
 
-              // Lazy-load the customers table when the panel first opens
+              // Lazy-load tables when panels first open
               if (panelId === 'customers' && typeof loadCustomersTable === 'function') {
                 loadCustomersTable();
+              }
+              if (panelId === 'invoices' && typeof loadInvoicesTable === 'function') {
+                loadInvoicesTable();
               }
             }
 
@@ -1844,6 +2467,7 @@ function loadLanguage(lang) {
     url: '../assets/lang/' + lang + '.json',
     type: 'GET',
     dataType: 'json',
+    cache: false,
     success: function(data) {
       translations = data;
       currentLanguage = lang;

@@ -74,5 +74,16 @@
   "custTotalJobs": "Total de Trabajos",
   "custFirstSeen": "Primera Visita",
   "custLastSeen": "Última Visita",
-  "repairHistory": "Historial de Reparaciones"
+  "repairHistory": "Historial de Reparaciones",
+  "invoices": "Facturas",
+  "invoicesSubtitle": "Crear y gestionar facturas de clientes",
+  "newInvoice": "Nueva Factura",
+  "saveInvoice": "Guardar Factura",
+  "invoiceNo": "N° de Factura",
+  "issueDate": "Fecha de Emisión",
+  "dueDate": "Fecha de Vencimiento",
+  "grandTotal": "Monto (USH)",
+  "paymentTerms": "Términos de Pago",
+  "invoiceNotes": "Notas",
+  "actions": "Acciones"
 }

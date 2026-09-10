@@ -74,5 +74,16 @@
   "custTotalJobs": "Total Jobs",
   "custFirstSeen": "First Seen",
   "custLastSeen": "Last Seen",
-  "repairHistory": "Repair History"
+  "repairHistory": "Repair History",
+  "invoices": "Invoices",
+  "invoicesSubtitle": "Create and manage customer invoices",
+  "newInvoice": "New Invoice",
+  "saveInvoice": "Save Invoice",
+  "invoiceNo": "Invoice No.",
+  "issueDate": "Issue Date",
+  "dueDate": "Due Date",
+  "grandTotal": "Amount (USH)",
+  "paymentTerms": "Payment Terms",
+  "invoiceNotes": "Notes",
+  "actions": "Actions"
 }

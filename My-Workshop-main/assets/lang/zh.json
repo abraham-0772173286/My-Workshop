@@ -74,5 +74,16 @@
   "custTotalJobs": "总工作数",
   "custFirstSeen": "首次到访",
   "custLastSeen": "最近到访",
-  "repairHistory": "维修历史"
+  "repairHistory": "维修历史",
+  "invoices": "发票",
+  "invoicesSubtitle": "创建和管理客户发票",
+  "newInvoice": "新建发票",
+  "saveInvoice": "保存发票",
+  "invoiceNo": "发票号",
+  "issueDate": "开票日期",
+  "dueDate": "到期日",
+  "grandTotal": "金额 (USH)",
+  "paymentTerms": "付款条款",
+  "invoiceNotes": "备注",
+  "actions": "操作"
 }
