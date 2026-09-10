@@ -296,7 +296,7 @@ function loadDropdowns() {
     sel.empty().append('<option value="">— Select driver —</option>');
     if (Array.isArray(rows)) {
       rows.forEach(function(r) {
-        sel.append(`<option value="${r.driver_id}">${r.driver_name}</option>`);
+        sel.append(`<option value="${r.id}">${r.driver_name}</option>`);
       });
     }
   });
@@ -305,7 +305,7 @@ function loadDropdowns() {
     sel.empty().append('<option value="">— Select vehicle —</option>');
     if (Array.isArray(rows)) {
       rows.forEach(function(r) {
-        sel.append(`<option value="${r.vehicle_id}">${r.plate_number} — ${r.owner || r.model || ''}</option>`);
+        sel.append(`<option value="${r.id}">${r.plate_number} — ${r.car_owner || r.model || ''}</option>`);
       });
     }
   });

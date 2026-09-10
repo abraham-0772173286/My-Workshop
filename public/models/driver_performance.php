@@ -85,20 +85,36 @@ $activePage   = 'drivers_performance';
 
     <div class="app-content p-4">
 
+      <!-- Driver Selector -->
+      <div class="card border-0 shadow-sm mb-4" style="border-radius:16px;">
+        <div class="card-body d-flex flex-wrap align-items-center gap-3 py-3">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-person-vcard text-primary fs-5"></i>
+            <span class="fw-semibold text-dark" data-i18n="selectDriverForPerformance">Driver Performance</span>
+          </div>
+          <div class="flex-grow-1" style="max-width:380px;">
+            <select class="form-select form-select-sm" id="selectDriver">
+              <option value="0" data-i18n="allDrivers">All Drivers</option>
+            </select>
+          </div>
+          <button class="btn btn-sm btn-light border" id="btnRefresh"><i class="fa fa-sync"></i></button>
+        </div>
+      </div>
+
       <!-- Summary Statistics -->
       <div class="row g-4 mb-4">
         <div class="col-md-3">
           <div class="card stat-card purple">
             <div class="text-center">
-              <div class="stat-number" id="totalDrivers">0</div>
-              <p class="stat-label" data-i18n="totalDrivers">Total Drivers</p>
+              <div class="stat-number" id="totalTrips">0</div>
+              <p class="stat-label" data-i18n="timesSentToTravel">Times Sent to Travel</p>
             </div>
           </div>
         </div>
         <div class="col-md-3">
           <div class="card stat-card green">
             <div class="text-center">
-              <div class="stat-number" id="totalTrips">0</div>
+              <div class="stat-number" id="totalTripsCount">0</div>
               <p class="stat-label" data-i18n="totalTrips">Total Trips</p>
             </div>
           </div>
@@ -126,7 +142,7 @@ $activePage   = 'drivers_performance';
         <div class="col-lg-12">
           <div class="card report-card">
             <div class="card-body">
-              <h6 class="card-title mb-3"><i class="bi bi-bar-chart me-2 text-primary"></i><span data-i18n="tripsPerDriver">Trips Per Driver</span></h6>
+              <h6 class="card-title mb-3"><i class="bi bi-bar-chart me-2 text-primary"></i><span id="chartTitle">Trips Per Driver</span></h6>
               <div class="chart-container">
                 <canvas id="tripsChart"></canvas>
               </div>
@@ -140,7 +156,7 @@ $activePage   = 'drivers_performance';
         <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
           <div class="d-flex justify-content-between align-items-center">
             <h5 class="fw-bold mb-0"><i class="bi bi-graph-up me-2 text-primary"></i><span data-i18n="performanceDetails">Driver Performance Details</span></h5>
-            <button class="btn btn-sm btn-light border" id="btnRefresh"><i class="fa fa-sync"></i></button>
+            <span class="badge bg-primary-subtle text-primary" id="perfTitle">All Drivers</span>
           </div>
         </div>
         <div class="card-body p-4">
@@ -150,6 +166,7 @@ $activePage   = 'drivers_performance';
                 <tr>
                   <th data-i18n="number">#</th>
                   <th data-i18n="driver">Driver</th>
+                  <th data-i18n="timesSentToTravel">Times Sent to Travel</th>
                   <th data-i18n="totalTrips">Total Trips</th>
                   <th data-i18n="totalDistanceKm">Total Distance (km)</th>
                   <th data-i18n="totalFuelCostUGX">Total Fuel Cost (UGX)</th>
@@ -159,11 +176,36 @@ $activePage   = 'drivers_performance';
               </thead>
               <tbody id="perfTableBody">
                 <tr>
-                  <td colspan="7" class="text-center py-4">
+                  <td colspan="8" class="text-center py-4">
                     <div class="spinner-border spinner-border-sm me-2"></div><span data-i18n="loadingPerformanceData">Loading performance data...</span>
                   </td>
                 </tr>
               </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Driver Trips Table -->
+      <div class="card border-0 shadow-sm mt-4" id="tripsCard" style="border-radius:16px;display:none;">
+        <div class="card-header bg-white py-3" style="border-radius:16px 16px 0 0;">
+          <h5 class="fw-bold mb-0"><i class="bi bi-map me-2 text-primary"></i><span data-i18n="driverTripLog">Trip Log</span></h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="table-responsive">
+            <table class="table perf-table align-middle w-100" id="tripsTable">
+              <thead>
+                <tr>
+                  <th data-i18n="number">#</th>
+                  <th data-i18n="vehicle">Vehicle</th>
+                  <th data-i18n="tripDate">Trip Date</th>
+                  <th data-i18n="origin">Origin</th>
+                  <th data-i18n="destination">Destination</th>
+                  <th data-i18n="distanceKm">Distance (km)</th>
+                  <th data-i18n="fareEarned">Fare (UGX)</th>
+                </tr>
+              </thead>
+              <tbody id="tripsTableBody"></tbody>
             </table>
           </div>
         </div>
@@ -193,9 +235,25 @@ $activePage   = 'drivers_performance';
 const API = '../../classes/Drivers.php';
 const fmt = n => 'UGX ' + Number(n).toLocaleString('en-UG');
 let tripsChart = null;
+let selectedDriver = 0;
 
-function loadPerformance() {
-  $.getJSON(API + '?f=performance', function(resp) {
+function loadDriverDropdown() {
+  $.getJSON(API + '?f=drivers', function(rows) {
+    const sel = $('#selectDriver');
+    const keep = sel.val();
+    sel.empty().append('<option value="0">All Drivers</option>');
+    if (Array.isArray(rows)) {
+      rows.forEach(function(r) {
+        sel.append(`<option value="${r.id}">${r.driver_name}</option>`);
+      });
+    }
+    sel.val(keep !== null ? keep : 0);
+  });
+}
+
+function loadPerformance(driverId) {
+  const url = driverId > 0 ? API + '?f=performance&driver_id=' + driverId : API + '?f=performance';
+  $.getJSON(url, function(resp) {
     if (resp.status !== 'success' || !resp.data) {
       toastr.error('Failed to load performance data.');
       return;
@@ -204,13 +262,28 @@ function loadPerformance() {
     const data = resp.data;
     const drivers = data.drivers || [];
     const summary = data.summary || {};
+    const trips = data.trips || [];
 
-    $('#totalDrivers').text(summary.total_drivers || drivers.length || 0);
-    $('#totalTrips').text(summary.total_trips || 0);
+    if (driverId > 0) {
+      $('#totalTrips').text(summary.total_assignments || 0);
+      $('#totalTripsCount').text(summary.total_trips || 0);
+      $('#perfTitle').text(drivers[0] ? drivers[0].driver_name : 'Driver');
+      $('#chartTitle').text('Trips Per Driver - ' + (drivers[0] ? drivers[0].driver_name : ''));
+      $('#tripsCard').show();
+      renderChartMonthly(drivers[0] ? drivers[0].monthly_trips : []);
+      renderTripsTable(trips);
+    } else {
+      $('#totalTrips').text(summary.total_assignments || 0);
+      $('#totalTripsCount').text(summary.total_trips || 0);
+      $('#perfTitle').text('All Drivers');
+      $('#chartTitle').text('Trips Per Driver');
+      $('#tripsCard').hide();
+      renderChart(drivers);
+    }
+
     $('#totalDistance').text(Number(summary.total_distance || 0).toLocaleString('en-UG') + ' km');
     $('#totalFuelCost').text(fmt(summary.total_fuel_cost || 0));
 
-    renderChart(drivers);
     renderTable(drivers);
   }).fail(function() {
     toastr.error('Could not load performance data.');
@@ -263,10 +336,57 @@ function renderChart(drivers) {
   });
 }
 
+function renderChartMonthly(monthlyTrips) {
+  const ctx = document.getElementById('tripsChart').getContext('2d');
+  if (tripsChart) tripsChart.destroy();
+
+  const reversed = (monthlyTrips || []).slice().reverse();
+  const labels = reversed.map(m => m.month || 'Unknown');
+  const trips = reversed.map(m => parseInt(m.trip_count) || 0);
+
+  tripsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Trips',
+        data: trips,
+        backgroundColor: 'rgba(13,148,136,0.15)',
+        borderColor: '#0d9488',
+        borderWidth: 2,
+        minBarLength: 8,
+        borderRadius: { topLeft: 10, topRight: 10 }
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f172a',
+          titleFont: { family: 'DM Sans' },
+          bodyFont: { family: 'DM Sans' },
+          callbacks: {
+            label: function(ctx) { return ctx.parsed.y + ' trip(s)'; }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'DM Sans' } } },
+        y: {
+          beginAtZero: true, grid: { color: '#eef2f7' },
+          ticks: { color: '#94a3b8', font: { family: 'DM Sans' }, precision: 0, stepSize: 1 }
+        }
+      }
+    }
+  });
+}
+
 function renderTable(drivers) {
   let html = '';
   if (drivers.length === 0) {
-    html = '<tr><td colspan="7" class="text-center py-4 text-muted">No performance data available</td></tr>';
+    html = '<tr><td colspan="8" class="text-center py-4 text-muted">No performance data available</td></tr>';
   } else {
     drivers.forEach(function(d, i) {
       const avgFuel = d.total_trips > 0 ? Math.round((parseFloat(d.total_fuel_cost) || 0) / parseInt(d.total_trips)) : 0;
@@ -274,6 +394,7 @@ function renderTable(drivers) {
         <tr>
           <td>${i + 1}</td>
           <td><span class="fw-bold text-dark">${d.driver_name || '—'}</span></td>
+          <td class="text-center"><span class="badge bg-primary-subtle text-primary">${d.total_assignments || 0}</span></td>
           <td class="text-center">${d.total_trips || 0}</td>
           <td>${Number(d.total_distance || 0).toFixed(1)} km</td>
           <td><span class="fw-semibold">${fmt(d.total_fuel_cost || 0)}</span></td>
@@ -286,9 +407,36 @@ function renderTable(drivers) {
   $('#perfTableBody').html(html);
 }
 
+function renderTripsTable(trips) {
+  let html = '';
+  if (!trips || trips.length === 0) {
+    html = '<tr><td colspan="7" class="text-center py-4 text-muted">No trips recorded for this driver</td></tr>';
+  } else {
+    trips.forEach(function(t, i) {
+      html += `
+        <tr>
+          <td>${i + 1}</td>
+          <td><span class="fw-bold text-dark">${t.plate_number || '—'}</span></td>
+          <td class="text-muted small">${t.trip_date || '—'}</td>
+          <td>${t.origin || '—'}</td>
+          <td>${t.destination || '—'}</td>
+          <td>${Number(t.distance_km || 0).toFixed(1)}</td>
+          <td><span class="fw-semibold text-success">${fmt(t.fare || 0)}</span></td>
+        </tr>
+      `;
+    });
+  }
+  $('#tripsTableBody').html(html);
+}
+
 $(document).ready(function() {
-  loadPerformance();
-  $('#btnRefresh').click(function() { loadTable(); toastr.info('Data refreshed.'); });
+  loadDriverDropdown();
+  loadPerformance(0);
+  $('#btnRefresh').click(function() { loadPerformance(selectedDriver); toastr.info('Data refreshed.'); });
+  $('#selectDriver').change(function() {
+    selectedDriver = parseInt($(this).val()) || 0;
+    loadPerformance(selectedDriver);
+  });
   $(window).on('resize', function() { if (tripsChart) tripsChart.resize(); });
 });
 </script>

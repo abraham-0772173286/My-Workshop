@@ -420,25 +420,39 @@ try {
     // ══════════════════════════════════════════════════════════════════════════
 
     if ($action === 'performance') {
-        $rows = $db->query(
-            "SELECT
-                d.id AS driver_id,
-                d.driver_name,
-                COUNT(DISTINCT dt.id) AS total_trips,
-                COALESCE(SUM(dt.distance_km), 0) AS total_distance,
-                COALESCE(SUM(fr.total_cost), 0) AS total_fuel_cost,
-                CASE
-                    WHEN COUNT(DISTINCT dt.id) > 0
-                    THEN ROUND(COALESCE(SUM(fr.total_cost), 0) / COUNT(DISTINCT dt.id), 2)
-                    ELSE 0
-                END AS avg_fuel_per_trip,
-                COALESCE(SUM(dt.fare), 0) AS total_fare
-             FROM drivers d
-             LEFT JOIN driver_trips dt ON dt.driver_id = d.id
-             LEFT JOIN fuel_records fr ON fr.driver_id = d.id
-             GROUP BY d.id, d.driver_name
-             ORDER BY d.driver_name ASC"
-        )->fetch_all(MYSQLI_ASSOC);
+        // Optional single-driver filter: ?f=performance&driver_id=3
+        $driverId = (int) ($_GET['driver_id'] ?? 0);
+        $where    = $driverId > 0 ? 'WHERE d.id = ?' : '';
+
+        $sql = "SELECT
+                    d.id AS driver_id,
+                    d.driver_name,
+                    COUNT(DISTINCT da.id) AS total_assignments,
+                    COUNT(DISTINCT dt.id) AS total_trips,
+                    COALESCE(SUM(dt.distance_km), 0) AS total_distance,
+                    COALESCE(SUM(fr.total_cost), 0) AS total_fuel_cost,
+                    CASE
+                        WHEN COUNT(DISTINCT dt.id) > 0
+                        THEN ROUND(COALESCE(SUM(fr.total_cost), 0) / COUNT(DISTINCT dt.id), 2)
+                        ELSE 0
+                    END AS avg_fuel_per_trip,
+                    COALESCE(SUM(dt.fare), 0) AS total_fare
+                 FROM drivers d
+                 LEFT JOIN driver_assignments da ON da.driver_id = d.id
+                 LEFT JOIN driver_trips dt ON dt.driver_id = d.id
+                 LEFT JOIN fuel_records fr ON fr.driver_id = d.id
+                 $where
+                 GROUP BY d.id, d.driver_name
+                 ORDER BY d.driver_name ASC";
+
+        if ($driverId > 0) {
+            $stmt = $db->prepare($sql);
+            $stmt->bind_param('i', $driverId);
+            $stmt->execute();
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        } else {
+            $rows = $db->query($sql)->fetch_all(MYSQLI_ASSOC);
+        }
 
         foreach ($rows as &$row) {
             $stmt = $db->prepare(
@@ -455,7 +469,34 @@ try {
         }
         unset($row);
 
-        reply($rows);
+        $summary = [
+            'total_drivers'     => count($rows),
+            'total_assignments' => (int) array_sum(array_column($rows, 'total_assignments')),
+            'total_trips'       => (int) array_sum(array_column($rows, 'total_trips')),
+            'total_distance'    => (float) array_sum(array_column($rows, 'total_distance')),
+            'total_fuel_cost'   => (float) array_sum(array_column($rows, 'total_fuel_cost')),
+            'total_fare'        => (float) array_sum(array_column($rows, 'total_fare')),
+        ];
+
+        // Recent trips for the selected driver (used by the single-driver view)
+        $trips = [];
+        if ($driverId > 0) {
+            $stmt = $db->prepare(
+                "SELECT dt.id, v.plate_number,
+                        DATE_FORMAT(dt.trip_date,'%d %b %Y') AS trip_date,
+                        dt.origin, dt.destination, dt.distance_km, dt.fare,
+                        COALESCE(dt.notes,'') AS notes
+                 FROM driver_trips dt
+                 INNER JOIN vehicles v ON v.id = dt.vehicle_id
+                 WHERE dt.driver_id = ?
+                 ORDER BY dt.trip_date DESC, dt.id DESC"
+            );
+            $stmt->bind_param('i', $driverId);
+            $stmt->execute();
+            $trips = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        }
+
+        reply(['status' => 'success', 'data' => ['drivers' => $rows, 'summary' => $summary, 'trips' => $trips]]);
     }
 
     // ══════════════════════════════════════════════════════════════════════════
