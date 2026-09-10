@@ -181,4 +181,31 @@ function ensure_workshop_schema(mysqli $connection): void
         CONSTRAINT fk_fr_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id) ON UPDATE CASCADE ON DELETE RESTRICT,
         CONSTRAINT fk_fr_trip FOREIGN KEY (trip_id) REFERENCES driver_trips(id) ON UPDATE CASCADE ON DELETE SET NULL
     ) ENGINE=InnoDB");
+
+    // ── Invoices ─────────────────────────────────────────────────────────────
+    $connection->query("CREATE TABLE IF NOT EXISTS invoices (
+        id            INT AUTO_INCREMENT PRIMARY KEY,
+        invoice_no    VARCHAR(20) NOT NULL UNIQUE,
+        customer_id   INT NOT NULL,
+        vehicle_id    INT NULL,
+        issue_date    DATE NOT NULL,
+        due_date      DATE NULL,
+        notes         TEXT NULL,
+        payment_terms VARCHAR(255) NULL DEFAULT 'Payment due on receipt',
+        status        ENUM('UNPAID','PAID','PARTIAL','CANCELLED') NOT NULL DEFAULT 'UNPAID',
+        created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_invoice_customer FOREIGN KEY (customer_id) REFERENCES customers(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        CONSTRAINT fk_invoice_vehicle  FOREIGN KEY (vehicle_id)  REFERENCES vehicles(id)  ON UPDATE CASCADE ON DELETE SET NULL
+    ) ENGINE=InnoDB");
+
+    $connection->query("CREATE TABLE IF NOT EXISTS invoice_items (
+        id          INT AUTO_INCREMENT PRIMARY KEY,
+        invoice_id  INT NOT NULL,
+        description VARCHAR(255) NOT NULL,
+        item_type   ENUM('Labour','Part','Other') NOT NULL DEFAULT 'Labour',
+        quantity    DECIMAL(10,2) NOT NULL DEFAULT 1,
+        unit_price  DECIMAL(12,2) NOT NULL DEFAULT 0,
+        vat_pct     DECIMAL(5,2)  NOT NULL DEFAULT 0,
+        CONSTRAINT fk_inv_item_invoice FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB");
 }

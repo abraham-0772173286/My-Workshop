@@ -66,8 +66,9 @@ $driversOpen  = in_array($activePage, $driverPages);
         <?= sidebarSubItem('drivers_history', 'models/driver_history.php', 'bi-clock-history', 'Driver History', $activePage, 'driversHistory') ?>
     </div>
 
-    <?= sidebarLink('payments', 'models/payment.php', 'bi-cash-stack', 'Payments', $activePage, 'payments') ?>
-    <?= sidebarLink('receipts', 'models/receipts.php', 'bi-receipt', 'Receipts', $activePage, 'receipts') ?>
+    <?= sidebarLink('payments', 'models/payment.php',  'bi-cash-stack', 'Payments', $activePage, 'payments') ?>
+    <?= sidebarLink('receipts', 'models/receipts.php', 'bi-receipt',    'Receipts', $activePage, 'receipts') ?>
+    <?= sidebarLink('invoices', 'models/invoices.php', 'bi-file-earmark-text', 'Invoices', $activePage, 'invoices') ?>
 
     <?php if (in_array($userRole, ['admin', 'owner'])): ?>
         <?= sidebarLink('reports', 'models/reports.php', 'bi-bar-chart-line', 'Reports', $activePage, 'reports') ?>
