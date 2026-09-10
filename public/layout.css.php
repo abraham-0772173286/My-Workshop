@@ -422,3 +422,357 @@ body.is-fullscreen .footer-content > div strong,
 :root:fullscreen .footer-content > div strong {
     font-weight: 600;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile & Tablet
+   Breakpoints:
+     ≤ 991px  — tablet / large phone  (sidebar off-canvas already handled)
+     ≤ 767px  — phone landscape
+     ≤ 575px  — phone portrait
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── Shared tablet + mobile ─────────────────────────────────────────── */
+@media (max-width: 991px) {
+
+    /* Content fills full width (sidebar is off-canvas) */
+    .app-header,
+    .app-main {
+        margin-left: 0 !important;
+    }
+
+    /* Footer not fixed on mobile — let it flow naturally */
+    .app-footer {
+        position: static !important;
+        margin-left: 0 !important;
+    }
+
+    /* Tighter content padding */
+    .app-content {
+        padding: 16px !important;
+    }
+
+    .app-content-header {
+        padding: 12px 16px 0 !important;
+    }
+
+    /* Page headings scale down */
+    .app-content-header h4 {
+        font-size: 1.1rem !important;
+    }
+
+    /* Cards: remove heavy shadows, round corners less aggressively */
+    .card {
+        border-radius: 10px !important;
+    }
+
+    .card-header {
+        padding: 12px 16px !important;
+    }
+
+    .card-body {
+        padding: 14px !important;
+    }
+
+    /* Breadcrumb hides on small screens */
+    .breadcrumb {
+        display: none !important;
+    }
+
+    /* DataTables — prevent controls from overflowing */
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+        float: none !important;
+        text-align: left !important;
+        margin-bottom: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        float: none !important;
+        text-align: center !important;
+        margin-top: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: .25rem .55rem !important;
+        font-size: .75rem !important;
+        margin: 0 1px !important;
+    }
+
+    /* Tables — horizontal scroll */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Stat / summary cards in dashboard */
+    .row.g-3 > [class*="col-md"],
+    .row.g-4 > [class*="col-md"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Action button groups in card headers: wrap & shrink */
+    .card-header .d-flex.gap-2,
+    .card-header .d-flex.gap-3 {
+        flex-wrap: wrap;
+        gap: 6px !important;
+    }
+
+    /* Toolbar badges / info strips */
+    .badge {
+        font-size: .68rem;
+        white-space: normal !important;
+        word-break: break-word;
+    }
+
+    /* Form modals: full width */
+    .modal-dialog {
+        margin: 8px !important;
+        max-width: calc(100vw - 16px) !important;
+    }
+
+    .modal-body {
+        padding: 14px !important;
+    }
+
+    /* Offcanvas drawers: full width on mobile */
+    .offcanvas-end {
+        width: 100% !important;
+    }
+}
+
+/* ── Phone landscape & small tablets (≤ 767px) ──────────────────────── */
+@media (max-width: 767px) {
+
+    .app-content {
+        padding: 12px !important;
+    }
+
+    /* Nav bar: shrink user name */
+    .navbar .d-none.d-md-inline {
+        display: none !important;
+    }
+
+    /* Card header toolbar: stack vertically */
+    .card-header .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 10px;
+    }
+
+    /* Tables: smaller font */
+    table.dataTable,
+    table.table {
+        font-size: .78rem !important;
+    }
+
+    table.dataTable thead th,
+    table.table thead th {
+        font-size: .68rem !important;
+        padding: .5rem .55rem !important;
+        white-space: nowrap;
+    }
+
+    table.dataTable tbody td,
+    table.table tbody td {
+        padding: .5rem .55rem !important;
+        vertical-align: middle;
+    }
+
+    /* Action button pairs in table rows: stack icons */
+    .d-flex.gap-1 {
+        flex-wrap: wrap;
+        gap: 4px !important;
+    }
+
+    /* Footer: single column */
+    .footer-content {
+        flex-direction: column !important;
+        text-align: center;
+        gap: 6px !important;
+        padding: 0 16px !important;
+    }
+
+    .footer-contacts {
+        margin-top: 4px;
+    }
+
+    .footer-contacts a {
+        margin: 0 6px;
+        font-size: 16px;
+    }
+
+    /* Modal forms: single column */
+    .modal .row.g-3 > .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Section headings */
+    h3.card-title, h4 {
+        font-size: 1rem !important;
+    }
+
+    h5 {
+        font-size: .95rem !important;
+    }
+
+    /* Chart containers */
+    canvas {
+        max-height: 220px !important;
+    }
+}
+
+/* ── Phone portrait (≤ 575px) ───────────────────────────────────────── */
+@media (max-width: 575px) {
+
+    body {
+        font-size: 13px;
+    }
+
+    .app-content {
+        padding: 10px !important;
+    }
+
+    .app-content-header {
+        padding: 10px !important;
+    }
+
+    .app-content-header h4 {
+        font-size: 1rem !important;
+    }
+
+    .app-content-header p.small {
+        display: none;
+    }
+
+    /* Card: no shadow, straight edges on very small screens */
+    .card {
+        border-radius: 8px !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,.07) !important;
+    }
+
+    .card-header {
+        padding: 10px 12px !important;
+    }
+
+    .card-body {
+        padding: 10px !important;
+    }
+
+    /* Buttons: slightly smaller */
+    .btn-sm {
+        padding: .3rem .65rem !important;
+        font-size: .75rem !important;
+    }
+
+    /* Export dropdown: full width */
+    .dropdown-menu {
+        min-width: 160px !important;
+    }
+
+    /* Status pills */
+    .status-pill {
+        font-size: .62rem !important;
+        padding: .22em .55em !important;
+    }
+
+    /* Badge pills in tables */
+    .badge {
+        font-size: .62rem !important;
+    }
+
+    /* Paginate: fewer buttons */
+    .dataTables_paginate .paginate_button.previous,
+    .dataTables_paginate .paginate_button.next {
+        display: inline-block !important;
+    }
+
+    /* Avatar circles (customers table) */
+    .cust-avatar {
+        width: 32px !important;
+        height: 32px !important;
+        font-size: 13px !important;
+        border-radius: 7px !important;
+    }
+
+    /* Sidebar brand compact */
+    .garage-sidebar .sidebar-brand {
+        padding: 14px 14px !important;
+    }
+
+    .garage-sidebar .brand-name {
+        font-size: 13px !important;
+    }
+
+    /* Stat cards on dashboard: two columns */
+    .row.g-3 > [class*="col-"] {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    /* But 1-column for very narrow */
+    @media (max-width: 380px) {
+        .row.g-3 > [class*="col-"] {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+}
+
+/* ── Sidebar width on tablet (give a bit more room) ─────────────────── */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .garage-sidebar {
+        width: 230px;
+    }
+
+    .app-header,
+    .app-main {
+        margin-left: 230px !important;
+    }
+
+    .garage-sidebar .nav-link {
+        font-size: 13.5px;
+        padding: 9px 14px;
+    }
+}
+
+/* ── Touch-friendly: bigger tap targets on mobile ───────────────────── */
+@media (hover: none) and (pointer: coarse) {
+
+    .garage-sidebar .nav-link {
+        min-height: 52px !important;
+    }
+
+    .garage-sidebar .nav-subitem .sub-link {
+        min-height: 46px !important;
+    }
+
+    .btn {
+        min-height: 40px;
+    }
+
+    .btn-sm {
+        min-height: 34px !important;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 42px;
+        font-size: 15px !important;
+    }
+
+    /* DataTables pagination buttons: bigger */
+    .dataTables_paginate .paginate_button {
+        padding: .4rem .8rem !important;
+        font-size: .82rem !important;
+    }
+}

@@ -33,15 +33,10 @@ $invoiceAppUrl = '/shengchi/My-Workshop-main/shengchi-invoice/index.php';
     /* ── Fixed footer for this page only ── */
     .app-footer {
       position: fixed !important;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       z-index: 1000;
     }
-    /* Push main content up so it doesn't hide under the fixed footer */
-    .app-main {
-      padding-bottom: 58px;
-    }
+    .app-main { padding-bottom: 58px; }
 
     /* ── iframe wrapper ── */
     .invoice-frame-wrap {
@@ -52,22 +47,16 @@ $invoiceAppUrl = '/shengchi/My-Workshop-main/shengchi-invoice/index.php';
       box-shadow: 0 4px 24px rgba(0,0,0,.10);
       background: #eef2ff;
     }
-
     #invoiceFrame {
       width: 100%;
-      /* starts at a sensible minimum; JS expands it to full content height */
       height: 600px;
       border: none;
       display: block;
     }
 
     /* ── Fullscreen toggle button ── */
-    .frame-controls {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .frame-controls .btn-fullscreen {
+    .frame-controls { display: flex; gap: 8px; align-items: center; }
+    .btn-fullscreen {
       background: #1d1d4e;
       color: #fff;
       border: none;
@@ -81,40 +70,75 @@ $invoiceAppUrl = '/shengchi/My-Workshop-main/shengchi-invoice/index.php';
       gap: 6px;
       transition: background .15s;
     }
-    .frame-controls .btn-fullscreen:hover { background: #4015bf; }
+    .btn-fullscreen:hover { background: #4015bf; }
 
-    /* ── Fullscreen overlay mode ── */
+    /* ── Open in new tab button ── */
+    .inv-btn-newtab {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #fff !important;
+      text-decoration: none !important;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      box-shadow: 0 3px 10px rgba(5,150,105,.28);
+      transition: filter .15s, transform .1s, box-shadow .15s;
+    }
+    .inv-btn-newtab:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(5,150,105,.4);
+    }
+
+    /* ── Hint strip — thin bar below buttons ── */
+    .inv-hint-strip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      color: #991b1b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .inv-hint-strip i {
+      color: #dc2626;
+      flex-shrink: 0;
+      font-size: 13px;
+    }
+    /* ── Fullscreen overlay ── */
     .invoice-frame-wrap.fullscreen {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       z-index: 9999;
       border-radius: 0;
-      min-height: unset;
       overflow: hidden;
     }
-    /* In fullscreen the iframe must fill the whole overlay */
     .invoice-frame-wrap.fullscreen #invoiceFrame {
       height: 100vh !important;
       overflow-y: auto;
     }
-    /* Hide the page footer when iframe is fullscreen */
-    .invoice-frame-wrap.fullscreen ~ * .app-footer,
-    body.inv-fullscreen .app-footer {
-      display: none !important;
-    }
+    body.inv-fullscreen .app-footer { display: none !important; }
     .invoice-frame-wrap.fullscreen .exit-fs-btn { display: flex !important; }
 
-    /* ── Exit fullscreen button (shown only in fullscreen) ── */
+    /* ── Exit fullscreen button ── */
     .exit-fs-btn {
       display: none;
       position: absolute;
-      top: 12px;
-      right: 14px;
+      top: 12px; right: 14px;
       z-index: 10000;
-      background: rgba(220,38,38,.9);
+      background: rgba(220,38,38,.92);
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -156,21 +180,22 @@ $invoiceAppUrl = '/shengchi/My-Workshop-main/shengchi-invoice/index.php';
     <div class="app-content p-4">
 
       <!-- Toolbar -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold px-3 py-2" style="border-radius:8px;">
-            <i class="bi bi-info-circle me-1"></i>
-            Fill the form and click <strong>Generate Document</strong> to get a print-ready estimate
-          </span>
-        </div>
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div><!-- left side empty, buttons on right --></div>
         <div class="frame-controls">
           <button class="btn-fullscreen" onclick="toggleFullscreen()">
             <i class="bi bi-fullscreen" id="fsIcon"></i> Fullscreen
           </button>
-          <a href="<?= htmlspecialchars($invoiceAppUrl) ?>" target="_blank" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-box-arrow-up-right me-1"></i>Open in new tab
+          <a href="<?= htmlspecialchars($invoiceAppUrl) ?>" target="_blank" class="inv-btn-newtab">
+            <i class="bi bi-box-arrow-up-right"></i>
+            <span>Open in new tab</span>
           </a>
         </div>
+      </div>
+      <!-- Hint strip — thin, single line, sits below buttons -->
+      <div class="inv-hint-strip mb-3">
+        <i class="bi bi-info-circle-fill"></i>
+        Fill the form and click <strong>Generate Document</strong> to get a print-ready estimate
       </div>
 
       <!-- iframe wrapper -->
