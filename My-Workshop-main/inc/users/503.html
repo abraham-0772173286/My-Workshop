@@ -1,0 +1,35 @@
+<style>
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+      backdrop-filter: blur( 8.5px );
+      -webkit-backdrop-filter: blur( 8.5px );
+      padding: 40px;
+      text-align: center;
+      max-width: 450px;
+    }
+    .icon {
+      font-size: 80px;
+      color: #ff4e50;
+    }
+    .btn-contact {
+      margin-top: 20px;
+    }
+  </style>
+
+<div class="d-flex justify-content-center align-items-center">
+    <div class="card animate__animated animate__fadeInDown">
+        <div class="icon mb-4">
+            <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <h2 class="mb-3">Access Restricted</h2>
+        <p>You do not have permission to view this page.<br>
+           Please contact the system administrator for assistance.</p>
+        <a href="mailto:admin@example.com"
+           class="btn btn-danger btn-contact animate__animated animate__pulse animate__infinite">
+           Contact Administrator
+        </a>
+    </div>
+</div>

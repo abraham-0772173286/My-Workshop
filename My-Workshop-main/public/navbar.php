@@ -1,0 +1,77 @@
+<nav class="app-header navbar navbar-expand bg-body mb-0 sticky-top">
+    <div class="container-fluid">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" id="sidebarToggle" href="#" role="button" aria-label="Toggle navigation" aria-expanded="true">
+                    <i class="fas fa-bars"></i>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav gap-2 ms-auto align-items-center">
+
+            <li class="nav-item dropdown">
+                <a class="nav-link position-relative" data-bs-toggle="dropdown" href="#">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span id="notif-badge" class="position-absolute badge rounded-pill bg-danger"
+                        style="display:none; font-size: 0.65rem; padding: 2px 5px; top: 5px; right: 5px; border: 2px solid #fff;">
+                        0 </span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0">
+
+                    <div class="dropdown-header d-flex justify-content-between align-items-center">
+                        <span>Notifications</span>
+                        <span class="badge bg-primary-subtle text-primary rounded-pill">0 New</span>
+                    </div>
+                    <div class="dropdown-divider m-0"></div>
+
+                    <div class="notif-scroll" style="max-height: 300px; overflow-y: auto;">
+                        <div class="p-4 text-center">
+                            <i class="bi bi-check2-circle text-success display-6"></i>
+                            <p class="text-muted small mt-2">No unread notifications</p>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-divider m-0"></div>
+                    <a href="#" class="dropdown-item dropdown-footer">View All Notifications</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                <button class="btn btn-link text-dark dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" style="text-decoration: none;">
+                    <i class="bi bi-globe"></i> <span id="currentLang">EN</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">🇺🇸 English</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('es')">🇪🇸 Español</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('fr')">🇫🇷 Français</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="changeLanguage('zh')">🇨🇳 中文</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item d-none d-md-block">
+                <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                    <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                </a>
+            </li>
+
+            <li class="nav-item dropdown user-menu">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                    <i class="bi bi-person-circle text-dark fs-5"></i>
+                    <span class="d-none d-md-inline text-dark fw-medium small ms-1">System</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end shadow-sm">
+                    <li class="user-header bg-light text-center p-4">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 80px;"></i>
+                        <p class="mb-0 fw-bold text-dark">Support System</p>
+                        <small class="text-muted">N/A</small>
+                    </li>
+                    <li class="user-footer d-flex justify-content-between p-3 bg-white">
+                        <a href="#" class="btn btn-outline-primary btn-sm px-3">Profile</a>
+                        <a href="inc/forgotpassword.php?f=logout" class="btn btn-outline-danger btn-sm px-3">Sign out</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
